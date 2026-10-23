@@ -188,15 +188,16 @@ def logistic(df: pd.DataFrame, rng: np.random.Generator, n_boot: int = 500) -> d
     }
 
 
-def verdict(fee: Share, arrival: Share, payer: Share, min_pairs: int) -> str:
+def verdict(fee: Share, arrival: Share, payer: Share, min_pairs: int, min_bursts: int = 5) -> str:
     """The pre-registered reading of the shares (README): a rule is claimed only when its permutation p-value is below
-    0.01 and its bootstrap interval excludes 0.5. `fee` comes from bursts where price is independent of the send
+    0.01 and its bootstrap interval excludes 0.5, from at least `min_pairs` pairs in at least `min_bursts` bursts (an
+    interval resampled from fewer bursts says little). `fee` comes from bursts where price is independent of the send
     order (main, conflict); `arrival` and `payer` from equal-price bursts."""
-    if fee.pairs < min_pairs:
+    if fee.pairs < min_pairs or fee.bursts < min_bursts:
         return "insufficient data"
 
     def holds(s: Share) -> bool:
-        return s.pairs >= min_pairs and s.p_value < 0.01 and s.low > 0.5
+        return s.pairs >= min_pairs and s.bursts >= min_bursts and s.p_value < 0.01 and s.low > 0.5
 
     if holds(fee) and holds(arrival):
         return "priority fee, then arrival"

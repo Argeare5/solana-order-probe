@@ -13,7 +13,7 @@ def summary(tmp_path_factory):
     root = tmp_path_factory.mktemp("synthetic")
     synth.write(root / "data")
     data = load.load(root / "data", cluster="synthetic")
-    return report.build(data, root / "out", seed=1, n_boot=400, n_perm=400, min_pairs=30)
+    return report.build(data, root / "out", seed=1, n_boot=400, n_perm=400, min_pairs=30, min_bursts=5)
 
 
 def verdicts(summary):

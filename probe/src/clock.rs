@@ -28,6 +28,8 @@ use tokio::sync::mpsc;
 use tokio_tungstenite::connect_async;
 use tokio_tungstenite::tungstenite::Message;
 
+/// Silence after which the WebSocket is taken as stalled and reconnected.
+const STALL: Duration = Duration::from_secs(3);
 /// Slots of first evidence kept in memory.
 const KEPT_SLOTS: u64 = 4_000;
 /// Slots in a leader window (`NUM_CONSECUTIVE_LEADER_SLOTS`); windows start at slots divisible by it.
@@ -349,7 +351,13 @@ async fn stream(url: &str, seen: &Mutex<Seen>, log: Option<&mpsc::UnboundedSende
     ws.send(Message::Text(json!({ "jsonrpc": "2.0", "id": 1, "method": "slotSubscribe" }).to_string().into())).await?;
     ws.send(Message::Text(json!({ "jsonrpc": "2.0", "id": 2, "method": "slotsUpdatesSubscribe" }).to_string().into()))
         .await?;
-    while let Some(message) = ws.next().await {
+    // Slots come every ~200 ms; a stream that stays silent much longer has stalled without closing
+    loop {
+        let message = match tokio::time::timeout(STALL, ws.next()).await {
+            Ok(Some(message)) => message,
+            Ok(None) => break,
+            Err(_) => bail!("no notification for {} s", STALL.as_secs()),
+        };
         match message? {
             Message::Text(text) => {
                 let value: Value = serde_json::from_str(&text)?;

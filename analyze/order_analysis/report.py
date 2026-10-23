@@ -39,14 +39,15 @@ def _style() -> None:
     })
 
 
-def build(data: Dataset, out: Path, seed: int, n_boot: int, n_perm: int, min_pairs: int) -> dict:
+def build(data: Dataset, out: Path, seed: int, n_boot: int, n_perm: int, min_pairs: int, min_bursts: int = 5) -> dict:
     out.mkdir(parents=True, exist_ok=True)
     (out / "figures").mkdir(exist_ok=True)
     rng = np.random.default_rng(seed)
     # Verdicts come from the direct path only; probes sent through an RPC node are compared on their own
     all_probes = data.probes
     probes = all_probes[all_probes["path"] == "quic"] if not all_probes.empty else all_probes
-    summary: dict = {"runs": sorted(data.run_dirs), "seed": seed, "bootstrap": n_boot, "permutations": n_perm}
+    summary: dict = {"runs": sorted(data.run_dirs), "seed": seed, "bootstrap": n_boot, "permutations": n_perm,
+                     "min_pairs": min_pairs, "min_bursts": min_bursts}
 
     # The network around the measurements: read-only records, present even before any live run
     ingress = network.tpu_ingress(data.data_dir)
@@ -93,7 +94,7 @@ def build(data: Dataset, out: Path, seed: int, n_boot: int, n_perm: int, min_pai
         reverse = subset[subset["variant"] == "reverse"]
         conflict = pair_subset[(pair_subset["variant"] == "conflict") & pair_subset["fee_agree"].notna()] if not pair_subset.empty else pair_subset
         row = {
-            "verdict": metrics.verdict(fee, arrival_null, payer_null, min_pairs),
+            "verdict": metrics.verdict(fee, arrival_null, payer_null, min_pairs, min_bursts),
             **{f"fee_{k}": v for k, v in vars(fee).items()},
             **{f"arrival_null_{k}": v for k, v in vars(arrival_null).items()},
             **{f"arrival_main_{k}": v for k, v in vars(arrival_main).items()},
@@ -267,7 +268,8 @@ def _figure_timing(bursts: pd.DataFrame, path: Path) -> None:
 def _fmt_share(row: pd.Series, prefix: str) -> str:
     if row.get(f"{prefix}_pairs", 0) == 0 or pd.isna(row.get(f"{prefix}_share")):
         return "–"
-    return f"{row[f'{prefix}_share']:.2f} [{row[f'{prefix}_low']:.2f}, {row[f'{prefix}_high']:.2f}], p={row[f'{prefix}_p_value']:.3g}, n={int(row[f'{prefix}_pairs'])}"
+    return (f"{row[f'{prefix}_share']:.2f} [{row[f'{prefix}_low']:.2f}, {row[f'{prefix}_high']:.2f}], "
+            f"p={row[f'{prefix}_p_value']:.3g}, {int(row[f'{prefix}_pairs'])} pairs / {int(row[f'{prefix}_bursts'])} bursts")
 
 
 def _markdown(delivery: pd.DataFrame, validators: pd.DataFrame, clients: pd.DataFrame, timing: pd.DataFrame,
@@ -275,7 +277,8 @@ def _markdown(delivery: pd.DataFrame, validators: pd.DataFrame, clients: pd.Data
     lines = ["# Results (generated)", "",
              f"Runs: {', '.join(summary['runs'])}. Probes sent {summary['probes_sent']}, landed {summary['probes_landed']}.",
              f"Intervals: 95% cluster bootstrap over bursts ({summary['bootstrap']} draws); p: permutation test of block "
-             f"positions ({summary['permutations']} permutations), seed {summary['seed']}.", "",
+             f"positions ({summary['permutations']} permutations), seed {summary['seed']}. A rule is claimed when p < 0.01 "
+             f"and the interval excludes 0.5, from at least {summary['min_pairs']} pairs in {summary['min_bursts']} bursts.", "",
              "## Verdict per validator", "",
              "| Client | Validator | Verdict | Higher price first (main, conflict) | Sent earlier first (equal price) | Payer-index control | Higher price first (reverse) |",
              "| --- | --- | --- | --- | --- | --- | --- |"]

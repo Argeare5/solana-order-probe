@@ -111,7 +111,9 @@ earlier first, and as a control the lower payer index first (which carries no in
 1.0 a strict rule. Intervals: 95% cluster bootstrap over bursts. Null model: a permutation test that shuffles the
 positions within each block (every order equally likely), plus the equal-price bursts. The reading was fixed before
 the data: a rule is claimed only when its permutation p-value is below 0.01 and its interval excludes 0.5, with at
-least 30 pairs; otherwise the answer is "no detectable rule". The fee share comes from the main and conflict bursts,
+least 30 pairs from at least 5 bursts; otherwise the answer is "no detectable rule" (or "insufficient data"). The
+5-burst minimum was added after the pilot and before the campaign: the pilot showed an interval resampled from a
+single burst, which has zero width and means nothing. The fee share comes from the main and conflict bursts,
 where price is independent of the send order; the reverse bursts are reported on their own. The whole block serves as
 background: Kendall's τ of position against reward per cost unit for every transaction.
 

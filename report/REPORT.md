@@ -19,6 +19,8 @@ Checked on the chain: blocks 459 652 900 and 459 652 950 carry 664 of 953 and 64
 | 2026-10-23 09:00 | Cluster snapshot for the campaign; QUIC handshake with the 12 chosen leaders (all accept an unstaked connection) | `data/snapshots/20261023T090046Z` |
 | 2026-10-23 09:00–09:31 | Slot clock calibration, 30 min, with the leader of every slot (`getSlotLeaders`) | `data/calibration/20261023T090046Z` |
 | 2026-10-23 09:43 | Cluster snapshot before the first live run | `data/snapshots/20261023T094303Z` |
+| 2026-10-23 10:05 | Funding of the 12 payers (2 transactions, 10 000 lamports of fees) | `data/spend_ledger.jsonl` |
+| 2026-10-23 10:09–10:20 | **Live pilot**: 3 leaders on 3 clients (JitoLabs, HarmonicAgave, Firedancer) × 8 bursts, fired 300 ms before the window, 0 and 10 ms spacing | `data/runs/20261023T100857Z` |
 
 ## Where leaders take transactions in
 
@@ -108,6 +110,16 @@ On a local validator in Docker (`solanalabs/solana:v1.18.26`, 2026-10-23 09:52�
 - Money: the 12 payers' balances fell by exactly the probe fees in the spend ledger, 556 135 lamports over 101 landed
   probes; `sweep --live --to` then left every payer and the funder at 0.
 
+## Pilot (live, mainnet)
+
+288 probes in 24 bursts: 276 landed, every one in its leader's window and every one in the window's first slot. One
+burst (JitoLabs, equal prices, 10 ms spacing) did not land at all: the leader's TPU dropped the QUIC connection in the
+middle of it (`tpu_ack`: "connection lost"). Unlike the local validator, mainnet leaders took all 12 probes sent back
+to back: every send position landed 12 times out of 12. Fees: 1 529 400 lamports for 276 probes; the reconciliation
+found nothing missing. The pilot was a check of the method; its bursts are part of the data, and its first readings
+(fee order strict for the Firedancer leader, not strict for the JitoLabs and HarmonicAgave ones) wait for the
+campaign's numbers.
+
 ## What went wrong
 
 - **The first slot clock fired 1.8–3.4 slots early.** It extrapolated from the arrival of the latest `slotSubscribe`
@@ -130,6 +142,12 @@ On a local validator in Docker (`solanalabs/solana:v1.18.26`, 2026-10-23 09:52�
   it sent, and the reconciliation records any fee still missing (tested above).
 - **A merely processed status was counted as landed.** A slot that is processed but later dropped with its fork
   would have recorded a landing that never happened; a probe now counts as landed only when its block is confirmed.
+- **The slot stream can stall without closing.** In four pilot bursts in a row the public WebSocket went silent, so
+  the clock fired from stale points and the window's start was never observed (their fire timing is unknown; the
+  probes still landed in the window). The stream is now reconnected after 3 s of silence.
+- **The verdict rule needed a minimum number of bursts.** In the pilot one leader's equal-price share rested on a
+  single burst, and the bootstrap over bursts gave it a zero-width interval. A verdict now needs at least 5 bursts
+  besides 30 pairs; the rule was changed after the pilot and before the campaign.
 - **No devnet SOL.** The devnet and testnet faucets answered every `requestAirdrop` with HTTP 429 or an internal
   error. The end-to-end live test ran on a local validator in Docker (`solanalabs/solana:v1.18.26`): 8 bursts,
   96 of 96 probes landed and were collected; funding, the spend ledger and the sweep matched the chain's fees.

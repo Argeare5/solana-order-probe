@@ -16,11 +16,12 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=20261023, help="seed of the bootstrap and permutations")
     parser.add_argument("--bootstrap", type=int, default=2000)
     parser.add_argument("--permutations", type=int, default=2000)
-    parser.add_argument("--min-pairs", type=int, default=30, help="pairs a validator needs before a verdict")
+    parser.add_argument("--min-pairs", type=int, default=30, help="pairs a rule's share needs before a verdict")
+    parser.add_argument("--min-bursts", type=int, default=5, help="bursts a rule's share needs before a verdict")
     args = parser.parse_args()
 
     data = load.load(args.data, cluster=None if args.cluster == "any" else args.cluster)
-    summary = report.build(data, args.out, args.seed, args.bootstrap, args.permutations, args.min_pairs)
+    summary = report.build(data, args.out, args.seed, args.bootstrap, args.permutations, args.min_pairs, args.min_bursts)
     print(f"{len(summary['runs'])} live runs, {len(summary.get('validators', []))} validators → {args.out}")
     for v in summary.get("validators", []):
         print(f"  {v['client']:<20} {v['identity']}  {v['verdict']}  fee share {v['fee_share']}")

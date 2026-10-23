@@ -1,0 +1,4 @@
+client,identity,bursts,sent,send_errors,tpu_acked,landed,in_window,landed_after_collection,failed,comparable
+Firedancer,EvnRmnMrd69kFdbLMxWkTn1icZ7DCceRhvmb2SJXqDo4,8,96,0,96,96,96,0,0,96
+HarmonicAgave,Fd7btgySsrjuo25CJCj7oE7VPMyezDhnx7pZkj2v69Nk,8,96,0,96,96,96,0,0,96
+JitoLabs,HEL1USMZKAL2odpNBj2oCjffnFGaYwmbGmyewGv1e2TU,8,96,8,84,84,84,0,0,84
