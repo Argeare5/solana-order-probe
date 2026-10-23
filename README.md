@@ -14,8 +14,8 @@ block with `getBlock`.
 All measurements are taken after Alpenglow's activation on October 21, 2026 (slot 459 653 000): mainnet blocks just
 before it carry ~650 vote transactions each, blocks after it none (`report/REPORT.md`).
 
-**Status (October 23, 2026):** the tooling is verified (mainnet dry-runs, a live end-to-end run on a local validator
-with the spend ledger matching the chain to the lamport); the mainnet campaign is next.
+**Status (October 23, 2026):** a pilot and the first campaign session have run on mainnet: 12 validators on 8 clients,
+3 744 probes, 0.0187 SOL of fees, with the spend ledger matching the chain to the lamport.
 
 ## Run it
 
@@ -156,7 +156,19 @@ compute budget per transaction).
 
 ## Results
 
-See [report/REPORT.md](report/REPORT.md) and [report/generated/summary.md](report/generated/summary.md).
+From session 1 (October 23, 10:20–12:51 UTC; details, intervals and caveats in [report/REPORT.md](report/REPORT.md),
+every table recomputed in [report/generated/summary.md](report/generated/summary.md)):
+
+- Every client with enough data orders by priority fee more often than chance, and none strictly under all
+  conditions. With the whole burst at the leader before its window, the share of probe pairs in fee order is
+  0.96–0.97 for Firedancer, 0.89–0.94 for AgaveBam, 0.81–0.83 for Agave and 0.61–0.71 for JitoLabs, HarmonicAgave
+  and Rakurai.
+- When probes arrive while the leader builds, arrival competes with the fee (shares 0.40–0.65 for most clients); at
+  equal price the Agave-based leaders tend to put the earlier probe first, the Firedancer ones the later.
+- Probes that write-lock one account are ordered by fee more strictly than independent ones, for every validator
+  with data.
+- Paths differ by client: BAM and Harmonic leaders take transactions through shared ingresses; the FireBAM ingress
+  dropped our unstaked connection in 21 of 24 bursts, and Harmonic's handed some probes to neighbouring leaders.
 
 ## Development
 

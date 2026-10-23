@@ -23,6 +23,9 @@ use crate::store::{append_jsonl, read_jsonl};
 
 /// A probe's blockhash lives ~150 blocks (~35 s); after this long an unlanded probe never lands.
 pub const SETTLE: Duration = Duration::from_secs(120);
+/// Signatures per status request. Unknown signatures send the node into its long-term history, and the public
+/// endpoint times out on a full batch of 256 of them.
+const BATCH: usize = 32;
 
 #[derive(Serialize, Deserialize)]
 struct Checked {
@@ -80,9 +83,18 @@ pub async fn run_dir(rpc: &Rpc, dir: &Path, ledger: &Ledger) -> Result<()> {
         .filter(|(_, _, signature)| !ledger.is_recorded(signature) && !checked.contains(*signature))
         .collect();
     let (mut landed, mut added) = (0, 0u64);
-    for chunk in pending.chunks(256) {
+    let mut unchecked = 0;
+    for chunk in pending.chunks(BATCH) {
         let signatures: Vec<String> = chunk.iter().map(|(_, _, s)| s.to_string()).collect();
-        let statuses = chain::landed(&chain::statuses(rpc, &signatures).await?);
+        let statuses = match chain::statuses(rpc, &signatures).await {
+            Ok(statuses) => chain::landed(&statuses),
+            Err(error) => {
+                // These stay unchecked; the next reconciliation asks again
+                eprintln!("  statuses of {} probes: {error:#}", chunk.len());
+                unchecked += chunk.len();
+                continue;
+            }
+        };
         for ((burst, index, signature), status) in chunk.iter().zip(&statuses) {
             let landed_slot = status["slot"].as_u64();
             let mut fee = None;
@@ -111,9 +123,10 @@ pub async fn run_dir(rpc: &Rpc, dir: &Path, ledger: &Ledger) -> Result<()> {
     }
     if late_collections + pending.len() > 0 {
         println!(
-            "reconciled {}: {late_collections} bursts collected now; {} probes checked, {landed} landed after collection, {added} lamports of fees added",
+            "reconciled {}: {late_collections} bursts collected now; {} probes checked, {landed} landed after collection, {added} lamports of fees added{}",
             dir.file_name().map(|n| n.to_string_lossy()).unwrap_or_default(),
-            pending.len()
+            pending.len() - unchecked,
+            if unchecked > 0 { format!("; {unchecked} left for the next reconciliation") } else { String::new() }
         );
     }
     Ok(())

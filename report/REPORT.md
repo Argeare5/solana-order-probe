@@ -1,7 +1,8 @@
 # Report
 
-Status: the measurement campaign on mainnet has not run yet. This report records the preparatory measurements and
-what went wrong so far; results per validator and client will be added from `generated/` after the live runs.
+Status (October 23, 2026): the pilot and the first campaign session have run on mainnet (12 validators on 8 clients,
+3 744 probes, 0.0187 SOL of fees). Results below; every number is recomputed from `data/` by `order_analysis`
+(`generated/summary.md`, `generated/*.csv`).
 
 ## Measurements
 
@@ -21,6 +22,8 @@ Checked on the chain: blocks 459 652 900 and 459 652 950 carry 664 of 953 and 64
 | 2026-10-23 09:43 | Cluster snapshot before the first live run | `data/snapshots/20261023T094303Z` |
 | 2026-10-23 10:05 | Funding of the 12 payers (2 transactions, 10 000 lamports of fees) | `data/spend_ledger.jsonl` |
 | 2026-10-23 10:09–10:20 | **Live pilot**: 3 leaders on 3 clients (JitoLabs, HarmonicAgave, Firedancer) × 8 bursts, fired 300 ms before the window, 0 and 10 ms spacing | `data/runs/20261023T100857Z` |
+| 2026-10-23 10:20–12:51 | **Live campaign, session 1**: 12 leaders on 8 clients × 24 bursts, every combination of 4 variants, fire 300 ms before or 100 ms after the window start, and 0, 10 or 50 ms between sends | `data/runs/20261023T102008Z` |
+| 2026-10-23 13:00–13:08 | Reconciliation of all live probes with the chain (1 late landing, 5 180 lamports added); spend ledger checked against the 13 addresses' balances | `data/runs/*/reconciled.jsonl`, `data/spend_ledger.jsonl` |
 
 ## Where leaders take transactions in
 
@@ -120,6 +123,100 @@ found nothing missing. The pilot was a check of the method; its bursts are part 
 (fee order strict for the Firedancer leader, not strict for the JitoLabs and HarmonicAgave ones) wait for the
 campaign's numbers.
 
+## Results
+
+### Delivery and cost
+
+3 744 probes in 312 bursts (24 in the pilot, 288 in session 1); 3 389 landed, 3 372 of them in the target leader's
+window. Fees
+paid: 18 704 116 lamports (0.0187 SOL) in all, funding and pilot included. The spend ledger equals the chain: the 13
+addresses (funder and 12 payers) received 0.1 SOL and hold 81 295 884 lamports now, a difference of exactly the
+ledger's 18 704 116.
+
+- A burst fired 300 ms before the window landed whole in the window's first slot; the planned fire moment was kept
+  closely (planned −300 ms: median −308 ms, p10 −454, p90 −269; planned +100 ms: median +98 ms, p10 −7, p90 +131).
+- In session 1, 312 probes were never accepted: the TPU closed our unstaked QUIC connection right after the handshake
+  (`closed by peer: dropped`). This hit the FireBAM leader in 21 of its 24 bursts (its TPU is a BAM ingress shared
+  with AgaveBam nodes), an AgaveBam leader in 2 and an Agave leader in 3. The FireBAM leader therefore has too little
+  data for a verdict.
+- 16 HarmonicAgave probes landed outside the target's window: one whole burst two slots before it, in the previous
+  leader's block, and 4 probes in the next leader's block. Harmonic's shared ingress hands transactions to the leader
+  that is building, not to the one they were sent for.
+
+### Verdict per validator
+
+Shares of within-block probe pairs that follow each rule, with 95% cluster-bootstrap intervals; a rule is claimed when
+p < 0.01 and the interval excludes 0.5, from at least 30 pairs in 5 bursts. "Then arrival" means that, besides the fee
+order in the price-ladder bursts, the equal-price bursts put the probe sent earlier first.
+
+| Client | Validator | Verdict | Higher price first | Sent earlier first (equal price) |
+| --- | --- | --- | --- | --- |
+| Agave | `5Us18…nBS` | priority fee, then arrival | 0.67 [0.53, 0.78] | 0.73 [0.52, 0.95] |
+| Agave | `7QQG…wLpE` | arrival order (FIFO) | 0.63 [0.48, 0.77] | 0.67 [0.51, 0.85] |
+| AgaveBam | `5Cch…q9Ux` | priority fee (not strict) | 0.83 [0.75, 0.89] | 0.60 [0.44, 0.85] |
+| AgaveBam | `DRpb…21hy` | priority fee, then arrival | 0.84 [0.73, 0.93] | 0.66 [0.50, 0.87] |
+| FireBAM | `9jxg…nGFP` | insufficient data | 1 burst landed with ≥ 2 probes | |
+| Firedancer | `9eGr…8FoY` | priority fee (not strict) | 0.77 [0.63, 0.87] | 0.35 [0.13, 0.65] |
+| Firedancer | `EvnR…qDo4` | priority fee (not strict) | 0.92 [0.82, 0.98] | 0.29 [0.11, 0.55] |
+| HarmonicAgave | `Fd7b…69Nk` | priority fee (not strict) | 0.63 [0.56, 0.71] | 0.60 [0.51, 0.75] |
+| HarmonicFiredancer | `JUPi…1h4b` | priority fee, then arrival | 0.65 [0.55, 0.74] | 0.66 [0.50, 0.85] |
+| JitoLabs | `E1r4…dxHL` | priority fee, then arrival | 0.61 [0.56, 0.65] | 0.72 [0.60, 0.88] |
+| JitoLabs | `HEL1…e2TU` | priority fee (not strict) | 0.64 [0.56, 0.73] | 0.59 [0.47, 0.77] |
+| Rakurai | `ana2…xcfY` | priority fee (not strict) | 0.64 [0.53, 0.74] | 0.65 [0.48, 0.88] |
+
+The payer-index control stays near chance for every validator (0.48–0.61; none passes the rule), so no leader ordered
+the probes by their accounts. Full tables with p-values and pair counts: `generated/summary.md`.
+
+### The rule depends on when the transactions arrive
+
+Higher price first, by firing condition (main and conflict bursts, pooled per client; pairs in brackets):
+
+| Client | −300 ms, 0 ms apart | −300 ms, 10 ms apart | −300 ms, 50 ms apart | +100 ms, 0 ms apart | +100 ms, 10 ms apart | +100 ms, 50 ms apart |
+| --- | --- | --- | --- | --- | --- | --- |
+| Agave | 0.83 (264) | 0.81 (264) | 0.44 (73) | 0.61 (264) | 0.40 (206) | 0.43 (46) |
+| AgaveBam | 0.89 (264) | 0.94 (264) | 0.78 (122) | 0.92 (264) | 0.64 (171) | 0.54 (81) |
+| Firedancer | 0.96 (396) | 0.97 (396) | 0.64 (160) | 0.72 (264) | 0.86 (200) | 0.56 (68) |
+| HarmonicAgave | 0.66 (264) | 0.71 (264) | 0.45 (58) | 0.66 (132) | 0.42 (101) | 0.65 (26) |
+| HarmonicFiredancer | 0.90 (132) | 0.62 (132) | 0.61 (70) | 0.58 (132) | 0.59 (132) | 0.32 (38) |
+| JitoLabs | 0.68 (396) | 0.69 (396) | 0.57 (125) | 0.51 (264) | 0.59 (237) | 0.72 (61) |
+| Rakurai | 0.71 (132) | 0.61 (132) | 0.67 (100) | 0.64 (132) | 0.61 (132) | 0.48 (27) |
+
+- **When the whole burst is at the leader before its window** (−300 ms, sent back to back or 10 ms apart), the fee
+  decides most of the order: Firedancer 0.96–0.97, AgaveBam 0.89–0.94, Agave 0.81–0.83, HarmonicFiredancer 0.90 and
+  0.62, Rakurai 0.61–0.71, HarmonicAgave 0.66–0.71, JitoLabs 0.68–0.69. Only the Firedancer leaders come close to a
+  strict fee order.
+- **When the probes arrive while the leader builds** (+100 ms) or spread over 550 ms (50 ms apart), arrival competes
+  with the fee and the share falls to 0.40–0.65 for most clients. In the reverse bursts (cheapest sent first) the
+  arrival order won more often than the fee for the Agave, HarmonicAgave, HarmonicFiredancer and Rakurai leaders and
+  one JitoLabs leader (fee share 0.37–0.48); the fee won for the other JitoLabs leader (0.60), the AgaveBam ones
+  (0.63–0.66) and the Firedancer ones (0.71–0.81).
+- **At equal price** the leaders built on Agave (Agave, AgaveBam, HarmonicAgave, JitoLabs, Rakurai) put the probe sent
+  earlier first more often than not (0.59–0.73); the rule holds for 4 of these 8, and for the HarmonicFiredancer
+  leader (0.66). The Firedancer leaders lean the other way (0.29–0.35, the last probe sent first), but their
+  intervals reach 0.5, so that is not claimed.
+
+### Conflicting transactions follow the fee more strictly
+
+In the conflict bursts, pairs of probes that write-lock the same account were ordered by price more often than the
+independent pairs of the same bursts, for every validator with data: Agave 0.86 / 0.82 against 0.65 / 0.71, AgaveBam
+0.91 / 0.88 against 0.81 / 0.79, Firedancer 0.91 / 0.91 against 0.63 / 0.87, HarmonicAgave 0.81 against 0.58,
+HarmonicFiredancer 0.82 against 0.68, JitoLabs 0.79 / 0.81 against 0.57 / 0.66, Rakurai 0.72 against 0.67
+(`generated/validators.csv`). Transactions that must run one after the other are queued by priority; independent
+ones go to parallel execution threads, whose interleaving in the block blurs the fee order.
+
+### The whole block
+
+Kendall's τ of position against reward per cost unit over all transactions in the target leaders' blocks is weak:
+median 0.02–0.10 per validator, 0.28 for one Firedancer leader. Other senders' transactions differ in accounts, size,
+bundles and builders, so the block as a whole shows little of the rule that same-shape probes reveal; the probes are
+the evidence, the block is background.
+
+### What these results do not show
+
+One session of 2.5 hours on October 23 (10:20–12:51 UTC), from one unstaked machine: other times of day, staked senders and leaders with
+more data may differ. The verdicts describe the result in the block; for BAM and Harmonic leaders that result is the
+external sequencer's and the leader's together.
+
 ## What went wrong
 
 - **The first slot clock fired 1.8–3.4 slots early.** It extrapolated from the arrival of the latest `slotSubscribe`
@@ -142,6 +239,11 @@ campaign's numbers.
   it sent, and the reconciliation records any fee still missing (tested above).
 - **A merely processed status was counted as landed.** A slot that is processed but later dropped with its fork
   would have recorded a landing that never happened; a probe now counts as landed only when its block is confirmed.
+- **The final reconciliation of session 1 timed out.** It asked the public RPC for 256 signature statuses with history
+  search in one request; for unknown signatures (mostly the FireBAM probes that never reached a leader) the endpoint
+  timed out, and the run ended with an error after all 288 bursts had been sent and collected. Requests now carry 32
+  signatures and a failed request leaves its probes for the next reconciliation; the rerun took 7.6 minutes and
+  found one late landing.
 - **The slot stream can stall without closing.** In four pilot bursts in a row the public WebSocket went silent, so
   the clock fired from stale points and the window's start was never observed (their fire timing is unknown; the
   probes still landed in the window). The stream is now reconnected after 3 s of silence.

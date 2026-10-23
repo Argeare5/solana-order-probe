@@ -137,6 +137,18 @@ def build(data: Dataset, out: Path, seed: int, n_boot: int, n_perm: int, min_pai
     clients_df = pd.DataFrame(clients)
     clients_df.to_csv(out / "clients.csv", index=False)
 
+    # The shares under each firing condition: when the burst reached the leader (planned offset from the window's
+    # start) and how far apart its probes were sent
+    condition_rows = []
+    for (client, offset, spacing), subset in probes.groupby(["client", "offset_ms", "spacing_ms"]):
+        fee = metrics.share(subset[subset["variant"].isin(INDEPENDENT_VARIANTS)], "fee", rng, 200, 1)
+        arrival = metrics.share(subset[subset["variant"] == "null"], "arrival", rng, 200, 1)
+        condition_rows.append({"client": client, "offset_ms": offset, "spacing_ms": spacing,
+                               "fee_share": fee.share, "fee_pairs": fee.pairs, "fee_bursts": fee.bursts,
+                               "arrival_null_share": arrival.share, "arrival_null_pairs": arrival.pairs})
+    conditions_df = pd.DataFrame(condition_rows)
+    conditions_df.to_csv(out / "by_condition.csv", index=False)
+
     # Timing: when bursts went out relative to the window's first shred, by planned offset
     bursts = data.bursts
     timing = bursts.groupby("offset_ms")["fire_vs_observed_ms"].describe(percentiles=[0.1, 0.5, 0.9])
@@ -170,7 +182,8 @@ def build(data: Dataset, out: Path, seed: int, n_boot: int, n_perm: int, min_pai
                              "| --- | --- | --- | --- | --- | --- |"]
                             + [f"| {r['client']} | `{r['identity']}` | {r['sent']} | {r['landed']} | {_fmt_share(r, 'fee')} | "
                                f"{_fmt_share(r, 'arrival_null')} |" for _, r in rpc_df.iterrows()]) + "\n\n"
-    (out / "summary.md").write_text(_markdown(delivery, validators_df, clients_df, timing, blocks, summary) + "\n" + rpc_md + network_md)
+    (out / "summary.md").write_text(_markdown(delivery, validators_df, clients_df, timing, blocks, summary) + "\n"
+                                    + _conditions_markdown(conditions_df) + rpc_md + network_md)
     return summary
 
 
@@ -199,10 +212,10 @@ def _figure_shares(df: pd.DataFrame, path: Path) -> None:
     ax.set_xlim(0, 1.02)
     ax.set_ylim(len(df) - 0.5, -1)
     ax.set_xlabel("share of within-block probe pairs that follow the rule")
-    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.12 - 0.6 / max(len(df), 1)), ncol=2)
+    ax.legend(loc="upper left", bbox_to_anchor=(0.0, -0.08 - 0.5 / max(len(df), 1)), ncol=1)
     ax.set_title("Which rule each leader follows inside its block", loc="left")
     fig.tight_layout()
-    fig.savefig(path, dpi=160)
+    fig.savefig(path, dpi=160, bbox_inches="tight")
     plt.close(fig)
 
 
@@ -343,3 +356,25 @@ def _network_markdown(ingress: pd.DataFrame, hand_over: pd.DataFrame, positions:
                          f"{cell(r, 'window')} | {cell(r, 'clock_error')} |")
         lines.append("")
     return "\n".join(lines)
+
+
+def _conditions_markdown(df: pd.DataFrame) -> str:
+    """Per client, the fee share (main and conflict bursts) under each firing condition, with its pair count."""
+    if df.empty:
+        return ""
+    conditions = sorted({(o, sp) for o, sp in zip(df["offset_ms"], df["spacing_ms"])})
+    head = " | ".join(f"{o:+.0f} ms, {sp} ms apart" for o, sp in conditions)
+    lines = ["## Higher price first, by firing condition", "",
+             "Planned fire moment against the window's start, and the gap between sends. Share of within-block pairs "
+             "of the main and conflict bursts with the higher price first (pairs in brackets).", "",
+             f"| Client | {head} |", "| --- |" + " --- |" * len(conditions)]
+    for client, g in df.groupby("client"):
+        cells = []
+        for o, sp in conditions:
+            r = g[(g["offset_ms"] == o) & (g["spacing_ms"] == sp)]
+            if r.empty or not r["fee_pairs"].iloc[0]:
+                cells.append("–")
+            else:
+                cells.append(f"{r['fee_share'].iloc[0]:.2f} ({int(r['fee_pairs'].iloc[0])})")
+        lines.append(f"| {client} | " + " | ".join(cells) + " |")
+    return "\n".join(lines) + "\n\n"

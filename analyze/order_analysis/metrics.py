@@ -199,12 +199,19 @@ def verdict(fee: Share, arrival: Share, payer: Share, min_pairs: int, min_bursts
     def holds(s: Share) -> bool:
         return s.pairs >= min_pairs and s.bursts >= min_bursts and s.p_value < 0.01 and s.low > 0.5
 
+    def reversed_(s: Share) -> bool:
+        return s.pairs >= min_pairs and s.bursts >= min_bursts and s.p_value < 0.01 and s.high < 0.5
+
     if holds(fee) and holds(arrival):
         return "priority fee, then arrival"
+    if holds(fee) and reversed_(arrival):
+        return "priority fee, then last arrival first"
     if holds(fee):
         return "strict priority fee" if fee.low >= 0.95 else "priority fee (not strict)"
     if holds(arrival):
         return "arrival order (FIFO)"
+    if reversed_(arrival):
+        return "last arrival first (LIFO)"
     if holds(payer):
         return "by account (payer), not fee or arrival"
     if fee.p_value < 0.01 and fee.high < 0.5:

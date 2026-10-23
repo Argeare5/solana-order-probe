@@ -1,0 +1,896 @@
+slot clock on NodeFirstShred, slot time 199.8 ms
+run 20261023T102008Z  mainnet-beta  LIVE  seed 12764618716962014187  slot 211 ms  cap 50000000 lamports, spent 1539400
+burst 0: JitoLabs E1r4Psq84tHfQ6aPTvvDka4U3u8zPVD7gEUrH25RdxHL window 460406752+4 in 5.1 s
+  fired Main (offset -300 ms, spacing 0 ms): -549 ms vs the window's first shred, QUIC handshake 32 ms
+burst 1: JitoLabs HEL1USMZKAL2odpNBj2oCjffnFGaYwmbGmyewGv1e2TU window 460406800+4 in 7.9 s
+  burst 0 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset -300 ms, spacing 0 ms): -758 ms vs the window's first shred, QUIC handshake 31 ms
+burst 2: JitoLabs HEL1USMZKAL2odpNBj2oCjffnFGaYwmbGmyewGv1e2TU window 460406824+4 in 3.4 s
+  burst 1 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset -300 ms, spacing 0 ms): -254 ms vs the window's first shred, QUIC handshake 32 ms
+burst 3: FireBAM 9jxgosAfHgHzwnxsHw4RAZYaLVokMbnYtmiZBreynGFP window 460406848+4 in 3.5 s
+  fired Main (offset -300 ms, spacing 0 ms): -300 ms vs the window's first shred, QUIC handshake 30 ms
+burst 4: AgaveBam DRpbCBMxVnDK7maPM5tGv6MvB3v1sRMC86PZ8okm21hy window 460406872+4 in 4.7 s
+  burst 2 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset -300 ms, spacing 0 ms): -332 ms vs the window's first shred, QUIC handshake 107 ms
+burst 5: AgaveBam DRpbCBMxVnDK7maPM5tGv6MvB3v1sRMC86PZ8okm21hy window 460406920+4 in 8.8 s
+  burst 4 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset -300 ms, spacing 0 ms): -450 ms vs the window's first shred, QUIC handshake 136 ms
+burst 6: HarmonicAgave Fd7btgySsrjuo25CJCj7oE7VPMyezDhnx7pZkj2v69Nk window 460406976+4 in 10.7 s
+  burst 5 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset -300 ms, spacing 0 ms): -285 ms vs the window's first shred, QUIC handshake 62 ms
+burst 7: AgaveBam 5Cchr1XGEg7dbBXByV5NY2ad8jfxAM7HA3x8D56rq9Ux window 460406996+4 in 3.6 s
+  fired Main (offset -300 ms, spacing 0 ms): -421 ms vs the window's first shred, QUIC handshake 160 ms
+burst 8: AgaveBam 5Cchr1XGEg7dbBXByV5NY2ad8jfxAM7HA3x8D56rq9Ux window 460407032+4 in 6.4 s
+  burst 6 collected: 12 of 12 landed, 12 in the window
+  burst 7 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset -300 ms, spacing 0 ms): -433 ms vs the window's first shred, QUIC handshake 157 ms
+burst 9: Firedancer 9eGrDohdNTAo61DRHyfMuqKWXqYnA3i254Wiszxe8FoY window 460407076+4 in 7.6 s
+  burst 8 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset -300 ms, spacing 0 ms): -397 ms vs the window's first shred, QUIC handshake 78 ms
+burst 10: FireBAM 9jxgosAfHgHzwnxsHw4RAZYaLVokMbnYtmiZBreynGFP window 460407112+4 in 6.5 s
+  burst 9 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset -300 ms, spacing 0 ms): -337 ms vs the window's first shred, QUIC handshake 33 ms
+burst 11: HarmonicAgave Fd7btgySsrjuo25CJCj7oE7VPMyezDhnx7pZkj2v69Nk window 460407132+4 in 4.0 s
+  fired Null (offset -300 ms, spacing 0 ms): -305 ms vs the window's first shred, QUIC handshake 63 ms
+burst 12: FireBAM 9jxgosAfHgHzwnxsHw4RAZYaLVokMbnYtmiZBreynGFP window 460407180+4 in 9.5 s
+  burst 3 collected: 0 of 12 landed, 0 in the window
+  burst 11 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset -300 ms, spacing 0 ms): -286 ms vs the window's first shred, QUIC handshake 32 ms
+burst 13: HarmonicFiredancer JUPiTERrZqgf1jUyR7dSkhMx4Kn2qJyekWsg3LT1h4b window 460407216+4 in 6.2 s
+  burst 12 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset -300 ms, spacing 0 ms): -291 ms vs the window's first shred, QUIC handshake 59 ms
+burst 14: JitoLabs HEL1USMZKAL2odpNBj2oCjffnFGaYwmbGmyewGv1e2TU window 460407244+4 in 3.2 s
+  burst 13 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset -300 ms, spacing 0 ms): -351 ms vs the window's first shred, QUIC handshake 30 ms
+burst 15: HarmonicAgave Fd7btgySsrjuo25CJCj7oE7VPMyezDhnx7pZkj2v69Nk window 460407268+4 in 3.1 s
+  burst 14 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset -300 ms, spacing 0 ms): -275 ms vs the window's first shred, QUIC handshake 62 ms
+burst 16: HarmonicFiredancer JUPiTERrZqgf1jUyR7dSkhMx4Kn2qJyekWsg3LT1h4b window 460407292+4 in 4.0 s
+  burst 15 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset -300 ms, spacing 0 ms): -282 ms vs the window's first shred, QUIC handshake 59 ms
+burst 17: Firedancer EvnRmnMrd69kFdbLMxWkTn1icZ7DCceRhvmb2SJXqDo4 window 460407340+4 in 9.0 s
+  burst 16 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset -300 ms, spacing 0 ms): -309 ms vs the window's first shred, QUIC handshake 70 ms
+burst 18: HarmonicAgave Fd7btgySsrjuo25CJCj7oE7VPMyezDhnx7pZkj2v69Nk window 460407364+4 in 3.5 s
+  burst 17 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset -300 ms, spacing 0 ms): -303 ms vs the window's first shred, QUIC handshake 60 ms
+burst 19: Agave 7QQGNm3ptwinipDCyaCF7jY5katgmFUu1ieP2f7nwLpE window 460407396+4 in 6.4 s
+  burst 18 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset -300 ms, spacing 0 ms): -315 ms vs the window's first shred, QUIC handshake 23 ms
+burst 20: HarmonicFiredancer JUPiTERrZqgf1jUyR7dSkhMx4Kn2qJyekWsg3LT1h4b window 460407432+4 in 7.2 s
+  burst 19 collected: 12 of 12 landed, 12 in the window
+  burst 10 collected: 0 of 12 landed, 0 in the window
+  fired Reverse (offset -300 ms, spacing 0 ms): -282 ms vs the window's first shred, QUIC handshake 139 ms
+burst 21: JitoLabs HEL1USMZKAL2odpNBj2oCjffnFGaYwmbGmyewGv1e2TU window 460407452+4 in 3.5 s
+  fired Conflict (offset -300 ms, spacing 0 ms): -374 ms vs the window's first shred, QUIC handshake 32 ms
+burst 22: JitoLabs HEL1USMZKAL2odpNBj2oCjffnFGaYwmbGmyewGv1e2TU window 460407472+4 in 3.9 s
+  burst 20 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset +100 ms, spacing 0 ms): +57 ms vs the window's first shred, QUIC handshake 95 ms
+burst 23: AgaveBam 5Cchr1XGEg7dbBXByV5NY2ad8jfxAM7HA3x8D56rq9Ux window 460407512+4 in 7.2 s
+  burst 21 collected: 12 of 12 landed, 12 in the window
+  burst 22 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset -300 ms, spacing 0 ms): -432 ms vs the window's first shred, QUIC handshake 239 ms
+burst 24: AgaveBam 5Cchr1XGEg7dbBXByV5NY2ad8jfxAM7HA3x8D56rq9Ux window 460407532+4 in 4.0 s
+  fired Conflict (offset -300 ms, spacing 0 ms): -406 ms vs the window's first shred, QUIC handshake 157 ms
+burst 25: Firedancer EvnRmnMrd69kFdbLMxWkTn1icZ7DCceRhvmb2SJXqDo4 window 460407552+4 in 3.7 s
+  burst 23 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset -300 ms, spacing 0 ms): -289 ms vs the window's first shred, QUIC handshake 71 ms
+burst 26: JitoLabs HEL1USMZKAL2odpNBj2oCjffnFGaYwmbGmyewGv1e2TU window 460407592+4 in 7.9 s
+  burst 24 collected: 12 of 12 landed, 12 in the window
+  burst 25 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset +100 ms, spacing 0 ms): +60 ms vs the window's first shred, QUIC handshake 32 ms
+burst 27: FireBAM 9jxgosAfHgHzwnxsHw4RAZYaLVokMbnYtmiZBreynGFP window 460407656+4 in 12.7 s
+  burst 26 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset -300 ms, spacing 0 ms): -281 ms vs the window's first shred, QUIC handshake 32 ms
+burst 28: JitoLabs HEL1USMZKAL2odpNBj2oCjffnFGaYwmbGmyewGv1e2TU window 460407688+4 in 5.4 s
+  fired Reverse (offset +100 ms, spacing 0 ms): +68 ms vs the window's first shred, QUIC handshake 31 ms
+burst 29: JitoLabs E1r4Psq84tHfQ6aPTvvDka4U3u8zPVD7gEUrH25RdxHL window 460407708+4 in 3.6 s
+  fired Null (offset -300 ms, spacing 0 ms): -273 ms vs the window's first shred, QUIC handshake 36 ms
+burst 30: JitoLabs E1r4Psq84tHfQ6aPTvvDka4U3u8zPVD7gEUrH25RdxHL window 460407740+4 in 6.1 s
+  burst 28 collected: 12 of 12 landed, 12 in the window
+  burst 29 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset -300 ms, spacing 0 ms): -307 ms vs the window's first shred, QUIC handshake 33 ms
+burst 31: JitoLabs E1r4Psq84tHfQ6aPTvvDka4U3u8zPVD7gEUrH25RdxHL window 460407776+4 in 6.7 s
+  burst 30 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset -300 ms, spacing 0 ms): -270 ms vs the window's first shred, QUIC handshake 35 ms
+burst 32: JitoLabs HEL1USMZKAL2odpNBj2oCjffnFGaYwmbGmyewGv1e2TU window 460407896+4 in 24.2 s
+  burst 31 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset +100 ms, spacing 0 ms): +165 ms vs the window's first shred, QUIC handshake 32 ms
+burst 33: AgaveBam DRpbCBMxVnDK7maPM5tGv6MvB3v1sRMC86PZ8okm21hy window 460407936+4 in 5.6 s
+  burst 32 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset -300 ms, spacing 0 ms): -343 ms vs the window's first shred, QUIC handshake 113 ms
+burst 34: AgaveBam DRpbCBMxVnDK7maPM5tGv6MvB3v1sRMC86PZ8okm21hy window 460407956+4 in 4.0 s
+  burst 27 collected: 0 of 12 landed, 0 in the window
+  fired Conflict (offset -300 ms, spacing 0 ms): -325 ms vs the window's first shred, QUIC handshake 107 ms
+burst 35: JitoLabs E1r4Psq84tHfQ6aPTvvDka4U3u8zPVD7gEUrH25RdxHL window 460407996+4 in 8.2 s
+  burst 33 collected: 12 of 12 landed, 12 in the window
+  burst 34 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset +100 ms, spacing 0 ms): +66 ms vs the window's first shred, QUIC handshake 42 ms
+burst 36: Firedancer EvnRmnMrd69kFdbLMxWkTn1icZ7DCceRhvmb2SJXqDo4 window 460408028+4 in 6.2 s
+  burst 35 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset -300 ms, spacing 0 ms): -289 ms vs the window's first shred, QUIC handshake 70 ms
+burst 37: AgaveBam DRpbCBMxVnDK7maPM5tGv6MvB3v1sRMC86PZ8okm21hy window 460408112+4 in 16.6 s
+  burst 36 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset +100 ms, spacing 0 ms): +44 ms vs the window's first shred, QUIC handshake 118 ms
+burst 38: JitoLabs HEL1USMZKAL2odpNBj2oCjffnFGaYwmbGmyewGv1e2TU window 460408140+4 in 5.5 s
+  burst 37 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset -300 ms, spacing 10 ms): -337 ms vs the window's first shred, QUIC handshake 35 ms
+burst 39: AgaveBam 5Cchr1XGEg7dbBXByV5NY2ad8jfxAM7HA3x8D56rq9Ux window 460408160+4 in 3.8 s
+  fired Main (offset +100 ms, spacing 0 ms): -12 ms vs the window's first shred, QUIC handshake 162 ms
+burst 40: Rakurai ana2y2YvQ3ZPMwm6qhnN3nJoUSiT3qx5Pvetkq9xcfY window 460408200+4 in 8.0 s
+  burst 38 collected: 12 of 12 landed, 12 in the window
+  burst 39 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset -300 ms, spacing 0 ms): -278 ms vs the window's first shred, QUIC handshake 34 ms
+burst 41: Firedancer EvnRmnMrd69kFdbLMxWkTn1icZ7DCceRhvmb2SJXqDo4 window 460408232+4 in 5.6 s
+  burst 40 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset -300 ms, spacing 0 ms): -274 ms vs the window's first shred, QUIC handshake 68 ms
+burst 42: HarmonicFiredancer JUPiTERrZqgf1jUyR7dSkhMx4Kn2qJyekWsg3LT1h4b window 460408272+4 in 7.6 s
+  burst 41 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset -300 ms, spacing 0 ms): the window's first slot was not seen (skipped?), QUIC handshake 59 ms
+burst 43: Firedancer EvnRmnMrd69kFdbLMxWkTn1icZ7DCceRhvmb2SJXqDo4 window 460408304+4 in 3.5 s
+  burst 42 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset +100 ms, spacing 0 ms): the window's first slot was not seen (skipped?), QUIC handshake 73 ms
+burst 44: HarmonicAgave Fd7btgySsrjuo25CJCj7oE7VPMyezDhnx7pZkj2v69Nk window 460408360+4 in 8.3 s
+  burst 43 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset +100 ms, spacing 0 ms): the window's first slot was not seen (skipped?), QUIC handshake 58 ms
+burst 45: FireBAM 9jxgosAfHgHzwnxsHw4RAZYaLVokMbnYtmiZBreynGFP window 460408412+4 in 7.7 s
+slot stream: the WebSocket closed; reconnecting
+  burst 44 collected: 12 of 12 landed, 0 in the window
+  fired Main (offset +100 ms, spacing 0 ms): +2 ms vs the window's first shred, QUIC handshake 31 ms
+burst 46: HarmonicAgave Fd7btgySsrjuo25CJCj7oE7VPMyezDhnx7pZkj2v69Nk window 460408432+4 in 3.3 s
+  fired Null (offset +100 ms, spacing 0 ms): +80 ms vs the window's first shred, QUIC handshake 58 ms
+burst 47: AgaveBam DRpbCBMxVnDK7maPM5tGv6MvB3v1sRMC86PZ8okm21hy window 460408452+4 in 3.5 s
+  fired Null (offset +100 ms, spacing 0 ms): +49 ms vs the window's first shred, QUIC handshake 109 ms
+burst 48: JitoLabs E1r4Psq84tHfQ6aPTvvDka4U3u8zPVD7gEUrH25RdxHL window 460408488+4 in 6.5 s
+  burst 46 collected: 12 of 12 landed, 12 in the window
+  burst 47 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset +100 ms, spacing 0 ms): +44 ms vs the window's first shred, QUIC handshake 31 ms
+burst 49: AgaveBam 5Cchr1XGEg7dbBXByV5NY2ad8jfxAM7HA3x8D56rq9Ux window 460408532+4 in 7.9 s
+  burst 48 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset +100 ms, spacing 0 ms): +3 ms vs the window's first shred, QUIC handshake 158 ms
+burst 50: HarmonicAgave Fd7btgySsrjuo25CJCj7oE7VPMyezDhnx7pZkj2v69Nk window 460408552+4 in 3.9 s
+  fired Reverse (offset +100 ms, spacing 0 ms): +123 ms vs the window's first shred, QUIC handshake 61 ms
+burst 51: HarmonicAgave Fd7btgySsrjuo25CJCj7oE7VPMyezDhnx7pZkj2v69Nk window 460408576+4 in 4.3 s
+  burst 49 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset +100 ms, spacing 0 ms): +101 ms vs the window's first shred, QUIC handshake 60 ms
+burst 52: FireBAM 9jxgosAfHgHzwnxsHw4RAZYaLVokMbnYtmiZBreynGFP window 460408624+4 in 9.6 s
+  burst 50 collected: 12 of 12 landed, 12 in the window
+  burst 51 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset +100 ms, spacing 0 ms): +102 ms vs the window's first shred, QUIC handshake 30 ms
+burst 53: Agave 5Us18hLZPXJTS4QVuGSsUw137Dyd2tgBaem24Xsf5nBS window 460408640+4 in 3.1 s
+  fired Main (offset -300 ms, spacing 0 ms): -308 ms vs the window's first shred, QUIC handshake 43 ms
+burst 54: HarmonicAgave Fd7btgySsrjuo25CJCj7oE7VPMyezDhnx7pZkj2v69Nk window 460408664+4 in 4.6 s
+  burst 53 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset -300 ms, spacing 10 ms): -303 ms vs the window's first shred, QUIC handshake 60 ms
+burst 55: JitoLabs HEL1USMZKAL2odpNBj2oCjffnFGaYwmbGmyewGv1e2TU window 460408688+4 in 4.1 s
+  burst 54 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset -300 ms, spacing 10 ms): -472 ms vs the window's first shred, QUIC handshake 29 ms
+burst 56: JitoLabs E1r4Psq84tHfQ6aPTvvDka4U3u8zPVD7gEUrH25RdxHL window 460408724+4 in 6.8 s
+  burst 55 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset +100 ms, spacing 0 ms): +102 ms vs the window's first shred, QUIC handshake 34 ms
+burst 57: Rakurai ana2y2YvQ3ZPMwm6qhnN3nJoUSiT3qx5Pvetkq9xcfY window 460408768+4 in 8.8 s
+  burst 56 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset -300 ms, spacing 0 ms): -266 ms vs the window's first shred, QUIC handshake 31 ms
+burst 58: AgaveBam 5Cchr1XGEg7dbBXByV5NY2ad8jfxAM7HA3x8D56rq9Ux window 460408820+4 in 10.5 s
+  burst 57 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset +100 ms, spacing 0 ms): -21 ms vs the window's first shred, QUIC handshake 160 ms
+burst 59: HarmonicFiredancer JUPiTERrZqgf1jUyR7dSkhMx4Kn2qJyekWsg3LT1h4b window 460408844+4 in 4.7 s
+  burst 58 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset +100 ms, spacing 0 ms): +102 ms vs the window's first shred, QUIC handshake 57 ms
+burst 60: FireBAM 9jxgosAfHgHzwnxsHw4RAZYaLVokMbnYtmiZBreynGFP window 460408872+4 in 5.3 s
+  burst 45 collected: 0 of 12 landed, 0 in the window
+  burst 59 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset +100 ms, spacing 0 ms): +131 ms vs the window's first shred, QUIC handshake 31 ms
+burst 61: HarmonicAgave Fd7btgySsrjuo25CJCj7oE7VPMyezDhnx7pZkj2v69Nk window 460408904+4 in 6.3 s
+  fired Null (offset -300 ms, spacing 10 ms): -407 ms vs the window's first shred, QUIC handshake 59 ms
+burst 62: Firedancer 9eGrDohdNTAo61DRHyfMuqKWXqYnA3i254Wiszxe8FoY window 460408936+4 in 6.1 s
+  burst 61 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset -300 ms, spacing 0 ms): -282 ms vs the window's first shred, QUIC handshake 79 ms
+burst 63: JitoLabs E1r4Psq84tHfQ6aPTvvDka4U3u8zPVD7gEUrH25RdxHL window 460408960+4 in 4.0 s
+  burst 62 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset +100 ms, spacing 0 ms): +73 ms vs the window's first shred, QUIC handshake 36 ms
+burst 64: AgaveBam 5Cchr1XGEg7dbBXByV5NY2ad8jfxAM7HA3x8D56rq9Ux window 460408988+4 in 4.3 s
+  burst 63 collected: 12 of 12 landed, 12 in the window
+  burst 52 collected: 0 of 12 landed, 0 in the window
+  fired Conflict (offset +100 ms, spacing 0 ms): -12 ms vs the window's first shred, QUIC handshake 158 ms
+burst 65: Firedancer EvnRmnMrd69kFdbLMxWkTn1icZ7DCceRhvmb2SJXqDo4 window 460409020+4 in 5.2 s
+  burst 64 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset +100 ms, spacing 0 ms): +118 ms vs the window's first shred, QUIC handshake 67 ms
+burst 66: JitoLabs E1r4Psq84tHfQ6aPTvvDka4U3u8zPVD7gEUrH25RdxHL window 460409064+4 in 7.0 s
+  burst 65 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset -300 ms, spacing 10 ms): -454 ms vs the window's first shred, QUIC handshake 41 ms
+burst 67: Firedancer 9eGrDohdNTAo61DRHyfMuqKWXqYnA3i254Wiszxe8FoY window 460409096+4 in 6.0 s
+  burst 66 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset -300 ms, spacing 0 ms): -312 ms vs the window's first shred, QUIC handshake 80 ms
+burst 68: HarmonicFiredancer JUPiTERrZqgf1jUyR7dSkhMx4Kn2qJyekWsg3LT1h4b window 460409116+4 in 3.8 s
+  fired Null (offset +100 ms, spacing 0 ms): +115 ms vs the window's first shred, QUIC handshake 58 ms
+burst 69: AgaveBam DRpbCBMxVnDK7maPM5tGv6MvB3v1sRMC86PZ8okm21hy window 460409148+4 in 6.1 s
+  burst 67 collected: 12 of 12 landed, 12 in the window
+  burst 68 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset +100 ms, spacing 0 ms): +5 ms vs the window's first shred, QUIC handshake 110 ms
+burst 70: Firedancer 9eGrDohdNTAo61DRHyfMuqKWXqYnA3i254Wiszxe8FoY window 460409188+4 in 7.2 s
+  burst 69 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset -300 ms, spacing 0 ms): -311 ms vs the window's first shred, QUIC handshake 78 ms
+burst 71: AgaveBam DRpbCBMxVnDK7maPM5tGv6MvB3v1sRMC86PZ8okm21hy window 460409248+4 in 10.5 s
+  burst 70 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset +100 ms, spacing 0 ms): -56 ms vs the window's first shred, QUIC handshake 107 ms
+burst 72: Firedancer 9eGrDohdNTAo61DRHyfMuqKWXqYnA3i254Wiszxe8FoY window 460409272+4 in 3.5 s
+  burst 71 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset +100 ms, spacing 0 ms): +130 ms vs the window's first shred, QUIC handshake 78 ms
+burst 73: JitoLabs HEL1USMZKAL2odpNBj2oCjffnFGaYwmbGmyewGv1e2TU window 460409320+4 in 7.6 s
+  burst 72 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset -300 ms, spacing 10 ms): the window's first slot was not seen (skipped?), QUIC handshake 32 ms
+burst 74: JitoLabs E1r4Psq84tHfQ6aPTvvDka4U3u8zPVD7gEUrH25RdxHL window 460409356+4 in 4.5 s
+  burst 60 collected: 0 of 12 landed, 0 in the window
+  burst 73 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset -300 ms, spacing 10 ms): -636 ms vs the window's first shred, QUIC handshake 30 ms
+burst 75: HarmonicFiredancer JUPiTERrZqgf1jUyR7dSkhMx4Kn2qJyekWsg3LT1h4b window 460409424+4 in 12.3 s
+  burst 74 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset +100 ms, spacing 0 ms): +27 ms vs the window's first shred, QUIC handshake 61 ms
+burst 76: AgaveBam DRpbCBMxVnDK7maPM5tGv6MvB3v1sRMC86PZ8okm21hy window 460409472+4 in 7.1 s
+  burst 75 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset -300 ms, spacing 10 ms): -762 ms vs the window's first shred, QUIC handshake 107 ms
+burst 77: JitoLabs HEL1USMZKAL2odpNBj2oCjffnFGaYwmbGmyewGv1e2TU window 460409508+4 in 5.1 s
+  burst 76 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset -300 ms, spacing 10 ms): -321 ms vs the window's first shred, QUIC handshake 30 ms
+burst 78: AgaveBam DRpbCBMxVnDK7maPM5tGv6MvB3v1sRMC86PZ8okm21hy window 460409556+4 in 9.5 s
+  burst 77 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset -300 ms, spacing 10 ms): -340 ms vs the window's first shred, QUIC handshake 107 ms
+burst 79: FireBAM 9jxgosAfHgHzwnxsHw4RAZYaLVokMbnYtmiZBreynGFP window 460409588+4 in 6.3 s
+  burst 78 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset +100 ms, spacing 0 ms): +134 ms vs the window's first shred, QUIC handshake 35 ms
+burst 80: Firedancer 9eGrDohdNTAo61DRHyfMuqKWXqYnA3i254Wiszxe8FoY window 460409620+4 in 5.3 s
+  fired Null (offset +100 ms, spacing 0 ms): +129 ms vs the window's first shred, QUIC handshake 77 ms
+burst 81: HarmonicAgave Fd7btgySsrjuo25CJCj7oE7VPMyezDhnx7pZkj2v69Nk window 460409644+4 in 4.0 s
+  fired Reverse (offset -300 ms, spacing 10 ms): -236 ms vs the window's first shred, QUIC handshake 62 ms
+burst 82: JitoLabs E1r4Psq84tHfQ6aPTvvDka4U3u8zPVD7gEUrH25RdxHL window 460409672+4 in 5.6 s
+  burst 80 collected: 12 of 12 landed, 12 in the window
+  burst 81 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset -300 ms, spacing 10 ms): -326 ms vs the window's first shred, QUIC handshake 32 ms
+burst 83: Firedancer EvnRmnMrd69kFdbLMxWkTn1icZ7DCceRhvmb2SJXqDo4 window 460409692+4 in 3.7 s
+  fired Reverse (offset +100 ms, spacing 0 ms): +118 ms vs the window's first shred, QUIC handshake 71 ms
+burst 84: HarmonicFiredancer JUPiTERrZqgf1jUyR7dSkhMx4Kn2qJyekWsg3LT1h4b window 460409712+8 in 3.9 s
+  burst 82 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset +100 ms, spacing 0 ms): +109 ms vs the window's first shred, QUIC handshake 64 ms
+burst 85: HarmonicFiredancer JUPiTERrZqgf1jUyR7dSkhMx4Kn2qJyekWsg3LT1h4b window 460409744+4 in 6.3 s
+  burst 83 collected: 12 of 12 landed, 12 in the window
+  burst 84 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset -300 ms, spacing 10 ms): -266 ms vs the window's first shred, QUIC handshake 59 ms
+burst 86: JitoLabs HEL1USMZKAL2odpNBj2oCjffnFGaYwmbGmyewGv1e2TU window 460409768+4 in 4.2 s
+  burst 85 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset +100 ms, spacing 10 ms): +79 ms vs the window's first shred, QUIC handshake 34 ms
+burst 87: Agave 7QQGNm3ptwinipDCyaCF7jY5katgmFUu1ieP2f7nwLpE window 460409796+4 in 5.4 s
+  burst 86 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset -300 ms, spacing 0 ms): -367 ms vs the window's first shred, QUIC handshake 25 ms
+burst 88: HarmonicFiredancer JUPiTERrZqgf1jUyR7dSkhMx4Kn2qJyekWsg3LT1h4b window 460409872+4 in 15.1 s
+  burst 87 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset -300 ms, spacing 10 ms): -418 ms vs the window's first shred, QUIC handshake 60 ms
+burst 89: JitoLabs HEL1USMZKAL2odpNBj2oCjffnFGaYwmbGmyewGv1e2TU window 460409900+4 in 3.7 s
+  burst 88 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset +100 ms, spacing 10 ms): the window's first slot was not seen (skipped?), QUIC handshake 30 ms
+burst 90: HarmonicAgave Fd7btgySsrjuo25CJCj7oE7VPMyezDhnx7pZkj2v69Nk window 460410000+4 in 17.5 s
+  burst 89 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset -300 ms, spacing 10 ms): the window's first slot was not seen (skipped?), QUIC handshake 61 ms
+burst 91: JitoLabs HEL1USMZKAL2odpNBj2oCjffnFGaYwmbGmyewGv1e2TU window 460410064+4 in 10.2 s
+  burst 90 collected: 12 of 12 landed, 12 in the window
+  burst 79 collected: 0 of 12 landed, 0 in the window
+  fired Reverse (offset +100 ms, spacing 10 ms): the window's first slot was not seen (skipped?), QUIC handshake 33 ms
+burst 92: JitoLabs HEL1USMZKAL2odpNBj2oCjffnFGaYwmbGmyewGv1e2TU window 460410100+4 in 4.3 s
+  burst 91 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset +100 ms, spacing 10 ms): the window's first slot was not seen (skipped?), QUIC handshake 31 ms
+burst 93: JitoLabs HEL1USMZKAL2odpNBj2oCjffnFGaYwmbGmyewGv1e2TU window 460410148+4 in 6.8 s
+slot stream: the WebSocket closed; reconnecting
+  burst 92 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset -300 ms, spacing 50 ms): -961 ms vs the window's first shred, QUIC handshake 33 ms
+burst 94: AgaveBam 5Cchr1XGEg7dbBXByV5NY2ad8jfxAM7HA3x8D56rq9Ux window 460410188+4 in 6.0 s
+  burst 93 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset -300 ms, spacing 10 ms): -397 ms vs the window's first shred, QUIC handshake 159 ms
+burst 95: AgaveBam 5Cchr1XGEg7dbBXByV5NY2ad8jfxAM7HA3x8D56rq9Ux window 460410208+4 in 4.0 s
+  fired Null (offset -300 ms, spacing 10 ms): -390 ms vs the window's first shred, QUIC handshake 159 ms
+burst 96: Rakurai ana2y2YvQ3ZPMwm6qhnN3nJoUSiT3qx5Pvetkq9xcfY window 460410236+4 in 5.5 s
+  burst 94 collected: 12 of 12 landed, 12 in the window
+  burst 95 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset -300 ms, spacing 0 ms): -320 ms vs the window's first shred, QUIC handshake 31 ms
+burst 97: HarmonicFiredancer JUPiTERrZqgf1jUyR7dSkhMx4Kn2qJyekWsg3LT1h4b window 460410272+4 in 6.3 s
+  burst 96 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset -300 ms, spacing 10 ms): -260 ms vs the window's first shred, QUIC handshake 62 ms
+burst 98: Rakurai ana2y2YvQ3ZPMwm6qhnN3nJoUSiT3qx5Pvetkq9xcfY window 460410296+4 in 4.4 s
+  fired Conflict (offset -300 ms, spacing 0 ms): -291 ms vs the window's first shred, QUIC handshake 31 ms
+burst 99: AgaveBam DRpbCBMxVnDK7maPM5tGv6MvB3v1sRMC86PZ8okm21hy window 460410348+4 in 10.2 s
+  burst 97 collected: 12 of 12 landed, 12 in the window
+  burst 98 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset -300 ms, spacing 10 ms): -561 ms vs the window's first shred, QUIC handshake 106 ms
+burst 100: AgaveBam 5Cchr1XGEg7dbBXByV5NY2ad8jfxAM7HA3x8D56rq9Ux window 460410372+4 in 4.7 s
+  burst 99 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset -300 ms, spacing 10 ms): -399 ms vs the window's first shred, QUIC handshake 190 ms
+burst 101: HarmonicAgave Fd7btgySsrjuo25CJCj7oE7VPMyezDhnx7pZkj2v69Nk window 460410396+4 in 3.6 s
+  burst 100 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset +100 ms, spacing 10 ms): +108 ms vs the window's first shred, QUIC handshake 133 ms
+burst 102: AgaveBam 5Cchr1XGEg7dbBXByV5NY2ad8jfxAM7HA3x8D56rq9Ux window 460410432+4 in 4.8 s
+  burst 101 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset -300 ms, spacing 10 ms): -411 ms vs the window's first shred, QUIC handshake 157 ms
+burst 103: JitoLabs E1r4Psq84tHfQ6aPTvvDka4U3u8zPVD7gEUrH25RdxHL window 460410484+4 in 7.8 s
+  burst 102 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset -300 ms, spacing 10 ms): -718 ms vs the window's first shred, QUIC handshake 36 ms
+burst 104: Firedancer 9eGrDohdNTAo61DRHyfMuqKWXqYnA3i254Wiszxe8FoY window 460410528+4 in 8.2 s
+  burst 103 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset +100 ms, spacing 0 ms): +117 ms vs the window's first shred, QUIC handshake 79 ms
+burst 105: JitoLabs HEL1USMZKAL2odpNBj2oCjffnFGaYwmbGmyewGv1e2TU window 460410548+4 in 3.3 s
+  fired Null (offset -300 ms, spacing 50 ms): -269 ms vs the window's first shred, QUIC handshake 44 ms
+burst 106: JitoLabs E1r4Psq84tHfQ6aPTvvDka4U3u8zPVD7gEUrH25RdxHL window 460410576+4 in 5.3 s
+  burst 104 collected: 12 of 12 landed, 12 in the window
+  burst 105 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset +100 ms, spacing 10 ms): +99 ms vs the window's first shred, QUIC handshake 33 ms
+burst 107: AgaveBam 5Cchr1XGEg7dbBXByV5NY2ad8jfxAM7HA3x8D56rq9Ux window 460410612+4 in 6.4 s
+  burst 106 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset +100 ms, spacing 10 ms): +15 ms vs the window's first shred, QUIC handshake 252 ms
+burst 108: JitoLabs E1r4Psq84tHfQ6aPTvvDka4U3u8zPVD7gEUrH25RdxHL window 460410680+4 in 12.7 s
+  burst 107 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset +100 ms, spacing 10 ms): +101 ms vs the window's first shred, QUIC handshake 32 ms
+burst 109: HarmonicAgave Fd7btgySsrjuo25CJCj7oE7VPMyezDhnx7pZkj2v69Nk window 460410704+4 in 4.3 s
+  fired Null (offset +100 ms, spacing 10 ms): +49 ms vs the window's first shred, QUIC handshake 79 ms
+burst 110: HarmonicAgave Fd7btgySsrjuo25CJCj7oE7VPMyezDhnx7pZkj2v69Nk window 460410724+4 in 3.8 s
+  burst 108 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset +100 ms, spacing 10 ms): +131 ms vs the window's first shred, QUIC handshake 96 ms
+burst 111: AgaveBam DRpbCBMxVnDK7maPM5tGv6MvB3v1sRMC86PZ8okm21hy window 460410752+4 in 5.4 s
+  burst 109 collected: 12 of 12 landed, 12 in the window
+  burst 110 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset -300 ms, spacing 10 ms): -398 ms vs the window's first shred, QUIC handshake 110 ms
+burst 112: Agave 5Us18hLZPXJTS4QVuGSsUw137Dyd2tgBaem24Xsf5nBS window 460410780+4 in 4.7 s
+  burst 111 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset -300 ms, spacing 0 ms): -492 ms vs the window's first shred, QUIC handshake 42 ms
+burst 113: JitoLabs HEL1USMZKAL2odpNBj2oCjffnFGaYwmbGmyewGv1e2TU window 460410808+4 in 4.5 s
+  burst 112 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset -300 ms, spacing 50 ms): -621 ms vs the window's first shred, QUIC handshake 33 ms
+burst 114: HarmonicFiredancer JUPiTERrZqgf1jUyR7dSkhMx4Kn2qJyekWsg3LT1h4b window 460410836+4 in 4.2 s
+  burst 113 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset -300 ms, spacing 10 ms): -258 ms vs the window's first shred, QUIC handshake 66 ms
+burst 115: JitoLabs HEL1USMZKAL2odpNBj2oCjffnFGaYwmbGmyewGv1e2TU window 460410864+4 in 3.4 s
+  burst 114 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset -300 ms, spacing 50 ms): the window's first slot was not seen (skipped?), QUIC handshake 47 ms
+burst 116: HarmonicFiredancer JUPiTERrZqgf1jUyR7dSkhMx4Kn2qJyekWsg3LT1h4b window 460410904+4 in 5.1 s
+  burst 115 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset +100 ms, spacing 10 ms): -111 ms vs the window's first shred, QUIC handshake 81 ms
+burst 117: Rakurai ana2y2YvQ3ZPMwm6qhnN3nJoUSiT3qx5Pvetkq9xcfY window 460410936+4 in 4.1 s
+  burst 116 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset +100 ms, spacing 0 ms): -192 ms vs the window's first shred, QUIC handshake 37 ms
+burst 118: FireBAM 9jxgosAfHgHzwnxsHw4RAZYaLVokMbnYtmiZBreynGFP window 460410976+4 in 5.8 s
+  burst 117 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset -300 ms, spacing 10 ms): -271 ms vs the window's first shred, QUIC handshake 39 ms
+burst 119: FireBAM 9jxgosAfHgHzwnxsHw4RAZYaLVokMbnYtmiZBreynGFP window 460411008+4 in 5.8 s
+  fired Null (offset -300 ms, spacing 10 ms): -254 ms vs the window's first shred, QUIC handshake 34 ms
+burst 120: JitoLabs E1r4Psq84tHfQ6aPTvvDka4U3u8zPVD7gEUrH25RdxHL window 460411028+4 in 3.7 s
+  fired Reverse (offset +100 ms, spacing 10 ms): +100 ms vs the window's first shred, QUIC handshake 33 ms
+burst 121: JitoLabs HEL1USMZKAL2odpNBj2oCjffnFGaYwmbGmyewGv1e2TU window 460411048+4 in 3.8 s
+  fired Main (offset +100 ms, spacing 50 ms): +116 ms vs the window's first shred, QUIC handshake 30 ms
+burst 122: JitoLabs E1r4Psq84tHfQ6aPTvvDka4U3u8zPVD7gEUrH25RdxHL window 460411088+4 in 7.4 s
+  burst 120 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset +100 ms, spacing 10 ms): +120 ms vs the window's first shred, QUIC handshake 31 ms
+burst 123: Rakurai ana2y2YvQ3ZPMwm6qhnN3nJoUSiT3qx5Pvetkq9xcfY window 460411112+4 in 3.9 s
+  fired Null (offset +100 ms, spacing 0 ms): +153 ms vs the window's first shred, QUIC handshake 121 ms
+burst 124: Firedancer EvnRmnMrd69kFdbLMxWkTn1icZ7DCceRhvmb2SJXqDo4 window 460411132+4 in 3.8 s
+  burst 122 collected: 12 of 12 landed, 12 in the window
+  burst 118 collected: 0 of 12 landed, 0 in the window
+  burst 121 collected: 11 of 12 landed, 11 in the window
+  fired Conflict (offset +100 ms, spacing 0 ms): +102 ms vs the window's first shred, QUIC handshake 72 ms
+burst 125: JitoLabs E1r4Psq84tHfQ6aPTvvDka4U3u8zPVD7gEUrH25RdxHL window 460411216+4 in 16.9 s
+  burst 123 collected: 12 of 12 landed, 12 in the window
+  burst 124 collected: 12 of 12 landed, 12 in the window
+  burst 119 collected: 0 of 12 landed, 0 in the window
+  fired Main (offset -300 ms, spacing 50 ms): -328 ms vs the window's first shred, QUIC handshake 118 ms
+burst 126: JitoLabs HEL1USMZKAL2odpNBj2oCjffnFGaYwmbGmyewGv1e2TU window 460411256+4 in 7.1 s
+  burst 125 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset +100 ms, spacing 50 ms): the window's first slot was not seen (skipped?), QUIC handshake 31 ms
+burst 127: HarmonicAgave Fd7btgySsrjuo25CJCj7oE7VPMyezDhnx7pZkj2v69Nk window 460411348+4 in 15.7 s
+  burst 126 collected: 10 of 12 landed, 10 in the window
+  fired Conflict (offset +100 ms, spacing 10 ms): the window's first slot was not seen (skipped?), QUIC handshake 63 ms
+burst 128: JitoLabs HEL1USMZKAL2odpNBj2oCjffnFGaYwmbGmyewGv1e2TU window 460411388+4 in 5.3 s
+  burst 127 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset +100 ms, spacing 50 ms): +69 ms vs the window's first shred, QUIC handshake 37 ms
+burst 129: JitoLabs HEL1USMZKAL2odpNBj2oCjffnFGaYwmbGmyewGv1e2TU window 460411424+4 in 6.5 s
+  fired Conflict (offset +100 ms, spacing 50 ms): +13 ms vs the window's first shred, QUIC handshake 37 ms
+burst 130: Firedancer EvnRmnMrd69kFdbLMxWkTn1icZ7DCceRhvmb2SJXqDo4 window 460411496+4 in 13.4 s
+  burst 129 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset -300 ms, spacing 10 ms): the window's first slot was not seen (skipped?), QUIC handshake 146 ms
+burst 131: JitoLabs E1r4Psq84tHfQ6aPTvvDka4U3u8zPVD7gEUrH25RdxHL window 460411552+4 in 8.5 s
+  burst 130 collected: 12 of 12 landed, 12 in the window
+  burst 128 collected: 11 of 12 landed, 11 in the window
+  fired Null (offset -300 ms, spacing 50 ms): -309 ms vs the window's first shred, QUIC handshake 39 ms
+burst 132: Firedancer 9eGrDohdNTAo61DRHyfMuqKWXqYnA3i254Wiszxe8FoY window 460411596+4 in 8.5 s
+  burst 131 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset +100 ms, spacing 0 ms): +122 ms vs the window's first shred, QUIC handshake 92 ms
+burst 133: HarmonicAgave Fd7btgySsrjuo25CJCj7oE7VPMyezDhnx7pZkj2v69Nk window 460411688+4 in 18.4 s
+  burst 132 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset -300 ms, spacing 50 ms): -295 ms vs the window's first shred, QUIC handshake 152 ms
+burst 134: JitoLabs E1r4Psq84tHfQ6aPTvvDka4U3u8zPVD7gEUrH25RdxHL window 460411728+4 in 7.8 s
+  burst 133 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset -300 ms, spacing 50 ms): -330 ms vs the window's first shred, QUIC handshake 50 ms
+burst 135: Firedancer 9eGrDohdNTAo61DRHyfMuqKWXqYnA3i254Wiszxe8FoY window 460411756+4 in 5.5 s
+  burst 134 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset -300 ms, spacing 10 ms): -272 ms vs the window's first shred, QUIC handshake 90 ms
+burst 136: AgaveBam 5Cchr1XGEg7dbBXByV5NY2ad8jfxAM7HA3x8D56rq9Ux window 460411820+4 in 12.8 s
+  burst 135 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset +100 ms, spacing 10 ms): +7 ms vs the window's first shred, QUIC handshake 161 ms
+burst 137: HarmonicAgave Fd7btgySsrjuo25CJCj7oE7VPMyezDhnx7pZkj2v69Nk window 460411844+4 in 4.7 s
+  burst 136 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset -300 ms, spacing 50 ms): -235 ms vs the window's first shred, QUIC handshake 66 ms
+burst 138: Firedancer 9eGrDohdNTAo61DRHyfMuqKWXqYnA3i254Wiszxe8FoY window 460411880+4 in 5.3 s
+  burst 137 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset -300 ms, spacing 10 ms): the window's first slot was not seen (skipped?), QUIC handshake 174 ms
+burst 139: FireBAM 9jxgosAfHgHzwnxsHw4RAZYaLVokMbnYtmiZBreynGFP window 460411940+4 in 9.4 s
+  burst 138 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset -300 ms, spacing 10 ms): the window's first slot was not seen (skipped?), QUIC handshake 37 ms
+burst 140: FireBAM 9jxgosAfHgHzwnxsHw4RAZYaLVokMbnYtmiZBreynGFP window 460411976+4 in 4.5 s
+  fired Conflict (offset -300 ms, spacing 10 ms): the window's first slot was not seen (skipped?), QUIC handshake 32 ms
+burst 141: FireBAM 9jxgosAfHgHzwnxsHw4RAZYaLVokMbnYtmiZBreynGFP window 460412008+4 in 3.5 s
+  fired Main (offset +100 ms, spacing 10 ms): the window's first slot was not seen (skipped?), QUIC handshake 35 ms
+burst 142: Firedancer EvnRmnMrd69kFdbLMxWkTn1icZ7DCceRhvmb2SJXqDo4 window 460412060+4 in 7.8 s
+  burst 141 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset -300 ms, spacing 10 ms): the window's first slot was not seen (skipped?), QUIC handshake 77 ms
+burst 143: HarmonicAgave Fd7btgySsrjuo25CJCj7oE7VPMyezDhnx7pZkj2v69Nk window 460412100+4 in 5.2 s
+  burst 142 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset -300 ms, spacing 50 ms): the window's first slot was not seen (skipped?), QUIC handshake 63 ms
+burst 144: Firedancer 9eGrDohdNTAo61DRHyfMuqKWXqYnA3i254Wiszxe8FoY window 460412144+4 in 5.7 s
+  burst 139 collected: 0 of 12 landed, 0 in the window
+  burst 143 collected: 12 of 12 landed, 12 in the window
+  burst 140 collected: 0 of 12 landed, 0 in the window
+  fired Reverse (offset -300 ms, spacing 10 ms): -304 ms vs the window's first shred, QUIC handshake 98 ms
+burst 145: Firedancer EvnRmnMrd69kFdbLMxWkTn1icZ7DCceRhvmb2SJXqDo4 window 460412176+4 in 4.3 s
+  burst 144 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset -300 ms, spacing 10 ms): -296 ms vs the window's first shred, QUIC handshake 86 ms
+burst 146: HarmonicFiredancer JUPiTERrZqgf1jUyR7dSkhMx4Kn2qJyekWsg3LT1h4b window 460412236+4 in 12.0 s
+  burst 145 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset +100 ms, spacing 10 ms): +119 ms vs the window's first shred, QUIC handshake 85 ms
+burst 147: Agave 7QQGNm3ptwinipDCyaCF7jY5katgmFUu1ieP2f7nwLpE window 460412264+4 in 4.9 s
+  burst 146 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset -300 ms, spacing 0 ms): -308 ms vs the window's first shred, QUIC handshake 24 ms
+burst 148: AgaveBam 5Cchr1XGEg7dbBXByV5NY2ad8jfxAM7HA3x8D56rq9Ux window 460412288+4 in 4.4 s
+  burst 147 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset +100 ms, spacing 10 ms): -12 ms vs the window's first shred, QUIC handshake 244 ms
+burst 149: HarmonicFiredancer JUPiTERrZqgf1jUyR7dSkhMx4Kn2qJyekWsg3LT1h4b window 460412308+4 in 3.2 s
+  fired Reverse (offset +100 ms, spacing 10 ms): +169 ms vs the window's first shred, QUIC handshake 62 ms
+burst 150: AgaveBam 5Cchr1XGEg7dbBXByV5NY2ad8jfxAM7HA3x8D56rq9Ux window 460412332+4 in 4.3 s
+  burst 148 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset +100 ms, spacing 10 ms): -24 ms vs the window's first shred, QUIC handshake 158 ms
+burst 151: HarmonicAgave Fd7btgySsrjuo25CJCj7oE7VPMyezDhnx7pZkj2v69Nk window 460412376+4 in 8.6 s
+  burst 149 collected: 12 of 12 landed, 12 in the window
+  burst 150 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset -300 ms, spacing 50 ms): -281 ms vs the window's first shred, QUIC handshake 161 ms
+burst 152: Firedancer 9eGrDohdNTAo61DRHyfMuqKWXqYnA3i254Wiszxe8FoY window 460412420+4 in 8.4 s
+  burst 151 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset -300 ms, spacing 10 ms): -290 ms vs the window's first shred, QUIC handshake 85 ms
+burst 153: Firedancer EvnRmnMrd69kFdbLMxWkTn1icZ7DCceRhvmb2SJXqDo4 window 460412452+4 in 6.1 s
+  burst 152 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset -300 ms, spacing 10 ms): -301 ms vs the window's first shred, QUIC handshake 85 ms
+burst 154: HarmonicFiredancer JUPiTERrZqgf1jUyR7dSkhMx4Kn2qJyekWsg3LT1h4b window 460412504+8 in 10.3 s
+  burst 153 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset +100 ms, spacing 10 ms): +111 ms vs the window's first shred, QUIC handshake 126 ms
+burst 155: Firedancer EvnRmnMrd69kFdbLMxWkTn1icZ7DCceRhvmb2SJXqDo4 window 460412560+4 in 10.3 s
+  burst 154 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset +100 ms, spacing 10 ms): +105 ms vs the window's first shred, QUIC handshake 73 ms
+burst 156: Firedancer EvnRmnMrd69kFdbLMxWkTn1icZ7DCceRhvmb2SJXqDo4 window 460412588+4 in 5.4 s
+  burst 155 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset +100 ms, spacing 10 ms): +112 ms vs the window's first shred, QUIC handshake 78 ms
+burst 157: HarmonicAgave Fd7btgySsrjuo25CJCj7oE7VPMyezDhnx7pZkj2v69Nk window 460412616+4 in 5.4 s
+  burst 156 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset +100 ms, spacing 50 ms): +97 ms vs the window's first shred, QUIC handshake 61 ms
+burst 158: Firedancer 9eGrDohdNTAo61DRHyfMuqKWXqYnA3i254Wiszxe8FoY window 460412656+4 in 7.4 s
+  burst 157 collected: 12 of 12 landed, 10 in the window
+  fired Main (offset +100 ms, spacing 10 ms): +105 ms vs the window's first shred, QUIC handshake 160 ms
+burst 159: HarmonicFiredancer JUPiTERrZqgf1jUyR7dSkhMx4Kn2qJyekWsg3LT1h4b window 460412688+4 in 6.1 s
+  burst 158 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset -300 ms, spacing 50 ms): -495 ms vs the window's first shred, QUIC handshake 69 ms
+burst 160: AgaveBam DRpbCBMxVnDK7maPM5tGv6MvB3v1sRMC86PZ8okm21hy window 460412716+4 in 5.0 s
+  burst 159 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset +100 ms, spacing 10 ms): +52 ms vs the window's first shred, QUIC handshake 116 ms
+burst 161: AgaveBam 5Cchr1XGEg7dbBXByV5NY2ad8jfxAM7HA3x8D56rq9Ux window 460412768+4 in 10.2 s
+  fired Main (offset -300 ms, spacing 50 ms): -369 ms vs the window's first shred, QUIC handshake 158 ms
+burst 162: Firedancer EvnRmnMrd69kFdbLMxWkTn1icZ7DCceRhvmb2SJXqDo4 window 460412816+4 in 9.6 s
+  burst 161 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset +100 ms, spacing 10 ms): +128 ms vs the window's first shred, QUIC handshake 86 ms
+burst 163: AgaveBam 5Cchr1XGEg7dbBXByV5NY2ad8jfxAM7HA3x8D56rq9Ux window 460412868+4 in 10.4 s
+  burst 162 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset -300 ms, spacing 50 ms): -390 ms vs the window's first shred, QUIC handshake 268 ms
+burst 164: Firedancer 9eGrDohdNTAo61DRHyfMuqKWXqYnA3i254Wiszxe8FoY window 460412892+4 in 4.5 s
+  fired Null (offset +100 ms, spacing 10 ms): +98 ms vs the window's first shred, QUIC handshake 89 ms
+burst 165: AgaveBam 5Cchr1XGEg7dbBXByV5NY2ad8jfxAM7HA3x8D56rq9Ux window 460412968+4 in 15.1 s
+  burst 160 collected: 0 of 12 landed, 0 in the window
+  burst 163 collected: 12 of 12 landed, 12 in the window
+  burst 164 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset -300 ms, spacing 50 ms): -420 ms vs the window's first shred, QUIC handshake 163 ms
+burst 166: JitoLabs E1r4Psq84tHfQ6aPTvvDka4U3u8zPVD7gEUrH25RdxHL window 460412988+4 in 3.7 s
+  burst 165 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset -300 ms, spacing 50 ms): -314 ms vs the window's first shred, QUIC handshake 34 ms
+burst 167: Rakurai ana2y2YvQ3ZPMwm6qhnN3nJoUSiT3qx5Pvetkq9xcfY window 460413028+4 in 6.4 s
+  burst 166 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset +100 ms, spacing 0 ms): +12 ms vs the window's first shred, QUIC handshake 41 ms
+burst 168: JitoLabs E1r4Psq84tHfQ6aPTvvDka4U3u8zPVD7gEUrH25RdxHL window 460413064+4 in 5.7 s
+  burst 167 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset +100 ms, spacing 50 ms): -48 ms vs the window's first shred, QUIC handshake 37 ms
+burst 169: AgaveBam DRpbCBMxVnDK7maPM5tGv6MvB3v1sRMC86PZ8okm21hy window 460413108+4 in 7.0 s
+  burst 168 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset +100 ms, spacing 10 ms): +38 ms vs the window's first shred, QUIC handshake 135 ms
+burst 170: AgaveBam DRpbCBMxVnDK7maPM5tGv6MvB3v1sRMC86PZ8okm21hy window 460413128+4 in 3.8 s
+  fired Reverse (offset +100 ms, spacing 10 ms): +37 ms vs the window's first shred, QUIC handshake 115 ms
+burst 171: Firedancer EvnRmnMrd69kFdbLMxWkTn1icZ7DCceRhvmb2SJXqDo4 window 460413160+4 in 6.2 s
+  burst 169 collected: 12 of 12 landed, 12 in the window
+  burst 170 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset +100 ms, spacing 10 ms): -17 ms vs the window's first shred, QUIC handshake 164 ms
+burst 172: JitoLabs E1r4Psq84tHfQ6aPTvvDka4U3u8zPVD7gEUrH25RdxHL window 460413228+4 in 13.6 s
+  burst 171 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset +100 ms, spacing 50 ms): +58 ms vs the window's first shred, QUIC handshake 39 ms
+burst 173: AgaveBam 5Cchr1XGEg7dbBXByV5NY2ad8jfxAM7HA3x8D56rq9Ux window 460413312+4 in 16.1 s
+  burst 172 collected: 11 of 12 landed, 11 in the window
+  fired Conflict (offset -300 ms, spacing 50 ms): -629 ms vs the window's first shred, QUIC handshake 162 ms
+burst 174: Firedancer EvnRmnMrd69kFdbLMxWkTn1icZ7DCceRhvmb2SJXqDo4 window 460413376+4 in 12.6 s
+  burst 173 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset -300 ms, spacing 50 ms): -329 ms vs the window's first shred, QUIC handshake 75 ms
+burst 175: AgaveBam DRpbCBMxVnDK7maPM5tGv6MvB3v1sRMC86PZ8okm21hy window 460413400+4 in 4.4 s
+  burst 174 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset +100 ms, spacing 10 ms): +48 ms vs the window's first shred, QUIC handshake 109 ms
+burst 176: HarmonicAgave Fd7btgySsrjuo25CJCj7oE7VPMyezDhnx7pZkj2v69Nk window 460413424+4 in 4.6 s
+  burst 175 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset +100 ms, spacing 50 ms): +125 ms vs the window's first shred, QUIC handshake 66 ms
+burst 177: AgaveBam DRpbCBMxVnDK7maPM5tGv6MvB3v1sRMC86PZ8okm21hy window 460413444+4 in 3.3 s
+  fired Main (offset -300 ms, spacing 50 ms): -352 ms vs the window's first shred, QUIC handshake 107 ms
+burst 178: Agave 7QQGNm3ptwinipDCyaCF7jY5katgmFUu1ieP2f7nwLpE window 460413488+4 in 8.8 s
+  burst 176 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset -300 ms, spacing 0 ms): -317 ms vs the window's first shred, QUIC handshake 26 ms
+burst 179: AgaveBam 5Cchr1XGEg7dbBXByV5NY2ad8jfxAM7HA3x8D56rq9Ux window 460413516+4 in 5.3 s
+  burst 178 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset +100 ms, spacing 50 ms): -145 ms vs the window's first shred, QUIC handshake 163 ms
+burst 180: AgaveBam DRpbCBMxVnDK7maPM5tGv6MvB3v1sRMC86PZ8okm21hy window 460413576+4 in 11.6 s
+  burst 177 collected: 0 of 12 landed, 0 in the window
+  burst 179 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset -300 ms, spacing 50 ms): -378 ms vs the window's first shred, QUIC handshake 113 ms
+burst 181: AgaveBam DRpbCBMxVnDK7maPM5tGv6MvB3v1sRMC86PZ8okm21hy window 460413624+4 in 8.3 s
+  burst 180 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset -300 ms, spacing 50 ms): -357 ms vs the window's first shred, QUIC handshake 131 ms
+burst 182: JitoLabs E1r4Psq84tHfQ6aPTvvDka4U3u8zPVD7gEUrH25RdxHL window 460413672+4 in 9.4 s
+  burst 181 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset +100 ms, spacing 50 ms): +93 ms vs the window's first shred, QUIC handshake 37 ms
+burst 183: HarmonicAgave Fd7btgySsrjuo25CJCj7oE7VPMyezDhnx7pZkj2v69Nk window 460413696+4 in 4.0 s
+  fired Reverse (offset +100 ms, spacing 50 ms): the window's first slot was not seen (skipped?), QUIC handshake 59 ms
+burst 184: HarmonicFiredancer JUPiTERrZqgf1jUyR7dSkhMx4Kn2qJyekWsg3LT1h4b window 460413728+4 in 3.5 s
+  burst 183 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset -300 ms, spacing 50 ms): -279 ms vs the window's first shred, QUIC handshake 70 ms
+burst 185: AgaveBam 5Cchr1XGEg7dbBXByV5NY2ad8jfxAM7HA3x8D56rq9Ux window 460413760+4 in 6.1 s
+  burst 182 collected: 11 of 12 landed, 11 in the window
+  fired Null (offset +100 ms, spacing 50 ms): +0 ms vs the window's first shred, QUIC handshake 165 ms
+burst 186: AgaveBam DRpbCBMxVnDK7maPM5tGv6MvB3v1sRMC86PZ8okm21hy window 460413804+4 in 8.2 s
+  fired Conflict (offset -300 ms, spacing 50 ms): -384 ms vs the window's first shred, QUIC handshake 121 ms
+burst 187: AgaveBam DRpbCBMxVnDK7maPM5tGv6MvB3v1sRMC86PZ8okm21hy window 460413852+4 in 9.4 s
+  burst 184 collected: 12 of 12 landed, 12 in the window
+  burst 186 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset +100 ms, spacing 50 ms): +12 ms vs the window's first shred, QUIC handshake 155 ms
+burst 188: AgaveBam 5Cchr1XGEg7dbBXByV5NY2ad8jfxAM7HA3x8D56rq9Ux window 460413896+4 in 8.2 s
+  fired Reverse (offset +100 ms, spacing 50 ms): +11 ms vs the window's first shred, QUIC handshake 203 ms
+burst 189: Agave 7QQGNm3ptwinipDCyaCF7jY5katgmFUu1ieP2f7nwLpE window 460413944+4 in 9.5 s
+  burst 187 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset +100 ms, spacing 0 ms): +70 ms vs the window's first shred, QUIC handshake 106 ms
+burst 190: Firedancer 9eGrDohdNTAo61DRHyfMuqKWXqYnA3i254Wiszxe8FoY window 460414052+4 in 21.9 s
+  getBlock 460413762: getBlock: still rate limited after retries; positions in it are lost, fees come from getTransaction
+  burst 185 collected: 10 of 12 landed, 10 in the window
+  burst 189 collected: 12 of 12 landed, 12 in the window
+  burst 188 collected: 10 of 12 landed, 10 in the window
+  fired Reverse (offset +100 ms, spacing 10 ms): +170 ms vs the window's first shred, QUIC handshake 88 ms
+burst 191: HarmonicFiredancer JUPiTERrZqgf1jUyR7dSkhMx4Kn2qJyekWsg3LT1h4b window 460414072+4 in 3.8 s
+  fired Reverse (offset -300 ms, spacing 50 ms): -253 ms vs the window's first shred, QUIC handshake 89 ms
+burst 192: HarmonicFiredancer JUPiTERrZqgf1jUyR7dSkhMx4Kn2qJyekWsg3LT1h4b window 460414096+4 in 4.2 s
+  burst 190 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset -300 ms, spacing 50 ms): -322 ms vs the window's first shred, QUIC handshake 66 ms
+burst 193: HarmonicAgave Fd7btgySsrjuo25CJCj7oE7VPMyezDhnx7pZkj2v69Nk window 460414124+4 in 5.3 s
+  burst 191 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset +100 ms, spacing 50 ms): +149 ms vs the window's first shred, QUIC handshake 69 ms
+burst 194: Firedancer 9eGrDohdNTAo61DRHyfMuqKWXqYnA3i254Wiszxe8FoY window 460414236+4 in 22.0 s
+  burst 193 collected: 12 of 12 landed, 10 in the window
+  fired Conflict (offset +100 ms, spacing 10 ms): +111 ms vs the window's first shred, QUIC handshake 90 ms
+burst 195: JitoLabs E1r4Psq84tHfQ6aPTvvDka4U3u8zPVD7gEUrH25RdxHL window 460414264+4 in 5.4 s
+  getBlock 460414097: getBlock: still rate limited after retries; positions in it are lost, fees come from getTransaction
+  burst 192 collected: 12 of 12 landed, 12 in the window
+  burst 194 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset +100 ms, spacing 50 ms): +58 ms vs the window's first shred, QUIC handshake 42 ms
+burst 196: AgaveBam 5Cchr1XGEg7dbBXByV5NY2ad8jfxAM7HA3x8D56rq9Ux window 460414300+4 in 5.5 s
+  fired Conflict (offset +100 ms, spacing 50 ms): -4 ms vs the window's first shred, QUIC handshake 162 ms
+burst 197: Firedancer 9eGrDohdNTAo61DRHyfMuqKWXqYnA3i254Wiszxe8FoY window 460414340+4 in 7.3 s
+  fired Main (offset -300 ms, spacing 50 ms): -301 ms vs the window's first shred, QUIC handshake 79 ms
+burst 198: Agave 5Us18hLZPXJTS4QVuGSsUw137Dyd2tgBaem24Xsf5nBS window 460414420+4 in 16.0 s
+  burst 195 collected: 11 of 12 landed, 11 in the window
+  burst 197 collected: 12 of 12 landed, 12 in the window
+  burst 196 collected: 11 of 12 landed, 11 in the window
+  fired Reverse (offset -300 ms, spacing 0 ms): -422 ms vs the window's first shred, QUIC handshake 36 ms
+burst 199: Firedancer 9eGrDohdNTAo61DRHyfMuqKWXqYnA3i254Wiszxe8FoY window 460414484+4 in 11.8 s
+  burst 198 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset -300 ms, spacing 50 ms): -288 ms vs the window's first shred, QUIC handshake 82 ms
+burst 200: Firedancer EvnRmnMrd69kFdbLMxWkTn1icZ7DCceRhvmb2SJXqDo4 window 460414540+4 in 10.9 s
+  burst 199 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset -300 ms, spacing 50 ms): -286 ms vs the window's first shred, QUIC handshake 79 ms
+burst 201: HarmonicFiredancer JUPiTERrZqgf1jUyR7dSkhMx4Kn2qJyekWsg3LT1h4b window 460414668+4 in 25.1 s
+  burst 200 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset +100 ms, spacing 50 ms): +119 ms vs the window's first shred, QUIC handshake 66 ms
+burst 202: Firedancer 9eGrDohdNTAo61DRHyfMuqKWXqYnA3i254Wiszxe8FoY window 460414692+4 in 4.2 s
+  burst 201 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset -300 ms, spacing 50 ms): -247 ms vs the window's first shred, QUIC handshake 173 ms
+burst 203: Firedancer 9eGrDohdNTAo61DRHyfMuqKWXqYnA3i254Wiszxe8FoY window 460414712+4 in 3.2 s
+  fired Conflict (offset -300 ms, spacing 50 ms): -277 ms vs the window's first shred, QUIC handshake 79 ms
+burst 204: AgaveBam DRpbCBMxVnDK7maPM5tGv6MvB3v1sRMC86PZ8okm21hy window 460414780+4 in 13.7 s
+  burst 202 collected: 12 of 12 landed, 12 in the window
+  burst 203 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset +100 ms, spacing 50 ms): +24 ms vs the window's first shred, QUIC handshake 110 ms
+burst 205: Firedancer 9eGrDohdNTAo61DRHyfMuqKWXqYnA3i254Wiszxe8FoY window 460414840+4 in 11.4 s
+  burst 204 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset +100 ms, spacing 50 ms): +119 ms vs the window's first shred, QUIC handshake 81 ms
+burst 206: FireBAM 9jxgosAfHgHzwnxsHw4RAZYaLVokMbnYtmiZBreynGFP window 460414876+4 in 6.4 s
+  burst 205 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset +100 ms, spacing 10 ms): +114 ms vs the window's first shred, QUIC handshake 33 ms
+burst 207: Firedancer 9eGrDohdNTAo61DRHyfMuqKWXqYnA3i254Wiszxe8FoY window 460414924+4 in 9.2 s
+  fired Null (offset +100 ms, spacing 50 ms): +152 ms vs the window's first shred, QUIC handshake 78 ms
+burst 208: HarmonicFiredancer JUPiTERrZqgf1jUyR7dSkhMx4Kn2qJyekWsg3LT1h4b window 460414944+4 in 3.1 s
+  fired Null (offset +100 ms, spacing 50 ms): +101 ms vs the window's first shred, QUIC handshake 64 ms
+burst 209: AgaveBam DRpbCBMxVnDK7maPM5tGv6MvB3v1sRMC86PZ8okm21hy window 460415104+4 in 31.7 s
+  burst 207 collected: 12 of 12 landed, 12 in the window
+  burst 208 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset +100 ms, spacing 50 ms): the window's first slot was not seen (skipped?), QUIC handshake 106 ms
+burst 210: HarmonicFiredancer JUPiTERrZqgf1jUyR7dSkhMx4Kn2qJyekWsg3LT1h4b window 460415180+4 in 12.7 s
+  burst 206 collected: 0 of 12 landed, 0 in the window
+  fired Reverse (offset +100 ms, spacing 50 ms): the window's first slot was not seen (skipped?), QUIC handshake 57 ms
+burst 211: HarmonicFiredancer JUPiTERrZqgf1jUyR7dSkhMx4Kn2qJyekWsg3LT1h4b window 460415232+4 in 7.7 s
+  burst 210 collected: 12 of 12 landed, 12 in the window
+  burst 209 collected: 9 of 12 landed, 9 in the window
+  fired Conflict (offset +100 ms, spacing 50 ms): the window's first slot was not seen (skipped?), QUIC handshake 59 ms
+burst 212: AgaveBam DRpbCBMxVnDK7maPM5tGv6MvB3v1sRMC86PZ8okm21hy window 460415288+4 in 8.7 s
+  fired Conflict (offset +100 ms, spacing 50 ms): -371 ms vs the window's first shred, QUIC handshake 107 ms
+burst 213: Firedancer EvnRmnMrd69kFdbLMxWkTn1icZ7DCceRhvmb2SJXqDo4 window 460415320+4 in 4.8 s
+  burst 212 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset -300 ms, spacing 50 ms): -305 ms vs the window's first shred, QUIC handshake 74 ms
+burst 214: Agave 7QQGNm3ptwinipDCyaCF7jY5katgmFUu1ieP2f7nwLpE window 460415440+4 in 24.3 s
+  burst 213 collected: 12 of 12 landed, 12 in the window
+  getBlock 460415234: getBlock: still rate limited after retries; positions in it are lost, fees come from getTransaction
+  fired Null (offset +100 ms, spacing 0 ms): +83 ms vs the window's first shred, QUIC handshake 29 ms
+burst 215: Firedancer EvnRmnMrd69kFdbLMxWkTn1icZ7DCceRhvmb2SJXqDo4 window 460415504+4 in 12.9 s
+  burst 211 collected: 12 of 12 landed, 12 in the window
+  burst 214 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset -300 ms, spacing 50 ms): -248 ms vs the window's first shred, QUIC handshake 71 ms
+burst 216: Agave 7QQGNm3ptwinipDCyaCF7jY5katgmFUu1ieP2f7nwLpE window 460415548+4 in 8.5 s
+  burst 215 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset +100 ms, spacing 0 ms): +112 ms vs the window's first shred, QUIC handshake 22 ms
+burst 217: FireBAM 9jxgosAfHgHzwnxsHw4RAZYaLVokMbnYtmiZBreynGFP window 460415624+4 in 15.3 s
+  burst 216 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset +100 ms, spacing 10 ms): +161 ms vs the window's first shred, QUIC handshake 42 ms
+burst 218: Firedancer EvnRmnMrd69kFdbLMxWkTn1icZ7DCceRhvmb2SJXqDo4 window 460415700+4 in 14.6 s
+  fired Main (offset +100 ms, spacing 50 ms): +113 ms vs the window's first shred, QUIC handshake 70 ms
+burst 219: Agave 7QQGNm3ptwinipDCyaCF7jY5katgmFUu1ieP2f7nwLpE window 460415748+4 in 9.1 s
+  burst 218 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset +100 ms, spacing 0 ms): +90 ms vs the window's first shred, QUIC handshake 23 ms
+burst 220: Rakurai ana2y2YvQ3ZPMwm6qhnN3nJoUSiT3qx5Pvetkq9xcfY window 460415792+4 in 7.5 s
+  burst 219 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset +100 ms, spacing 0 ms): the window's first slot was not seen (skipped?), QUIC handshake 32 ms
+burst 221: FireBAM 9jxgosAfHgHzwnxsHw4RAZYaLVokMbnYtmiZBreynGFP window 460415880+4 in 14.9 s
+  burst 220 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset +100 ms, spacing 10 ms): +106 ms vs the window's first shred, QUIC handshake 30 ms
+burst 222: Firedancer EvnRmnMrd69kFdbLMxWkTn1icZ7DCceRhvmb2SJXqDo4 window 460416000+4 in 24.0 s
+  burst 217 collected: 0 of 12 landed, 0 in the window
+  fired Null (offset +100 ms, spacing 50 ms): +86 ms vs the window's first shred, QUIC handshake 67 ms
+burst 223: Firedancer 9eGrDohdNTAo61DRHyfMuqKWXqYnA3i254Wiszxe8FoY window 460416028+4 in 3.9 s
+  burst 222 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset +100 ms, spacing 50 ms): +106 ms vs the window's first shred, QUIC handshake 81 ms
+burst 224: Rakurai ana2y2YvQ3ZPMwm6qhnN3nJoUSiT3qx5Pvetkq9xcfY window 460416148+4 in 21.8 s
+  burst 223 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset -300 ms, spacing 10 ms): the window's first slot was not seen (skipped?), QUIC handshake 33 ms
+burst 225: FireBAM 9jxgosAfHgHzwnxsHw4RAZYaLVokMbnYtmiZBreynGFP window 460416188+4 in 5.4 s
+  burst 224 collected: 12 of 12 landed, 12 in the window
+  burst 221 collected: 0 of 12 landed, 0 in the window
+  fired Main (offset -300 ms, spacing 50 ms): the window's first slot was not seen (skipped?), QUIC handshake 30 ms
+burst 226: Firedancer 9eGrDohdNTAo61DRHyfMuqKWXqYnA3i254Wiszxe8FoY window 460416248+4 in 9.8 s
+  fired Conflict (offset +100 ms, spacing 50 ms): +8 ms vs the window's first shred, QUIC handshake 77 ms
+burst 227: Firedancer EvnRmnMrd69kFdbLMxWkTn1icZ7DCceRhvmb2SJXqDo4 window 460416420+4 in 32.9 s
+  burst 226 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset +100 ms, spacing 50 ms): +102 ms vs the window's first shred, QUIC handshake 77 ms
+burst 228: Firedancer EvnRmnMrd69kFdbLMxWkTn1icZ7DCceRhvmb2SJXqDo4 window 460416480+4 in 11.4 s
+  burst 227 collected: 12 of 12 landed, 12 in the window
+  burst 225 collected: 0 of 12 landed, 0 in the window
+  fired Conflict (offset +100 ms, spacing 50 ms): +105 ms vs the window's first shred, QUIC handshake 74 ms
+burst 229: FireBAM 9jxgosAfHgHzwnxsHw4RAZYaLVokMbnYtmiZBreynGFP window 460416652+4 in 34.4 s
+  burst 228 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset -300 ms, spacing 50 ms): -271 ms vs the window's first shred, QUIC handshake 31 ms
+burst 230: FireBAM 9jxgosAfHgHzwnxsHw4RAZYaLVokMbnYtmiZBreynGFP window 460416968+4 in 64.0 s
+  burst 229 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset -300 ms, spacing 50 ms): -286 ms vs the window's first shred, QUIC handshake 30 ms
+burst 231: FireBAM 9jxgosAfHgHzwnxsHw4RAZYaLVokMbnYtmiZBreynGFP window 460417128+4 in 32.1 s
+  fired Conflict (offset -300 ms, spacing 50 ms): -273 ms vs the window's first shred, QUIC handshake 31 ms
+burst 232: Rakurai ana2y2YvQ3ZPMwm6qhnN3nJoUSiT3qx5Pvetkq9xcfY window 460417472+4 in 70.1 s
+  burst 230 collected: 0 of 12 landed, 0 in the window
+  burst 231 collected: 0 of 12 landed, 0 in the window
+  fired Null (offset -300 ms, spacing 10 ms): -283 ms vs the window's first shred, QUIC handshake 34 ms
+burst 233: FireBAM 9jxgosAfHgHzwnxsHw4RAZYaLVokMbnYtmiZBreynGFP window 460418036+4 in 115.6 s
+  burst 232 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset +100 ms, spacing 50 ms): +91 ms vs the window's first shred, QUIC handshake 31 ms
+burst 234: Agave 7QQGNm3ptwinipDCyaCF7jY5katgmFUu1ieP2f7nwLpE window 460418232+4 in 38.9 s
+  burst 233 collected: 0 of 12 landed, 0 in the window
+  fired Main (offset -300 ms, spacing 10 ms): -305 ms vs the window's first shred, QUIC handshake 23 ms
+burst 235: FireBAM 9jxgosAfHgHzwnxsHw4RAZYaLVokMbnYtmiZBreynGFP window 460418460+4 in 46.1 s
+  burst 234 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset +100 ms, spacing 50 ms): +100 ms vs the window's first shred, QUIC handshake 29 ms
+burst 236: FireBAM 9jxgosAfHgHzwnxsHw4RAZYaLVokMbnYtmiZBreynGFP window 460418860+4 in 80.6 s
+  burst 235 collected: 0 of 12 landed, 0 in the window
+  fired Reverse (offset +100 ms, spacing 50 ms): +102 ms vs the window's first shred, QUIC handshake 30 ms
+burst 237: FireBAM 9jxgosAfHgHzwnxsHw4RAZYaLVokMbnYtmiZBreynGFP window 460418904+4 in 8.4 s
+  fired Conflict (offset +100 ms, spacing 50 ms): +201 ms vs the window's first shred, QUIC handshake 30 ms
+burst 238: Agave 5Us18hLZPXJTS4QVuGSsUw137Dyd2tgBaem24Xsf5nBS window 460419356+4 in 92.5 s
+  burst 236 collected: 0 of 12 landed, 0 in the window
+  burst 237 collected: 0 of 12 landed, 0 in the window
+  fired Conflict (offset -300 ms, spacing 0 ms): -312 ms vs the window's first shred, QUIC handshake 37 ms
+burst 239: Agave 7QQGNm3ptwinipDCyaCF7jY5katgmFUu1ieP2f7nwLpE window 460419564+4 in 41.9 s
+  burst 238 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset -300 ms, spacing 10 ms): -329 ms vs the window's first shred, QUIC handshake 24 ms
+burst 240: Rakurai ana2y2YvQ3ZPMwm6qhnN3nJoUSiT3qx5Pvetkq9xcfY window 460420628+4 in 214.0 s
+  burst 239 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset -300 ms, spacing 10 ms): -290 ms vs the window's first shred, QUIC handshake 31 ms
+burst 241: Agave 5Us18hLZPXJTS4QVuGSsUw137Dyd2tgBaem24Xsf5nBS window 460420724+4 in 17.9 s
+  burst 240 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset +100 ms, spacing 0 ms): +112 ms vs the window's first shred, QUIC handshake 36 ms
+burst 242: Agave 5Us18hLZPXJTS4QVuGSsUw137Dyd2tgBaem24Xsf5nBS window 460421208+4 in 97.4 s
+  burst 241 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset +100 ms, spacing 0 ms): +90 ms vs the window's first shred, QUIC handshake 35 ms
+burst 243: Rakurai ana2y2YvQ3ZPMwm6qhnN3nJoUSiT3qx5Pvetkq9xcfY window 460421708+4 in 101.3 s
+  burst 242 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset -300 ms, spacing 10 ms): -305 ms vs the window's first shred, QUIC handshake 32 ms
+burst 244: Rakurai ana2y2YvQ3ZPMwm6qhnN3nJoUSiT3qx5Pvetkq9xcfY window 460421760+4 in 10.4 s
+  burst 243 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset +100 ms, spacing 10 ms): +119 ms vs the window's first shred, QUIC handshake 31 ms
+burst 245: Agave 7QQGNm3ptwinipDCyaCF7jY5katgmFUu1ieP2f7nwLpE window 460422012+4 in 50.7 s
+  burst 244 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset -300 ms, spacing 10 ms): -312 ms vs the window's first shred, QUIC handshake 27 ms
+burst 246: Agave 5Us18hLZPXJTS4QVuGSsUw137Dyd2tgBaem24Xsf5nBS window 460422112+4 in 18.8 s
+  burst 245 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset +100 ms, spacing 0 ms): +103 ms vs the window's first shred, QUIC handshake 38 ms
+burst 247: Rakurai ana2y2YvQ3ZPMwm6qhnN3nJoUSiT3qx5Pvetkq9xcfY window 460422772+4 in 133.4 s
+  burst 246 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset +100 ms, spacing 10 ms): +116 ms vs the window's first shred, QUIC handshake 32 ms
+burst 248: Rakurai ana2y2YvQ3ZPMwm6qhnN3nJoUSiT3qx5Pvetkq9xcfY window 460422828+4 in 11.0 s
+  burst 247 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset +100 ms, spacing 10 ms): +115 ms vs the window's first shred, QUIC handshake 32 ms
+burst 249: Rakurai ana2y2YvQ3ZPMwm6qhnN3nJoUSiT3qx5Pvetkq9xcfY window 460423628+4 in 161.5 s
+  burst 248 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset +100 ms, spacing 10 ms): +117 ms vs the window's first shred, QUIC handshake 31 ms
+burst 250: Agave 5Us18hLZPXJTS4QVuGSsUw137Dyd2tgBaem24Xsf5nBS window 460424000+4 in 74.1 s
+  burst 249 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset +100 ms, spacing 0 ms): the window's first slot was not seen (skipped?), QUIC handshake 34 ms
+burst 251: Rakurai ana2y2YvQ3ZPMwm6qhnN3nJoUSiT3qx5Pvetkq9xcfY window 460424044+4 in 6.0 s
+  burst 250 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset -300 ms, spacing 50 ms): the window's first slot was not seen (skipped?), QUIC handshake 35 ms
+burst 252: Agave 5Us18hLZPXJTS4QVuGSsUw137Dyd2tgBaem24Xsf5nBS window 460424412+4 in 71.4 s
+slot stream: the WebSocket closed; reconnecting
+  burst 251 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset -300 ms, spacing 10 ms): -308 ms vs the window's first shred, QUIC handshake 41 ms
+burst 253: Rakurai ana2y2YvQ3ZPMwm6qhnN3nJoUSiT3qx5Pvetkq9xcfY window 460424804+4 in 81.4 s
+  burst 252 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset -300 ms, spacing 50 ms): -296 ms vs the window's first shred, QUIC handshake 125 ms
+burst 254: Agave 7QQGNm3ptwinipDCyaCF7jY5katgmFUu1ieP2f7nwLpE window 460425040+4 in 47.1 s
+  burst 253 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset -300 ms, spacing 10 ms): -486 ms vs the window's first shred, QUIC handshake 24 ms
+burst 255: Rakurai ana2y2YvQ3ZPMwm6qhnN3nJoUSiT3qx5Pvetkq9xcfY window 460425192+4 in 30.0 s
+  burst 254 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset -300 ms, spacing 50 ms): -263 ms vs the window's first shred, QUIC handshake 33 ms
+burst 256: Rakurai ana2y2YvQ3ZPMwm6qhnN3nJoUSiT3qx5Pvetkq9xcfY window 460425440+4 in 50.5 s
+  burst 255 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset -300 ms, spacing 50 ms): -296 ms vs the window's first shred, QUIC handshake 40 ms
+burst 257: Agave 7QQGNm3ptwinipDCyaCF7jY5katgmFUu1ieP2f7nwLpE window 460425880+4 in 86.7 s
+  burst 256 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset +100 ms, spacing 10 ms): +73 ms vs the window's first shred, QUIC handshake 22 ms
+burst 258: Rakurai ana2y2YvQ3ZPMwm6qhnN3nJoUSiT3qx5Pvetkq9xcfY window 460425932+4 in 10.3 s
+  burst 257 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset +100 ms, spacing 50 ms): +98 ms vs the window's first shred, QUIC handshake 71 ms
+burst 259: Rakurai ana2y2YvQ3ZPMwm6qhnN3nJoUSiT3qx5Pvetkq9xcfY window 460426216+4 in 57.0 s
+  burst 258 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset +100 ms, spacing 50 ms): +59 ms vs the window's first shred, QUIC handshake 50 ms
+burst 260: Agave 7QQGNm3ptwinipDCyaCF7jY5katgmFUu1ieP2f7nwLpE window 460426460+4 in 48.8 s
+  burst 259 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset +100 ms, spacing 10 ms): +76 ms vs the window's first shred, QUIC handshake 24 ms
+burst 261: Rakurai ana2y2YvQ3ZPMwm6qhnN3nJoUSiT3qx5Pvetkq9xcfY window 460426888+4 in 85.9 s
+  burst 260 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset +100 ms, spacing 50 ms): +144 ms vs the window's first shred, QUIC handshake 38 ms
+burst 262: Rakurai ana2y2YvQ3ZPMwm6qhnN3nJoUSiT3qx5Pvetkq9xcfY window 460427396+4 in 102.2 s
+  burst 261 collected: 11 of 12 landed, 11 in the window
+  fired Conflict (offset +100 ms, spacing 50 ms): +190 ms vs the window's first shred, QUIC handshake 35 ms
+burst 263: Agave 7QQGNm3ptwinipDCyaCF7jY5katgmFUu1ieP2f7nwLpE window 460428612+4 in 246.0 s
+  burst 262 collected: 10 of 12 landed, 10 in the window
+  fired Reverse (offset +100 ms, spacing 10 ms): the window's first slot was not seen (skipped?), QUIC handshake 27 ms
+burst 264: Agave 7QQGNm3ptwinipDCyaCF7jY5katgmFUu1ieP2f7nwLpE window 460429416+4 in 160.3 s
+  burst 263 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset +100 ms, spacing 10 ms): the window's first slot was not seen (skipped?), QUIC handshake 26 ms
+burst 265: Agave 5Us18hLZPXJTS4QVuGSsUw137Dyd2tgBaem24Xsf5nBS window 460430560+4 in 230.3 s
+slot stream: the WebSocket closed; reconnecting
+  burst 264 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset -300 ms, spacing 10 ms): -290 ms vs the window's first shred, QUIC handshake 35 ms
+burst 266: Agave 7QQGNm3ptwinipDCyaCF7jY5katgmFUu1ieP2f7nwLpE window 460430792+4 in 47.2 s
+  burst 265 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset -300 ms, spacing 50 ms): -284 ms vs the window's first shred, QUIC handshake 31 ms
+burst 267: Agave 7QQGNm3ptwinipDCyaCF7jY5katgmFUu1ieP2f7nwLpE window 460431272+4 in 97.2 s
+  burst 266 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset -300 ms, spacing 50 ms): -314 ms vs the window's first shred, QUIC handshake 32 ms
+burst 268: Agave 7QQGNm3ptwinipDCyaCF7jY5katgmFUu1ieP2f7nwLpE window 460431580+4 in 61.8 s
+  burst 267 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset -300 ms, spacing 50 ms): -310 ms vs the window's first shred, QUIC handshake 32 ms
+burst 269: Agave 7QQGNm3ptwinipDCyaCF7jY5katgmFUu1ieP2f7nwLpE window 460431828+4 in 50.0 s
+getSignatureStatuses: error sending request for url (https://api.mainnet-beta.solana.com/), retrying
+  burst 268 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset -300 ms, spacing 50 ms): -371 ms vs the window's first shred, QUIC handshake 28 ms
+burst 270: Agave 7QQGNm3ptwinipDCyaCF7jY5katgmFUu1ieP2f7nwLpE window 460431992+4 in 32.2 s
+  burst 269 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset +100 ms, spacing 50 ms): +92 ms vs the window's first shred, QUIC handshake 26 ms
+burst 271: Agave 7QQGNm3ptwinipDCyaCF7jY5katgmFUu1ieP2f7nwLpE window 460432260+4 in 53.1 s
+  burst 270 collected: 12 of 12 landed, 12 in the window
+  fired Null (offset +100 ms, spacing 50 ms): +88 ms vs the window's first shred, QUIC handshake 42 ms
+burst 272: Agave 7QQGNm3ptwinipDCyaCF7jY5katgmFUu1ieP2f7nwLpE window 460432876+4 in 122.1 s
+  burst 271 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset +100 ms, spacing 50 ms): +102 ms vs the window's first shred, QUIC handshake 28 ms
+burst 273: Agave 5Us18hLZPXJTS4QVuGSsUw137Dyd2tgBaem24Xsf5nBS window 460434304+4 in 294.2 s
+  burst 272 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset -300 ms, spacing 10 ms): -312 ms vs the window's first shred, QUIC handshake 37 ms
+burst 274: Agave 7QQGNm3ptwinipDCyaCF7jY5katgmFUu1ieP2f7nwLpE window 460434344+4 in 7.9 s
+  burst 273 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset +100 ms, spacing 50 ms): +81 ms vs the window's first shred, QUIC handshake 22 ms
+burst 275: Agave 5Us18hLZPXJTS4QVuGSsUw137Dyd2tgBaem24Xsf5nBS window 460434532+4 in 37.3 s
+  burst 274 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset -300 ms, spacing 10 ms): -305 ms vs the window's first shred, QUIC handshake 33 ms
+burst 276: Agave 5Us18hLZPXJTS4QVuGSsUw137Dyd2tgBaem24Xsf5nBS window 460434740+4 in 41.9 s
+  burst 275 collected: 12 of 12 landed, 12 in the window
+  fired Main (offset +100 ms, spacing 10 ms): +93 ms vs the window's first shred, QUIC handshake 45 ms
+burst 277: Agave 5Us18hLZPXJTS4QVuGSsUw137Dyd2tgBaem24Xsf5nBS window 460435272+4 in 106.7 s
+  burst 276 collected: 12 of 12 landed, 12 in the window
+slot stream: the WebSocket closed; reconnecting
+  fired Null (offset +100 ms, spacing 10 ms): +103 ms vs the window's first shred, QUIC handshake 36 ms
+burst 278: Agave 5Us18hLZPXJTS4QVuGSsUw137Dyd2tgBaem24Xsf5nBS window 460435340+4 in 12.1 s
+  burst 277 collected: 12 of 12 landed, 12 in the window
+  fired Reverse (offset +100 ms, spacing 10 ms): +78 ms vs the window's first shred, QUIC handshake 32 ms
+burst 279: Agave 5Us18hLZPXJTS4QVuGSsUw137Dyd2tgBaem24Xsf5nBS window 460435960+4 in 124.8 s
+  burst 278 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset +100 ms, spacing 10 ms): +101 ms vs the window's first shred, QUIC handshake 32 ms
+burst 280: Agave 5Us18hLZPXJTS4QVuGSsUw137Dyd2tgBaem24Xsf5nBS window 460437676+4 in 350.0 s
+  burst 279 collected: 12 of 12 landed, 12 in the window
+slot stream: the WebSocket closed; reconnecting
+  fired Main (offset -300 ms, spacing 50 ms): -291 ms vs the window's first shred, QUIC handshake 36 ms
+burst 281: Agave 5Us18hLZPXJTS4QVuGSsUw137Dyd2tgBaem24Xsf5nBS window 460437968+4 in 59.1 s
+  fired Null (offset -300 ms, spacing 50 ms): -301 ms vs the window's first shred, QUIC handshake 34 ms
+burst 282: Agave 5Us18hLZPXJTS4QVuGSsUw137Dyd2tgBaem24Xsf5nBS window 460441880+4 in 796.9 s
+  burst 281 collected: 12 of 12 landed, 12 in the window
+  burst 280 collected: 0 of 12 landed, 0 in the window
+slot stream: the WebSocket closed; reconnecting
+slot stream: the WebSocket closed; reconnecting
+slot stream: the WebSocket closed; reconnecting
+slot stream: the WebSocket closed; reconnecting
+  fired Reverse (offset -300 ms, spacing 50 ms): -482 ms vs the window's first shred, QUIC handshake 35 ms
+burst 283: Agave 5Us18hLZPXJTS4QVuGSsUw137Dyd2tgBaem24Xsf5nBS window 460444456+4 in 476.7 s
+  burst 282 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset -300 ms, spacing 50 ms): -281 ms vs the window's first shred, QUIC handshake 36 ms
+burst 284: Agave 5Us18hLZPXJTS4QVuGSsUw137Dyd2tgBaem24Xsf5nBS window 460446676+4 in 448.4 s
+  burst 283 collected: 0 of 12 landed, 0 in the window
+  fired Main (offset +100 ms, spacing 50 ms): the window's first slot was not seen (skipped?), QUIC handshake 37 ms
+burst 285: Agave 5Us18hLZPXJTS4QVuGSsUw137Dyd2tgBaem24Xsf5nBS window 460448644+4 in 400.4 s
+  burst 284 collected: 0 of 12 landed, 0 in the window
+  fired Null (offset +100 ms, spacing 50 ms): -50 ms vs the window's first shred, QUIC handshake 35 ms
+burst 286: Agave 5Us18hLZPXJTS4QVuGSsUw137Dyd2tgBaem24Xsf5nBS window 460448940+4 in 59.1 s
+  fired Reverse (offset +100 ms, spacing 50 ms): +92 ms vs the window's first shred, QUIC handshake 36 ms
+burst 287: Agave 5Us18hLZPXJTS4QVuGSsUw137Dyd2tgBaem24Xsf5nBS window 460449336+4 in 79.0 s
+  burst 285 collected: 0 of 12 landed, 0 in the window
+  burst 286 collected: 12 of 12 landed, 12 in the window
+  fired Conflict (offset +100 ms, spacing 50 ms): +199 ms vs the window's first shred, QUIC handshake 35 ms
+all bursts done
+  burst 287 collected: 10 of 12 landed, 10 in the window
+waiting 98 s until the last probes can no longer land, then reconciling
+getSignatureStatuses: error sending request for url (https://api.mainnet-beta.solana.com/), retrying
+getSignatureStatuses: error sending request for url (https://api.mainnet-beta.solana.com/), retrying
+getSignatureStatuses: error sending request for url (https://api.mainnet-beta.solana.com/), retrying
+slot stream: the WebSocket closed; reconnecting
+getSignatureStatuses: error sending request for url (https://api.mainnet-beta.solana.com/), retrying
+getSignatureStatuses: error sending request for url (https://api.mainnet-beta.solana.com/), retrying
+slot stream: the WebSocket closed; reconnecting
+Error: getSignatureStatuses: request failed
+
+Caused by:
+    0: error sending request for url (https://api.mainnet-beta.solana.com/)
+    1: operation timed out
+
+[exited with code 0]
