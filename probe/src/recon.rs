@@ -142,22 +142,22 @@ pub async fn run(rpc: &Rpc, data_dir: &Path, args: Args) -> Result<()> {
             if window_start.is_some() && slot == previous + 1 {
                 length += 1;
             } else {
-                if let Some(start) = window_start {
-                    if (current_slot..horizon_end).contains(&start) {
-                        windows.entry(identity.clone()).or_default().push(start);
-                        runs.push(length);
-                    }
+                if let Some(start) = window_start
+                    && (current_slot..horizon_end).contains(&start)
+                {
+                    windows.entry(identity.clone()).or_default().push(start);
+                    runs.push(length);
                 }
                 window_start = Some(slot);
                 length = 1;
             }
             previous = slot;
         }
-        if let Some(start) = window_start {
-            if (current_slot..horizon_end).contains(&start) {
-                windows.entry(identity.clone()).or_default().push(start);
-                runs.push(length);
-            }
+        if let Some(start) = window_start
+            && (current_slot..horizon_end).contains(&start)
+        {
+            windows.entry(identity.clone()).or_default().push(start);
+            runs.push(length);
         }
     }
     let mut window_lengths: BTreeMap<usize, usize> = BTreeMap::new();
@@ -230,7 +230,7 @@ pub async fn run(rpc: &Rpc, data_dir: &Path, args: Args) -> Result<()> {
                     && windows.contains_key(*identity)
             })
             .collect();
-        pool.sort_by(|a, b| b.1.1.cmp(&a.1.1));
+        pool.sort_by_key(|p| std::cmp::Reverse(p.1.1));
         for (identity, (vote, lamports)) in pool.into_iter().take(args.per_client) {
             let node = &nodes[identity];
             let mut next = windows[identity].clone();

@@ -68,8 +68,10 @@ def build(data: Dataset, out: Path, seed: int, n_boot: int, n_perm: int, min_pai
     delivery = probes.groupby(["client", "identity"]).agg(
         sent=("signature", "size"),
         send_errors=("send_error", lambda s: s.notna().sum()),
+        tpu_acked=("tpu_ack", lambda s: (s == "acked").sum()),
         landed=("landed_slot", lambda s: s.notna().sum()),
         in_window=("in_window", "sum"),
+        landed_after_collection=("landed_late", "sum"),
         failed=("failed", "sum"),
     )
     delivery.insert(0, "bursts", probes.drop_duplicates(["run_id", "burst"]).groupby(["client", "identity"]).size())

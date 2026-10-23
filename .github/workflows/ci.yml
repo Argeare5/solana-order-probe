@@ -1,0 +1,49 @@
+# Builds and tests both parts on every push and pull request. Nothing here touches a network beyond package
+# registries: no RPC calls, no keys, no sends.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    name: probe (Rust)
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: probe
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: probe
+      # rust-toolchain.toml pins the toolchain; rustup installs it on first use
+      - run: cargo clippy --locked --all-targets -- -D warnings
+      - run: cargo test --locked
+
+  analyze:
+    name: analyze (Python)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t solana-order-probe/analyze analyze
+      - name: Synthetic tests
+        run: docker run --rm --entrypoint python -w /app solana-order-probe/analyze -m pytest -q tests
+      - name: Analysis of the committed raw data
+        run: |
+          mkdir -p "$RUNNER_TEMP/report"
+          docker run --rm -v "$PWD/data:/work/data:ro" -v "$RUNNER_TEMP/report:/work/report" solana-order-probe/analyze
+
+  compose:
+    name: docker compose
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker compose config --quiet
+      - run: docker compose build
+      - run: docker compose run --rm probe --help

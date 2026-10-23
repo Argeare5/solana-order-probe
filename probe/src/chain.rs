@@ -62,6 +62,17 @@ pub async fn statuses(rpc: &Rpc, signatures: &[String]) -> Result<Vec<Value>> {
     Ok(result["value"].as_array().context("statuses")?.clone())
 }
 
+/// The statuses whose block is confirmed or finalized; any other (unknown or only processed) becomes null.
+pub fn landed(statuses: &[Value]) -> Vec<Value> {
+    statuses
+        .iter()
+        .map(|s| match s["confirmationStatus"].as_str() {
+            Some("confirmed" | "finalized") => s.clone(),
+            _ => Value::Null,
+        })
+        .collect()
+}
+
 /// Waits until every signature is confirmed or `timeout` passes; fails if any transaction failed or never landed.
 pub async fn confirm(rpc: &Rpc, signatures: &[String], timeout: Duration) -> Result<()> {
     let deadline = tokio::time::Instant::now() + timeout;

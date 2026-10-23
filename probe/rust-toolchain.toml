@@ -1,0 +1,5 @@
+# The toolchain the probe is built and tested with (the Docker image uses the same version)
+[toolchain]
+channel = "1.99.1"
+profile = "minimal"
+components = ["clippy", "rustfmt"]

@@ -62,10 +62,11 @@ impl TpuClient {
     }
 }
 
-/// Sends one wire transaction on its own unidirectional stream, as the TPU expects.
-pub async fn send(connection: &Connection, wire: &[u8]) -> Result<()> {
+/// Sends one wire transaction on its own unidirectional stream, as the TPU expects. The finished stream is returned
+/// so the caller can wait for the TPU's acknowledgement (`SendStream::stopped`) after the whole burst is out.
+pub async fn send(connection: &Connection, wire: &[u8]) -> Result<quinn::SendStream> {
     let mut stream = connection.open_uni().await?;
     stream.write_all(wire).await?;
     stream.finish()?;
-    Ok(())
+    Ok(stream)
 }

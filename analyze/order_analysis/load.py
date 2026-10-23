@@ -1,7 +1,9 @@
-"""Loading the raw data the probe writes: data/runs/<run>/{run.json, bursts.jsonl, results.jsonl, blocks/*.json.gz}.
+"""Loading the raw data the probe writes: data/runs/<run>/{run.json, bursts.jsonl, results.jsonl,
+reconciled.jsonl, blocks/*.json.gz}.
 
-One row per probe joins what was planned and sent (bursts.jsonl) with where it landed (results.jsonl). Only live runs
-on the requested cluster are kept; dry-runs carry no landings.
+One row per probe joins what was planned and sent (bursts.jsonl) with where it landed (results.jsonl, and
+reconciled.jsonl for probes found to have landed after their burst was collected). Only live runs on the requested
+cluster are kept; dry-runs carry no landings.
 """
 
 from __future__ import annotations
@@ -55,6 +57,7 @@ def load(data_dir: Path, cluster: str | None = "mainnet-beta", include_dry: bool
         run_dirs[run["run_id"]] = run_dir
         runs.append(run)
         results = {(r["run_id"], r["burst"]): r for r in _jsonl(run_dir / "results.jsonl")}
+        late = {c["signature"]: c for c in _jsonl(run_dir / "reconciled.jsonl") if c.get("landed_slot") is not None}
         for b in _jsonl(run_dir / "bursts.jsonl"):
             row = {k: b.get(k) for k in BURST_COLUMNS}
             row["path"] = row["path"] or "quic"
@@ -66,6 +69,11 @@ def load(data_dir: Path, cluster: str | None = "mainnet-beta", include_dry: bool
             landed = {r["index"]: r for r in (result or {}).get("results", [])}
             for p in b["probes"]:
                 r = landed.get(p["index"], {})
+                if r.get("landed_slot") is None and p["signature"] in late:
+                    # Landed after collection: its slot and fee are known, its place in the block is not
+                    c = late[p["signature"]]
+                    r = {"landed_slot": c["landed_slot"], "in_window": c["in_window"], "fee_lamports": c["fee_lamports"],
+                         "err": c.get("err"), "late": True}
                 probes.append({
                     **{k: row[k] for k in ("run_id", "burst", "identity", "client", "version", "path", "variant",
                                            "spacing_ms", "offset_ms", "fire_vs_observed_ms", "window_start",
@@ -79,6 +87,8 @@ def load(data_dir: Path, cluster: str | None = "mainnet-beta", include_dry: bool
                     "send_order": p["send_order"],
                     "sent_ms": None if p.get("sent_offset_us") is None else p["sent_offset_us"] / 1e3,
                     "send_error": p.get("send_error"),
+                    "tpu_ack": p.get("tpu_ack"),
+                    "landed_late": bool(r.get("late")),
                     "landed_slot": r.get("landed_slot"),
                     "in_window": r.get("in_window", False),
                     "block_index": r.get("block_index"),

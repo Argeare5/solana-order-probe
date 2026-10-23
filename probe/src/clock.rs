@@ -57,7 +57,7 @@ pub struct Estimator {
 pub const ESTIMATOR: Estimator = Estimator { fit_slots: 150, recent: 1, quantile: 0.0 };
 
 /// What the clock predicts from.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum Basis {
     /// The node's first-shred timestamps, mapped to local time.
@@ -206,10 +206,10 @@ impl SlotClock {
 
     /// The predicted first evidence of `slot`, in local Unix ms.
     pub fn predict_unix_ms(&self, slot: u64) -> f64 {
-        if let (Basis::NodeFirstShred, Some(offset)) = (self.basis(), self.node_offset_ms()) {
-            if let Some(node_ms) = predict_phased(&self.node_points(), slot, ANCHORS) {
-                return node_ms - offset;
-            }
+        if let (Basis::NodeFirstShred, Some(offset)) = (self.basis(), self.node_offset_ms())
+            && let Some(node_ms) = predict_phased(&self.node_points(), slot, ANCHORS)
+        {
+            return node_ms - offset;
         }
         predict(&self.arrival_points(), slot, &ESTIMATOR, self.hint_ms).expect("the clock starts with a slot")
     }

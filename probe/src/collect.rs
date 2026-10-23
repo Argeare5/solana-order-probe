@@ -1,5 +1,7 @@
 //! Collection of a live burst once its window has passed: where each probe landed (slot, index in the block, fee),
-//! the compact blocks that hold probes, and the real fees into the spend ledger.
+//! the compact blocks that hold probes, and the real fees into the spend ledger. A block that cannot be fetched
+//! costs only the positions in it: the fees of its probes then come from `getTransaction`, and whatever is still
+//! missing is picked up by the reconciliation at the end of the run (`reconcile`).
 
 use std::collections::{BTreeSet, HashMap};
 use std::path::PathBuf;
@@ -41,34 +43,44 @@ struct BurstResult {
 
 pub async fn burst(rpc: Rpc, run_dir: PathBuf, burst: BurstRecord, ledger: Ledger, at: std::time::Instant) -> Result<()> {
     tokio::time::sleep_until(at.into()).await;
+    let result = collect(&rpc, &run_dir, &burst, &ledger).await;
+    // The reservation goes either way: fees found are recorded, the rest is the reconciliation's
+    ledger.release(burst.worst_case_lamports);
+    result
+}
+
+/// Collects one burst now (also used by the reconciliation for a burst whose collection failed).
+pub async fn collect(rpc: &Rpc, run_dir: &std::path::Path, burst: &BurstRecord, ledger: &Ledger) -> Result<()> {
     let signatures: Vec<String> = burst.probes.iter().map(|p| p.signature.clone()).collect();
 
-    // Statuses, asked again for a while: a probe can land a few slots after its window
-    let mut statuses = chain::statuses(&rpc, &signatures).await?;
+    // Statuses, asked again for a while: a probe can land a few slots after its window, and a status counts only once
+    // its block is confirmed (a merely processed slot can still be dropped with its fork)
+    let mut statuses = chain::landed(&chain::statuses(rpc, &signatures).await?);
     for _ in 0..3 {
         if statuses.iter().all(|s| !s.is_null()) {
             break;
         }
         tokio::time::sleep(Duration::from_secs(3)).await;
-        statuses = chain::statuses(&rpc, &signatures).await?;
+        statuses = chain::landed(&chain::statuses(rpc, &signatures).await?);
     }
 
     // Every block that holds a probe, kept in compact form
     let landed_slots: BTreeSet<u64> = statuses.iter().filter_map(|s| s["slot"].as_u64()).collect();
     let mut positions: HashMap<String, (u64, usize, usize, Option<u64>)> = HashMap::new();
     for slot in &landed_slots {
-        let block = fetch_block(&rpc, *slot).await?;
-        let path = run_dir.join("blocks").join(format!("{slot}.json.gz"));
-        if !path.exists() {
-            std::fs::create_dir_all(path.parent().unwrap())?;
-            crate::store::write_json_gz(&path, &block)?;
-        }
+        let block = match save_block(rpc, run_dir, *slot).await {
+            Ok(block) => block,
+            Err(error) => {
+                eprintln!("  getBlock {slot}: {error:#}; positions in it are lost, fees come from getTransaction");
+                continue;
+            }
+        };
         let count = block["transactions"].as_array().map_or(0, Vec::len);
         for (index, tx) in block["transactions"].as_array().into_iter().flatten().enumerate() {
-            if let Some(signature) = tx["signature"].as_str() {
-                if signatures.iter().any(|s| s == signature) {
-                    positions.insert(signature.to_owned(), (*slot, index, count, tx["fee"].as_u64()));
-                }
+            if let Some(signature) = tx["signature"].as_str()
+                && signatures.iter().any(|s| s == signature)
+            {
+                positions.insert(signature.to_owned(), (*slot, index, count, tx["fee"].as_u64()));
             }
         }
     }
@@ -78,7 +90,13 @@ pub async fn burst(rpc: Rpc, run_dir: PathBuf, burst: BurstRecord, ledger: Ledge
     for (probe, status) in burst.probes.iter().zip(&statuses) {
         let position = positions.get(&probe.signature);
         let landed_slot = status["slot"].as_u64();
-        let fee = position.and_then(|p| p.3);
+        let mut fee = position.and_then(|p| p.3);
+        if landed_slot.is_some() && fee.is_none() {
+            fee = chain::fee_of(rpc, &probe.signature).await.unwrap_or_else(|error| {
+                eprintln!("  fee of {}: {error:#}; left to the reconciliation", probe.signature);
+                None
+            });
+        }
         if let (Some(_), Some(fee)) = (landed_slot, fee) {
             ledger.record("probe", &probe.signature, fee)?;
         }
@@ -93,8 +111,6 @@ pub async fn burst(rpc: Rpc, run_dir: PathBuf, burst: BurstRecord, ledger: Ledge
             err: status.get("err").filter(|e| !e.is_null()).cloned(),
         });
     }
-    ledger.release(burst.worst_case_lamports);
-
     let result = BurstResult {
         run_id: burst.run_id.clone(),
         burst: burst.burst,
@@ -115,6 +131,17 @@ pub async fn burst(rpc: Rpc, run_dir: PathBuf, burst: BurstRecord, ledger: Ledge
     );
     crate::store::append_jsonl(&run_dir.join("results.jsonl"), &result)?;
     Ok(())
+}
+
+/// Fetches and saves the compact block of `slot` (for the reconciliation of a late probe).
+pub async fn save_block(rpc: &Rpc, run_dir: &std::path::Path, slot: u64) -> Result<Value> {
+    let block = fetch_block(rpc, slot).await?;
+    let path = run_dir.join("blocks").join(format!("{slot}.json.gz"));
+    if !path.exists() {
+        std::fs::create_dir_all(path.parent().unwrap())?;
+        crate::store::write_json_gz(&path, &block)?;
+    }
+    Ok(block)
 }
 
 /// A block in compact form: its transactions in block order with signature, fee, compute units consumed, cost units

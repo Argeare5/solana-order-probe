@@ -8,6 +8,7 @@ mod ledger;
 mod probe;
 mod quic;
 mod recon;
+mod reconcile;
 mod rpc;
 mod run;
 mod schedule;
@@ -20,7 +21,7 @@ use clap::{Parser, Subcommand};
 
 /// Sends probe transactions into chosen Solana leader windows and records where they land in the block.
 #[derive(Parser)]
-#[command(name = "order-probe", version)]
+#[command(name = "order-probe", version = concat!(env!("CARGO_PKG_VERSION"), " (", env!("ORDER_PROBE_COMMIT"), ")"))]
 struct Cli {
     /// JSON-RPC endpoint. Measurements are taken on mainnet.
     #[arg(long, env = "RPC_URL", default_value = "https://api.mainnet-beta.solana.com", global = true)]
@@ -75,6 +76,9 @@ enum Command {
     Calibrate(calibrate::Args),
     /// Simulates a probe through the RPC node and reports the compute units it consumes (sets --cu-limit). Read-only.
     Simulate(simulate::Args),
+    /// Checks every probe of the live runs against the chain and records any fee the spend ledger is missing
+    /// (`run --live` does this itself before and after it sends). Sends nothing.
+    Reconcile,
 }
 
 #[tokio::main]
@@ -131,5 +135,10 @@ async fn main() -> anyhow::Result<()> {
         Command::Run(args) => run::run(&rpc, &cli.data_dir, &cli.secrets_dir, &ledger, args).await,
         Command::Calibrate(args) => calibrate::run(&rpc, &cli.data_dir, args).await,
         Command::Simulate(args) => simulate::run(&rpc, &cli.secrets_dir, args).await,
+        Command::Reconcile => {
+            reconcile::all(&rpc, &cli.data_dir, &ledger).await?;
+            println!("spent {} of {} lamports", ledger.spent(), ledger.cap());
+            Ok(())
+        }
     }
 }

@@ -2,7 +2,7 @@
 
 No live mainnet runs in the data yet.
 
-## Where leaders take transactions in (snapshot 20261023T090046Z)
+## Where leaders take transactions in (snapshot 20261023T094303Z)
 
 A TPU host shared by many nodes and different from their own address is the ingress of an external sequencer or block builder: probes sent to such a leader reach that ingress first.
 
@@ -17,7 +17,7 @@ A TPU host shared by many nodes and different from their own address is the ingr
 | Rakurai | 9 | 1.2% | 9 | 9 | 1 |
 | Agave | 20 | 1.1% | 20 | 20 | 1 |
 | Raiku | 1 | 0.1% | 1 | 1 | 1 |
-| Unknown(61303) | 1 | 0.1% | 1 | 1 | 1 |
+| Unknown(45933) | 1 | 0.1% | 1 | 1 | 1 |
 
 ## Slot duration by position in the leader window (calibration 20261023T090046Z)
 

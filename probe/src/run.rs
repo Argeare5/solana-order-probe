@@ -19,7 +19,7 @@ use chrono::{SecondsFormat, Utc};
 use rand::rngs::StdRng;
 use rand::seq::SliceRandom;
 use rand::{RngExt, SeedableRng};
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use serde_json::json;
 use solana_pubkey::Pubkey;
 use solana_signer::Signer;
@@ -31,19 +31,20 @@ use crate::probe::{self, ProbeSpec};
 use crate::quic::{self, TpuClient};
 use crate::rpc::Rpc;
 use crate::schedule::{self, Window};
-use crate::{chain, collect};
+use crate::{chain, collect, reconcile};
 
 /// How the probes reach the leader.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, clap::ValueEnum, Serialize)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, clap::ValueEnum, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum SendPath {
     /// Straight to the leader's TPU over QUIC: we control the arrival order.
+    #[default]
     Quic,
     /// Through the RPC node's `sendTransaction` (no preflight, no retries), which forwards them itself: for comparison.
     Rpc,
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, clap::ValueEnum, Serialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, clap::ValueEnum, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum Variant {
     /// Price ladder, random send order.
@@ -117,7 +118,7 @@ pub struct Args {
     live: bool,
 }
 
-#[derive(Serialize, Clone)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct ProbeRecord {
     pub index: usize,
     pub tag: String,
@@ -131,9 +132,12 @@ pub struct ProbeRecord {
     /// Microseconds after the burst's fire moment at which the probe was handed to QUIC.
     pub sent_offset_us: Option<u64>,
     pub send_error: Option<String>,
+    /// Whether the TPU acknowledged all of the probe's bytes over QUIC (`acked`), or what happened instead.
+    #[serde(default)]
+    pub tpu_ack: Option<String>,
 }
 
-#[derive(Serialize, Clone)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct BurstRecord {
     pub run_id: String,
     pub burst: usize,
@@ -144,6 +148,7 @@ pub struct BurstRecord {
     pub tpu_quic: String,
     pub stake_sol: f64,
     pub window: Window,
+    #[serde(default)]
     pub path: SendPath,
     pub variant: Variant,
     pub spacing_ms: u64,
@@ -243,12 +248,17 @@ pub async fn run(rpc: &Rpc, data_dir: &Path, secrets: &Path, ledger: &Ledger, ar
     let clock = SlotClock::start(args.ws_url.clone(), slot_ms, None).await?;
     let basis = clock.settle(Duration::from_secs(20)).await;
     println!("slot clock on {basis:?}, slot time {:.1} ms", clock.slot_ms());
+    if args.live {
+        // Fees that earlier runs paid but did not record count against the cap before anything is sent
+        reconcile::all(rpc, data_dir, ledger).await?;
+    }
 
     crate::store::write_json(
         &run_dir.join("run.json"),
         &json!({
             "run_id": run_id,
             "started_at": Utc::now().to_rfc3339(),
+            "code_version": format!("{} {}", env!("CARGO_PKG_VERSION"), env!("ORDER_PROBE_COMMIT")),
             "cluster": cluster,
             "genesis_hash": genesis_hash,
             "live": args.live,
@@ -293,219 +303,256 @@ pub async fn run(rpc: &Rpc, data_dir: &Path, secrets: &Path, ledger: &Ledger, ar
         l
     };
     let prep_slots = (3_000.0 / slot_ms).ceil() as u64;
+    let mut last_fire: Option<Instant> = None;
 
-    loop {
-        if Instant::now() > deadline {
-            println!("time limit reached");
-            break;
-        }
-        // The soonest window of a target that still needs bursts, far enough ahead to prepare
-        let now = clock.now_slot() as u64;
-        let next = targets
-            .iter()
-            .enumerate()
-            .filter(|(_, t)| t.done < args.bursts_per_target)
-            .filter_map(|(i, t)| t.windows.iter().find(|w| w.start > now + prep_slots && w.start > last_end).map(|w| (i, *w)))
-            .min_by_key(|(_, w)| w.start);
-        let Some((ti, window)) = next else {
-            if targets.iter().all(|t| t.done >= args.bursts_per_target) {
-                println!("all bursts done");
-            } else {
-                println!("no more known windows for the remaining targets");
+    // A failure inside the loop ends it, but never before the bursts already sent are collected and reconciled
+    let outcome: Result<()> = async {
+        loop {
+            if Instant::now() > deadline {
+                println!("time limit reached");
+                break;
             }
-            break;
-        };
-        let target = &targets[ti];
-        let wait = clock.predict(window.start).saturating_duration_since(Instant::now());
-        println!(
-            "burst {burst}: {} {} window {}+{} in {:.1} s",
-            target.client,
-            target.identity,
-            window.start,
-            window.slots,
-            wait.as_secs_f64()
-        );
-        tokio::time::sleep_until((clock.predict(window.start) - Duration::from_millis(2_500)).into()).await;
-
-        // Prepare the burst. Conditions cycle per target: variant fastest, then offset, then spacing
-        let (n_variants, n_offsets) = (args.variants.len(), args.offsets_ms.len());
-        let variant = args.variants[target.done % n_variants];
-        let offset_ms = args.offsets_ms[(target.done / n_variants) % n_offsets];
-        let spacing_ms = args.spacings_ms[(target.done / (n_variants * n_offsets)) % args.spacings_ms.len()];
-        let blockhash = chain::latest_blockhash(rpc).await?;
-        let shared = Pubkey::new_from_array(rng.random());
-        // Prices go to the payers in a fresh random order every burst, so that price is never tied to a payer
-        // (a leader that orders by account would otherwise look like one that orders by price)
-        let mut price_rank: Vec<usize> = (0..args.probes).collect();
-        price_rank.shuffle(&mut rng);
-        let mut specs = Vec::with_capacity(args.probes);
-        for i in 0..args.probes {
-            let cu_price = match variant {
-                Variant::Null => ladder[args.probes / 2],
-                _ => ladder[price_rank[i]],
+            // The soonest window of a target that still needs bursts, far enough ahead to prepare
+            let now = clock.now_slot() as u64;
+            let next = targets
+                .iter()
+                .enumerate()
+                .filter(|(_, t)| t.done < args.bursts_per_target)
+                .filter_map(|(i, t)| t.windows.iter().find(|w| w.start > now + prep_slots && w.start > last_end).map(|w| (i, *w)))
+                .min_by_key(|(_, w)| w.start);
+            let Some((ti, window)) = next else {
+                if targets.iter().all(|t| t.done >= args.bursts_per_target) {
+                    println!("all bursts done");
+                } else {
+                    println!("no more known windows for the remaining targets");
+                }
+                break;
             };
-            let shared_target = variant == Variant::Conflict && i % 2 == 1;
-            specs.push((
-                ProbeSpec {
-                    tag: format!("sop:{run_id}:{burst}:{i}"),
-                    cu_limit: args.cu_limit,
-                    cu_price,
-                    target: if shared_target { shared } else { Pubkey::new_from_array(rng.random()) },
-                },
-                shared_target,
-            ));
-        }
-        let mut order: Vec<usize> = (0..args.probes).collect();
-        if variant == Variant::Reverse {
-            // Cheapest first: the most expensive probe goes last
-            order.sort_by_key(|&i| price_rank[i]);
-        } else {
-            order.shuffle(&mut rng);
-        }
-        let mut built = Vec::with_capacity(args.probes);
-        let mut records = Vec::with_capacity(args.probes);
-        for (i, (spec, shared_target)) in specs.iter().enumerate() {
-            let payer = &pool.payers[i];
-            let probe = probe::build(payer, spec, blockhash.clone())?;
-            records.push(ProbeRecord {
-                index: i,
-                tag: spec.tag.clone(),
-                signature: probe.signature.to_string(),
-                payer: payer.pubkey().to_string(),
-                cu_limit: spec.cu_limit,
-                cu_price: spec.cu_price,
-                max_fee_lamports: probe::max_fee_lamports(spec),
-                shared_target: *shared_target,
-                send_order: order.iter().position(|&o| o == i).unwrap(),
-                sent_offset_us: None,
-                send_error: None,
-            });
-            built.push(probe);
-        }
-        let worst_case: u64 = records.iter().map(|r| r.max_fee_lamports).sum();
-        if args.live {
-            if let Err(error) = ledger.reserve(worst_case) {
+            let target = &targets[ti];
+            let wait = clock.predict(window.start).saturating_duration_since(Instant::now());
+            println!(
+                "burst {burst}: {} {} window {}+{} in {:.1} s",
+                target.client,
+                target.identity,
+                window.start,
+                window.slots,
+                wait.as_secs_f64()
+            );
+            tokio::time::sleep_until((clock.predict(window.start) - Duration::from_millis(2_500)).into()).await;
+
+            // Prepare the burst. Conditions cycle per target: variant fastest, then offset, then spacing
+            let (n_variants, n_offsets) = (args.variants.len(), args.offsets_ms.len());
+            let variant = args.variants[target.done % n_variants];
+            let offset_ms = args.offsets_ms[(target.done / n_variants) % n_offsets];
+            let spacing_ms = args.spacings_ms[(target.done / (n_variants * n_offsets)) % args.spacings_ms.len()];
+            let blockhash = match chain::latest_blockhash(rpc).await {
+                Ok(blockhash) => blockhash,
+                Err(error) => {
+                    println!("  blockhash: {error:#}; window skipped");
+                    continue;
+                }
+            };
+            let shared = Pubkey::new_from_array(rng.random());
+            // Prices go to the payers in a fresh random order every burst, so that price is never tied to a payer
+            // (a leader that orders by account would otherwise look like one that orders by price)
+            let mut price_rank: Vec<usize> = (0..args.probes).collect();
+            price_rank.shuffle(&mut rng);
+            let mut specs = Vec::with_capacity(args.probes);
+            for i in 0..args.probes {
+                let cu_price = match variant {
+                    Variant::Null => ladder[args.probes / 2],
+                    _ => ladder[price_rank[i]],
+                };
+                let shared_target = variant == Variant::Conflict && i % 2 == 1;
+                specs.push((
+                    ProbeSpec {
+                        tag: format!("sop:{run_id}:{burst}:{i}"),
+                        cu_limit: args.cu_limit,
+                        cu_price,
+                        target: if shared_target { shared } else { Pubkey::new_from_array(rng.random()) },
+                    },
+                    shared_target,
+                ));
+            }
+            let mut order: Vec<usize> = (0..args.probes).collect();
+            if variant == Variant::Reverse {
+                // Cheapest first: the most expensive probe goes last
+                order.sort_by_key(|&i| price_rank[i]);
+            } else {
+                order.shuffle(&mut rng);
+            }
+            let mut built = Vec::with_capacity(args.probes);
+            let mut records = Vec::with_capacity(args.probes);
+            for (i, (spec, shared_target)) in specs.iter().enumerate() {
+                let payer = &pool.payers[i];
+                let probe = probe::build(payer, spec, blockhash.clone())?;
+                records.push(ProbeRecord {
+                    index: i,
+                    tag: spec.tag.clone(),
+                    signature: probe.signature.to_string(),
+                    payer: payer.pubkey().to_string(),
+                    cu_limit: spec.cu_limit,
+                    cu_price: spec.cu_price,
+                    max_fee_lamports: probe::max_fee_lamports(spec),
+                    shared_target: *shared_target,
+                    send_order: order.iter().position(|&o| o == i).unwrap(),
+                    sent_offset_us: None,
+                    send_error: None,
+                    tpu_ack: None,
+                });
+                built.push(probe);
+            }
+            let worst_case: u64 = records.iter().map(|r| r.max_fee_lamports).sum();
+            if args.live && let Err(error) = ledger.reserve(worst_case) {
                 println!("{error:#}; stopping");
                 break;
             }
-        }
 
-        let connected = match args.path {
-            SendPath::Quic => tpu.connect(target.tpu_quic).await.map(Some),
-            SendPath::Rpc => Ok(None),
-        };
-        let (connection, handshake_ms, rtt_ms) = match connected {
-            Ok(None) => (None, None, None),
-            Ok(Some((connection, handshake))) => {
-                let rtt = connection.rtt().as_secs_f64() * 1e3;
-                (Some(connection), Some(handshake.as_secs_f64() * 1e3), Some(rtt))
+            let connected = match args.path {
+                SendPath::Quic => tpu.connect(target.tpu_quic).await.map(Some),
+                SendPath::Rpc => Ok(None),
+            };
+            let (connection, handshake_ms, rtt_ms) = match connected {
+                Ok(None) => (None, None, None),
+                Ok(Some((connection, handshake))) => {
+                    let rtt = connection.rtt().as_secs_f64() * 1e3;
+                    (Some(connection), Some(handshake.as_secs_f64() * 1e3), Some(rtt))
+                }
+                Err(error) => {
+                    println!("  QUIC to {}: {error:#}; burst skipped", target.tpu_quic);
+                    if args.live {
+                        ledger.release(worst_case);
+                    }
+                    targets[ti].windows.retain(|w| w.start != window.start);
+                    continue;
+                }
+            };
+
+            // Fire: the window start is re-predicted with the newest evidence every few ms until the moment comes
+            loop {
+                let fire = clock::shift(clock.predict(window.start), offset_ms);
+                let now = Instant::now();
+                if now >= fire {
+                    break;
+                }
+                tokio::time::sleep((fire - now).min(Duration::from_millis(5))).await;
             }
-            Err(error) => {
-                println!("  QUIC to {}: {error:#}; burst skipped", target.tpu_quic);
+            let fired = Instant::now();
+            let fire_unix_us = clock::unix_us();
+            let fire_at = Utc::now().to_rfc3339_opts(SecondsFormat::Micros, true);
+            let fire_slot_estimate = clock.now_slot();
+            let fire_last_seen_slot = clock.latest_slot();
+            let clock_slot_ms = clock.slot_ms();
+            let clock_basis = clock.basis();
+            let clock_node_offset_ms = clock.node_offset_ms();
+            let predicted_start_unix_us = (clock.predict_unix_ms(window.start) * 1e3) as i64;
+            let mut streams = Vec::new();
+            for (n, &i) in order.iter().enumerate() {
+                if n > 0 && spacing_ms > 0 {
+                    tokio::time::sleep(Duration::from_millis(spacing_ms)).await;
+                }
                 if args.live {
-                    ledger.release(worst_case);
+                    let sent = match (&connection, args.path) {
+                        (Some(connection), SendPath::Quic) => quic::send(connection, &built[i].wire).await.map(|s| streams.push((i, s))),
+                        (_, SendPath::Rpc) => chain::send_unchecked(rpc, &built[i].wire).await.map(|_| ()),
+                        (None, SendPath::Quic) => Ok(()),
+                    };
+                    if let Err(error) = sent {
+                        records[i].send_error = Some(format!("{error:#}"));
+                    }
                 }
-                targets[ti].windows.retain(|w| w.start != window.start);
-                continue;
+                records[i].sent_offset_us = Some(fired.elapsed().as_micros() as u64);
             }
-        };
+            last_fire = Some(fired);
+            if let Some(connection) = &connection {
+                // Wait until the TPU acknowledges every probe's bytes (or 2 s), then close
+                let until = tokio::time::Instant::now() + Duration::from_secs(2);
+                let acks = streams.into_iter().map(|(i, stream)| async move {
+                    let ack = match tokio::time::timeout_at(until, stream.stopped()).await {
+                        Ok(Ok(None)) => "acked".to_owned(),
+                        Ok(Ok(Some(code))) => format!("stopped by the TPU with code {code}"),
+                        Ok(Err(error)) => format!("{error}"),
+                        Err(_) => "no acknowledgement within 2 s".to_owned(),
+                    };
+                    (i, ack)
+                });
+                for (i, ack) in futures_util::future::join_all(acks).await {
+                    records[i].tpu_ack = Some(ack);
+                }
+                connection.close(0u32.into(), b"done");
+            }
+            let observed = clock.wait_observed(window.start, clock.predict(window.start) + Duration::from_secs(3)).await;
 
-        // Fire: the window start is re-predicted with the newest evidence every few ms until the moment comes
-        loop {
-            let fire = clock::shift(clock.predict(window.start), offset_ms);
-            let now = Instant::now();
-            if now >= fire {
-                break;
-            }
-            tokio::time::sleep((fire - now).min(Duration::from_millis(5))).await;
-        }
-        let fired = Instant::now();
-        let fire_unix_us = clock::unix_us();
-        let fire_at = Utc::now().to_rfc3339_opts(SecondsFormat::Micros, true);
-        let fire_slot_estimate = clock.now_slot();
-        let fire_last_seen_slot = clock.latest_slot();
-        let clock_slot_ms = clock.slot_ms();
-        let clock_basis = clock.basis();
-        let clock_node_offset_ms = clock.node_offset_ms();
-        let predicted_start_unix_us = (clock.predict_unix_ms(window.start) * 1e3) as i64;
-        for (n, &i) in order.iter().enumerate() {
-            if n > 0 && spacing_ms > 0 {
-                tokio::time::sleep(Duration::from_millis(spacing_ms)).await;
-            }
+            let record = BurstRecord {
+                run_id: run_id.clone(),
+                burst,
+                live: args.live,
+                identity: target.identity.clone(),
+                client: target.client.clone(),
+                version: target.version.clone(),
+                tpu_quic: target.tpu_quic.to_string(),
+                stake_sol: target.stake_sol,
+                window,
+                path: args.path,
+                variant,
+                spacing_ms,
+                offset_ms,
+                blockhash: blockhash.to_string(),
+                fire_at,
+                fire_unix_us,
+                fire_slot_estimate,
+                fire_last_seen_slot,
+                clock_slot_ms,
+                clock_basis,
+                clock_node_offset_ms,
+                predicted_start_unix_us,
+                observed_arrival_unix_us: observed.map(|o| o.unix_us),
+                observed_first_shred_node_ms: observed.and_then(|o| o.first_shred_node_ms),
+                fire_vs_observed_ms: clock.observed_unix_ms(window.start).map(|ms| fire_unix_us as f64 / 1e3 - ms),
+                quic_handshake_ms: handshake_ms,
+                quic_rtt_ms: rtt_ms,
+                worst_case_lamports: worst_case,
+                probes: records,
+            };
+            crate::store::append_jsonl(&run_dir.join("bursts.jsonl"), &record)?;
+            println!(
+                "  fired {:?} (offset {offset_ms:+.0} ms, spacing {spacing_ms} ms): {}, {}",
+                variant,
+                record
+                    .fire_vs_observed_ms
+                    .map_or("the window's first slot was not seen (skipped?)".to_owned(), |ms| format!("{ms:+.0} ms vs the window's first shred")),
+                handshake_ms.map_or("through the RPC node".to_owned(), |ms| format!("QUIC handshake {ms:.0} ms"))
+            );
+
             if args.live {
-                let sent = match (&connection, args.path) {
-                    (Some(connection), SendPath::Quic) => quic::send(connection, &built[i].wire).await,
-                    (_, SendPath::Rpc) => chain::send_unchecked(rpc, &built[i].wire).await.map(|_| ()),
-                    (None, SendPath::Quic) => Ok(()),
-                };
-                if let Err(error) = sent {
-                    records[i].send_error = Some(format!("{error:#}"));
-                }
+                let collect_at = clock.predict(window.end() + 1) + Duration::from_secs(4);
+                collectors.spawn(collect::burst(rpc.clone(), run_dir.clone(), record, ledger.clone(), collect_at));
             }
-            records[i].sent_offset_us = Some(fired.elapsed().as_micros() as u64);
+            targets[ti].done += 1;
+            last_end = window.end();
+            burst += 1;
         }
-        if let Some(connection) = &connection {
-            // Let the streams drain before closing
-            tokio::time::sleep(Duration::from_millis(300)).await;
-            connection.close(0u32.into(), b"done");
-        }
-        let observed = clock.wait_observed(window.start, clock.predict(window.start) + Duration::from_secs(3)).await;
-
-        let record = BurstRecord {
-            run_id: run_id.clone(),
-            burst,
-            live: args.live,
-            identity: target.identity.clone(),
-            client: target.client.clone(),
-            version: target.version.clone(),
-            tpu_quic: target.tpu_quic.to_string(),
-            stake_sol: target.stake_sol,
-            window,
-            path: args.path,
-            variant,
-            spacing_ms,
-            offset_ms,
-            blockhash: blockhash.to_string(),
-            fire_at,
-            fire_unix_us,
-            fire_slot_estimate,
-            fire_last_seen_slot,
-            clock_slot_ms,
-            clock_basis,
-            clock_node_offset_ms,
-            predicted_start_unix_us,
-            observed_arrival_unix_us: observed.map(|o| o.unix_us),
-            observed_first_shred_node_ms: observed.and_then(|o| o.first_shred_node_ms),
-            fire_vs_observed_ms: clock.observed_unix_ms(window.start).map(|ms| fire_unix_us as f64 / 1e3 - ms),
-            quic_handshake_ms: handshake_ms,
-            quic_rtt_ms: rtt_ms,
-            worst_case_lamports: worst_case,
-            probes: records,
-        };
-        crate::store::append_jsonl(&run_dir.join("bursts.jsonl"), &record)?;
-        println!(
-            "  fired {:?} (offset {offset_ms:+.0} ms, spacing {spacing_ms} ms): {}, {}",
-            variant,
-            record
-                .fire_vs_observed_ms
-                .map_or("the window's first slot was not seen (skipped?)".to_owned(), |ms| format!("{ms:+.0} ms vs the window's first shred")),
-            handshake_ms.map_or("through the RPC node".to_owned(), |ms| format!("QUIC handshake {ms:.0} ms"))
-        );
-
-        if args.live {
-            let collect_at = clock.predict(window.end() + 1) + Duration::from_secs(4);
-            collectors.spawn(collect::burst(rpc.clone(), run_dir.clone(), record, ledger.clone(), collect_at));
-        }
-        targets[ti].done += 1;
-        last_end = window.end();
-        burst += 1;
+        Ok(())
+    }
+    .await;
+    if let Err(error) = &outcome {
+        println!("run stopped: {error:#}; collecting the bursts already sent");
     }
 
     while let Some(result) = collectors.join_next().await {
-        if let Err(error) = result? {
-            eprintln!("collection: {error:#}");
+        match result {
+            Ok(Err(error)) => eprintln!("collection: {error:#} (the reconciliation retries it)"),
+            Err(error) => eprintln!("collection task: {error}"),
+            Ok(Ok(())) => {}
         }
     }
+    if let (true, Some(fired)) = (args.live, last_fire) {
+        let wait = (fired + reconcile::SETTLE).saturating_duration_since(Instant::now());
+        println!("waiting {:.0} s until the last probes can no longer land, then reconciling", wait.as_secs_f64());
+        tokio::time::sleep(wait).await;
+        reconcile::run_dir(rpc, &run_dir, ledger).await?;
+    }
+    outcome?;
     println!("run {run_id}: {burst} bursts; spent {} of {} lamports", ledger.spent(), ledger.cap());
     Ok(())
 }

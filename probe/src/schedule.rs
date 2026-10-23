@@ -10,7 +10,7 @@ use crate::rpc::Rpc;
 /// that holds more, as the only node of a test cluster does, is split into windows of this length.
 const MAX_WINDOW_SLOTS: u64 = 48;
 
-#[derive(Clone, Copy, Debug, serde::Serialize)]
+#[derive(Clone, Copy, Debug, serde::Serialize, serde::Deserialize)]
 pub struct Window {
     pub start: u64,
     pub slots: u64,

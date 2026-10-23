@@ -5,7 +5,10 @@ what went wrong so far; results per validator and client will be added from `gen
 
 ## Measurements
 
-All times UTC. Every measurement is after Alpenglow's activation (slot 459 653 000, October 21, 2026).
+All times UTC. Every measurement is after Alpenglow's activation at slot 459 653 000 on October 21, 2026, around
+13:54 (slot 459 652 980 has block time 13:53:55, slot 459 653 040 13:54:10; slot 459 653 000 itself was skipped).
+Checked on the chain: blocks 459 652 900 and 459 652 950 carry 664 of 953 and 649 of 915 vote transactions, blocks
+459 653 100 and 459 653 200 carry 0 of 560 and 0 of 353. The first measurement here is at slot 460 36x xxx.
 
 | Date | What | Data |
 | --- | --- | --- |
@@ -15,6 +18,7 @@ All times UTC. Every measurement is after Alpenglow's activation (slot 459 653 0
 | 2026-10-23 08:41 | Dry-run from `docker compose up`, 3 bursts on 3 clients (nothing sent) | `data/runs/20261023T084133Z` |
 | 2026-10-23 09:00 | Cluster snapshot for the campaign; QUIC handshake with the 12 chosen leaders (all accept an unstaked connection) | `data/snapshots/20261023T090046Z` |
 | 2026-10-23 09:00–09:31 | Slot clock calibration, 30 min, with the leader of every slot (`getSlotLeaders`) | `data/calibration/20261023T090046Z` |
+| 2026-10-23 09:43 | Cluster snapshot before the first live run | `data/snapshots/20261023T094303Z` |
 
 ## Where leaders take transactions in
 
@@ -90,6 +94,20 @@ planned offset for 74% of bursts and within 100 ms for 91%. By client the deviat
 window started later than predicted for AgaveBam leaders (median deviation of the fire moment −73 ms in that small
 sample) and earlier for Firedancer (+32 ms).
 
+## Pipeline checks before mainnet
+
+On a local validator in Docker (`solanalabs/solana:v1.18.26`, 2026-10-23 09:52–10:03), with the same binary and image:
+
+- A live run of 8 bursts (96 probes): 89 landed, all in their window; every probe's QUIC stream was acknowledged by
+  the TPU. The 7 that did not land were the last one or two sent in the bursts with no spacing (11th and 12th of 12
+  sent back to back); with 10 ms between sends all 12 landed. An unstaked connection's streams beyond the TPU's rate
+  are acknowledged and then dropped. The mainnet runs record the send order of every probe, so the same effect shows
+  there as a landing rate by send order.
+- A run killed right after its first burst, before collection: `reconcile` collected the burst afterwards (12 of 12
+  landed, positions and fees recorded); a second `reconcile` changed nothing.
+- Money: the 12 payers' balances fell by exactly the probe fees in the spend ledger, 556 135 lamports over 101 landed
+  probes; `sweep --live --to` then left every payer and the funder at 0.
+
 ## What went wrong
 
 - **The first slot clock fired 1.8–3.4 slots early.** It extrapolated from the arrival of the latest `slotSubscribe`
@@ -105,6 +123,13 @@ sample) and earlier for Firedancer (+32 ms).
 - **The public endpoint can switch nodes.** The 08:20 and 09:00 recordings saw node clocks 53 ms and 115 ms ahead of
   ours. A clock that kept one offset across a reconnection would fire up to ~60 ms off for a while; the offset is now
   tied to the connection.
+- **A failed collection would have hidden fees.** In the first version a collection error (an RPC failure on
+  `getBlock`, a probe landing after its burst was collected) left the probe's fee out of the spend ledger, and an
+  error in the burst loop aborted the run before its last bursts were collected. Found in the code review before the
+  first mainnet run; now fees come from `getTransaction` when a block cannot be fetched, the run always collects what
+  it sent, and the reconciliation records any fee still missing (tested above).
+- **A merely processed status was counted as landed.** A slot that is processed but later dropped with its fork
+  would have recorded a landing that never happened; a probe now counts as landed only when its block is confirmed.
 - **No devnet SOL.** The devnet and testnet faucets answered every `requestAirdrop` with HTTP 429 or an internal
   error. The end-to-end live test ran on a local validator in Docker (`solanalabs/solana:v1.18.26`): 8 bursts,
   96 of 96 probes landed and were collected; funding, the spend ledger and the sweep matched the chain's fees.
