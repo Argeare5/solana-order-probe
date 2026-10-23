@@ -1,0 +1,12 @@
+# Keys and local configuration never leave the machine
+secrets/
+.env
+
+# Build output
+target/
+__pycache__/
+*.pyc
+.venv/
+
+# Local scratch
+.DS_Store

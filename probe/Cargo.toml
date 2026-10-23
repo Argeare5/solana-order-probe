@@ -1,0 +1,39 @@
+[package]
+name = "order-probe"
+version = "0.1.0"
+edition = "2024"
+description = "Sends probe transactions into chosen Solana leader windows and records where they land in the block"
+license = "MIT"
+publish = false
+
+[dependencies]
+anyhow = "1"
+base64 = "0.23.1"
+bs58 = "0.5.1"
+chrono = { version = "0.4", default-features = false, features = ["clock", "serde"] }
+clap = { version = "4.6", features = ["derive", "env"] }
+flate2 = "1.1.10"
+futures-util = "0.3.34"
+rand = "0.10.3"
+reqwest = { version = "0.13", default-features = false, features = ["json", "rustls"] }
+rustls = "0.23"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+solana-compute-budget-interface = { version = "3", features = ["borsh"] }
+solana-hash = "4"
+solana-instruction = "4.0.0"
+solana-keypair = "4"
+solana-message = "6"
+solana-pubkey = "4"
+solana-signature = "3"
+solana-signer = "4"
+solana-system-interface = { version = "3", features = ["bincode"] }
+solana-tls-utils = { version = "=4.3.2", features = ["agave-unstable-api"] }
+solana-transaction = { version = "6", features = ["wincode"] }
+tokio = { version = "1.54", features = ["macros", "rt-multi-thread", "time", "sync", "fs"] }
+# The QUIC client identity for the leader's TPU: solana-tls-utils builds its certificate from a solana-keypair 3.x
+tls-keypair = { package = "solana-keypair", version = "3.1" }
+# The QUIC implementation Agave 4.3 itself uses (solana-tls-utils pins it)
+quinn = { package = "anza-quinn", version = "=0.11.11-rustsec20260339" }
+tokio-tungstenite = { version = "0.30", features = ["rustls-tls-webpki-roots"] }
+wincode = "0.6.3"
