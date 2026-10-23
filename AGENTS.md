@@ -16,7 +16,10 @@ measurements and what went wrong.
   that exact run.
 - **The spend cap is enforced in code** (`probe/src/ledger.rs`): reserve a burst's worst case before sending, record
   real fees from the chain, never bypass `Ledger::reserve`. Fees are recorded once per signature;
-  `probe/src/reconcile.rs` adds any fee collection missed.
+  `probe/src/reconcile.rs` adds any fee collection missed. The ledger lives with the keys
+  (`secrets/spend_ledger.jsonl`, merged with the published copy in `data/`).
+- **Never use `--live` to check something.** Guards, flags and code paths are checked with unit tests, dry-runs or a
+  local validator in Docker. A live mainnet command runs only when the owner asked for that run.
 - **Keys live only in `./secrets`** (gitignored, mounted into the container). Never print, log, commit or move a
   keypair; never ask for one in chat. The owner's wallet never enters the tool: it funds a throwaway funder created
   by `keys --new-funder`, and `sweep --live --to <wallet>` returns what is left.
@@ -49,6 +52,7 @@ docker build -t solana-order-probe/analyze analyze
 docker run --rm --entrypoint python -w /app solana-order-probe/analyze -m pytest -q tests
 docker compose run --rm analyze                               # regenerate report/generated from data/
 docker compose up                                             # dry-run on mainnet + analysis
+scripts/session.sh                                            # a whole session as a dry-run; --live sends
 ```
 
 Read-only checks against mainnet (no keys needed): `recon`, `calibrate --minutes 5`, `simulate --fee-payer <any funded

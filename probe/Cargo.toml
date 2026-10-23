@@ -30,7 +30,7 @@ solana-signer = "4"
 solana-system-interface = { version = "3", features = ["bincode"] }
 solana-tls-utils = { version = "=4.3.2", features = ["agave-unstable-api"] }
 solana-transaction = { version = "6", features = ["wincode"] }
-tokio = { version = "1.54", features = ["macros", "rt-multi-thread", "time", "sync", "fs"] }
+tokio = { version = "1.54", features = ["macros", "rt-multi-thread", "time", "sync", "fs", "signal"] }
 # The QUIC client identity for the leader's TPU: solana-tls-utils builds its certificate from a solana-keypair 3.x
 tls-keypair = { package = "solana-keypair", version = "3.1" }
 # The QUIC implementation Agave 4.3 itself uses (solana-tls-utils pins it)

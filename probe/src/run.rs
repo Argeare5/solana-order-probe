@@ -173,6 +173,9 @@ pub struct BurstRecord {
     pub fire_vs_observed_ms: Option<f64>,
     pub quic_handshake_ms: Option<f64>,
     pub quic_rtt_ms: Option<f64>,
+    /// Why the TPU closed the connection each time it had to be reopened during the burst.
+    #[serde(default)]
+    pub quic_drops: Vec<String>,
     pub worst_case_lamports: u64,
     pub probes: Vec<ProbeRecord>,
 }
@@ -185,6 +188,31 @@ struct Target {
     stake_sol: f64,
     windows: Vec<Window>,
     done: usize,
+}
+
+/// The most a burst of `args` can cost: every probe at its ladder price plus the base fee.
+fn probe_burst_worst_case(args: &Args) -> u64 {
+    args.prices[..args.probes]
+        .iter()
+        .map(|&cu_price| {
+            probe::max_fee_lamports(&ProbeSpec { tag: String::new(), cu_limit: args.cu_limit, cu_price, target: Pubkey::default() })
+        })
+        .sum()
+}
+
+/// How long before the fire moment the QUIC connection is opened (the handshake takes 30–160 ms on mainnet).
+const CONNECT_LEAD_MS: f64 = 700.0;
+
+/// Sleeps until `offset_ms` from the predicted first evidence of `slot`, re-predicting every few ms.
+async fn wait_until(clock: &SlotClock, slot: u64, offset_ms: f64) {
+    loop {
+        let at = clock::shift(clock.predict(slot), offset_ms);
+        let now = Instant::now();
+        if now >= at {
+            return;
+        }
+        tokio::time::sleep((at - now).min(Duration::from_millis(5))).await;
+    }
 }
 
 pub async fn run(rpc: &Rpc, data_dir: &Path, secrets: &Path, ledger: &Ledger, args: Args) -> Result<()> {
@@ -237,10 +265,28 @@ pub async fn run(rpc: &Rpc, data_dir: &Path, secrets: &Path, ledger: &Ledger, ar
 
     let pool = PayerPool::load_or_create(secrets, args.probes)?;
     if args.live {
+        // Every payer pays one probe of every burst; it must be able to pay the most expensive one in each and
+        // stay rent-exempt, or the last bursts of the run would be lost
         let rent = chain::rent_exempt_minimum(rpc, 0).await?;
+        let top_price = args.prices[..args.probes].iter().copied().max().unwrap_or(0);
+        let per_probe = probe::max_fee_lamports(&ProbeSpec {
+            tag: String::new(),
+            cu_limit: args.cu_limit,
+            cu_price: top_price,
+            target: Pubkey::default(),
+        });
+        let bursts = (targets.len() * args.bursts_per_target) as u64;
+        let needed = rent + bursts * per_probe;
         for payer in &pool.payers {
-            if chain::balance(rpc, &payer.pubkey().to_string()).await? < rent + 100_000 {
-                bail!("payer {} is not funded: run `fund --live` first", payer.pubkey());
+            let balance = chain::balance(rpc, &payer.pubkey().to_string()).await?;
+            if balance < needed {
+                bail!(
+                    "payer {} holds {balance} lamports; {bursts} bursts can cost it up to {} plus {rent} rent-exempt: \
+                     top the payers up with `fund --live --float-sol {:.4}`",
+                    payer.pubkey(),
+                    bursts * per_probe,
+                    (bursts * per_probe) as f64 * 1.1 / 1e9
+                );
             }
         }
     }
@@ -291,6 +337,18 @@ pub async fn run(rpc: &Rpc, data_dir: &Path, secrets: &Path, ledger: &Ledger, ar
         ledger.cap(),
         ledger.spent()
     );
+    if args.live {
+        // The plan, and a moment to stop it, before anything is sent
+        let worst: u64 = targets.len() as u64 * args.bursts_per_target as u64 * probe_burst_worst_case(&args);
+        println!(
+            "LIVE on {cluster}: {} targets × {} bursts, worst case {worst} lamports, {} left under the cap; \
+             sending starts in 10 s (Ctrl-C to stop)",
+            targets.len(),
+            args.bursts_per_target,
+            ledger.cap().saturating_sub(ledger.spent())
+        );
+        tokio::time::sleep(Duration::from_secs(10)).await;
+    }
 
     let tpu = TpuClient::new()?;
     let deadline = Instant::now() + Duration::from_secs(args.max_minutes * 60);
@@ -408,35 +466,31 @@ pub async fn run(rpc: &Rpc, data_dir: &Path, secrets: &Path, ledger: &Ledger, ar
                 break;
             }
 
-            let connected = match args.path {
-                SendPath::Quic => tpu.connect(target.tpu_quic).await.map(Some),
-                SendPath::Rpc => Ok(None),
-            };
-            let (connection, handshake_ms, rtt_ms) = match connected {
-                Ok(None) => (None, None, None),
-                Ok(Some((connection, handshake))) => {
-                    let rtt = connection.rtt().as_secs_f64() * 1e3;
-                    (Some(connection), Some(handshake.as_secs_f64() * 1e3), Some(rtt))
-                }
-                Err(error) => {
-                    println!("  QUIC to {}: {error:#}; burst skipped", target.tpu_quic);
-                    if args.live {
-                        ledger.release(worst_case);
+            // Connect shortly before the fire moment (an idle unstaked connection is what a busy TPU evicts first),
+            // then wait for the moment itself; the window start is re-predicted every few ms on the way
+            wait_until(&clock, window.start, offset_ms - CONNECT_LEAD_MS).await;
+            let mut link = match args.path {
+                SendPath::Quic => match quic::Link::open(&tpu, target.tpu_quic).await {
+                    Ok(link) => Some(link),
+                    Err(error) => {
+                        println!("  QUIC to {}: {error:#}; burst skipped", target.tpu_quic);
+                        if args.live {
+                            ledger.release(worst_case);
+                        }
+                        targets[ti].windows.retain(|w| w.start != window.start);
+                        continue;
                     }
-                    targets[ti].windows.retain(|w| w.start != window.start);
-                    continue;
-                }
+                },
+                SendPath::Rpc => None,
             };
-
-            // Fire: the window start is re-predicted with the newest evidence every few ms until the moment comes
-            loop {
-                let fire = clock::shift(clock.predict(window.start), offset_ms);
-                let now = Instant::now();
-                if now >= fire {
-                    break;
-                }
-                tokio::time::sleep((fire - now).min(Duration::from_millis(5))).await;
+            let handshake_ms = link.as_ref().map(|l| l.handshake.as_secs_f64() * 1e3);
+            wait_until(&clock, window.start, offset_ms).await;
+            if let Some(link) = link.as_mut()
+                && let Err(error) = link.ensure_open().await
+            {
+                println!("  QUIC to {}: {error:#}", target.tpu_quic);
             }
+            let rtt_ms = link.as_ref().map(|l| l.connection.rtt().as_secs_f64() * 1e3);
             let fired = Instant::now();
             let fire_unix_us = clock::unix_us();
             let fire_at = Utc::now().to_rfc3339_opts(SecondsFormat::Micros, true);
@@ -452,8 +506,8 @@ pub async fn run(rpc: &Rpc, data_dir: &Path, secrets: &Path, ledger: &Ledger, ar
                     tokio::time::sleep(Duration::from_millis(spacing_ms)).await;
                 }
                 if args.live {
-                    let sent = match (&connection, args.path) {
-                        (Some(connection), SendPath::Quic) => quic::send(connection, &built[i].wire).await.map(|s| streams.push((i, s))),
+                    let sent = match (link.as_mut(), args.path) {
+                        (Some(link), SendPath::Quic) => link.send(&built[i].wire).await.map(|s| streams.push((i, s))),
                         (_, SendPath::Rpc) => chain::send_unchecked(rpc, &built[i].wire).await.map(|_| ()),
                         (None, SendPath::Quic) => Ok(()),
                     };
@@ -464,7 +518,7 @@ pub async fn run(rpc: &Rpc, data_dir: &Path, secrets: &Path, ledger: &Ledger, ar
                 records[i].sent_offset_us = Some(fired.elapsed().as_micros() as u64);
             }
             last_fire = Some(fired);
-            if let Some(connection) = &connection {
+            if let Some(link) = &link {
                 // Wait until the TPU acknowledges every probe's bytes (or 2 s), then close
                 let until = tokio::time::Instant::now() + Duration::from_secs(2);
                 let acks = streams.into_iter().map(|(i, stream)| async move {
@@ -479,8 +533,9 @@ pub async fn run(rpc: &Rpc, data_dir: &Path, secrets: &Path, ledger: &Ledger, ar
                 for (i, ack) in futures_util::future::join_all(acks).await {
                     records[i].tpu_ack = Some(ack);
                 }
-                connection.close(0u32.into(), b"done");
+                link.connection.close(0u32.into(), b"done");
             }
+            let quic_drops = link.map(|l| l.drops).unwrap_or_default();
             let observed = clock.wait_observed(window.start, clock.predict(window.start) + Duration::from_secs(3)).await;
 
             let record = BurstRecord {
@@ -511,6 +566,7 @@ pub async fn run(rpc: &Rpc, data_dir: &Path, secrets: &Path, ledger: &Ledger, ar
                 fire_vs_observed_ms: clock.observed_unix_ms(window.start).map(|ms| fire_unix_us as f64 / 1e3 - ms),
                 quic_handshake_ms: handshake_ms,
                 quic_rtt_ms: rtt_ms,
+                quic_drops,
                 worst_case_lamports: worst_case,
                 probes: records,
             };

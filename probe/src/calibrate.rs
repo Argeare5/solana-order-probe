@@ -184,11 +184,20 @@ pub async fn run(rpc: &Rpc, data_dir: &Path, args: Args) -> Result<()> {
     let until = Instant::now() + Duration::from_secs_f64(args.minutes * 60.0);
     let mut events = Vec::new();
     let mut next_report = Instant::now() + Duration::from_secs(30);
+    // Ctrl-C or SIGTERM ends the recording early; what was recorded is still evaluated and written
+    let stop = stop_signal();
+    tokio::pin!(stop);
     while Instant::now() < until {
-        match tokio::time::timeout(Duration::from_millis(200), rx.recv()).await {
-            Ok(Some(event)) => events.push(event),
-            Ok(None) => break,
-            Err(_) => {}
+        tokio::select! {
+            received = tokio::time::timeout(Duration::from_millis(200), rx.recv()) => match received {
+                Ok(Some(event)) => events.push(event),
+                Ok(None) => break,
+                Err(_) => {}
+            },
+            _ = &mut stop => {
+                println!("  stopped after {} events", events.len());
+                break;
+            }
         }
         if Instant::now() > next_report {
             println!("  {} events, slot {}, slot time {:.1} ms", events.len(), clock.latest_slot(), clock.slot_ms());
@@ -218,6 +227,20 @@ pub async fn run(rpc: &Rpc, data_dir: &Path, args: Args) -> Result<()> {
     print(&summary);
     println!("\nCalibration written to {}", dir.display());
     Ok(())
+}
+
+/// Completes on Ctrl-C or, on Unix, SIGTERM.
+async fn stop_signal() {
+    #[cfg(unix)]
+    {
+        let mut term = tokio::signal::unix::signal(tokio::signal::unix::SignalKind::terminate()).expect("SIGTERM handler");
+        tokio::select! {
+            _ = tokio::signal::ctrl_c() => {}
+            _ = term.recv() => {}
+        }
+    }
+    #[cfg(not(unix))]
+    let _ = tokio::signal::ctrl_c().await;
 }
 
 fn evaluate(events: &[RawEvent], hint_ms: f64, horizons: &[f64], slots_updates: bool, leaders: Option<&Leaders>) -> Value {

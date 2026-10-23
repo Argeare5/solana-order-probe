@@ -52,10 +52,10 @@ Intervals: 95% cluster bootstrap over bursts (2000 draws); p: permutation test o
 
 ## Fire timing (first probe sent − window's first shred, ms)
 
-|   offset_ms |   count |   mean |   std |   min |   10% |   50% |   90% |   max |
-|------------:|--------:|-------:|------:|------:|------:|------:|------:|------:|
-|        -300 |     151 |   -346 |   109 |  -961 |  -454 |  -308 |  -269 |  -235 |
-|         100 |     127 |     74 |    75 |  -371 |    -7 |    98 |   131 |   201 |
+|   offset_ms |   count |   mean |   std |   min |   10% |   50% |   90% |   max |   from_parallel_stream |
+|------------:|--------:|-------:|------:|------:|------:|------:|------:|------:|-----------------------:|
+|        -300 |     151 |   -346 |   109 |  -961 |  -454 |  -308 |  -269 |  -235 |                      0 |
+|         100 |     127 |     74 |    75 |  -371 |    -7 |    98 |   131 |   201 |                      0 |
 
 ## Whole blocks: Kendall τ of position against reward per cost unit
 
@@ -90,6 +90,24 @@ Planned fire moment against the window's start, and the gap between sends. Share
 | HarmonicFiredancer | 0.90 (132) | 0.62 (132) | 0.61 (70) | 0.58 (132) | 0.59 (132) | 0.32 (38) |
 | JitoLabs | 0.68 (396) | 0.69 (396) | 0.57 (125) | 0.51 (264) | 0.59 (237) | 0.72 (61) |
 | Rakurai | 0.71 (132) | 0.61 (132) | 0.67 (100) | 0.64 (132) | 0.61 (132) | 0.48 (27) |
+
+## By session
+
+Each run is a session at one time of day. Fee share: main and conflict bursts (all conditions / whole burst before the window, ≤ 10 ms apart); block load: median transactions and compute units of the target leaders' blocks that held probes.
+
+| Session | Client | Fee share | Fee share, clean | Transactions per block | Compute units per block |
+| --- | --- | --- | --- | --- | --- |
+| 20261023T102008Z | Agave | 0.65 (1117) | 0.82 (528) | 284 | 10.5 M |
+| 20261023T102008Z | AgaveBam | 0.84 (1166) | 0.92 (528) | 346 | 13.3 M |
+| 20261023T102008Z | FireBAM | 0.62 (66) | – (0) | 302 | 9.6 M |
+| 20261023T100857Z | Firedancer | 1.00 (264) | 1.00 (264) | 668 | 24.0 M |
+| 20261023T102008Z | Firedancer | 0.82 (1220) | 0.95 (528) | 414 | 17.8 M |
+| 20261023T100857Z | HarmonicAgave | 0.78 (264) | 0.78 (264) | 385 | 14.5 M |
+| 20261023T102008Z | HarmonicAgave | 0.56 (581) | 0.59 (264) | 384 | 13.0 M |
+| 20261023T102008Z | HarmonicFiredancer | 0.65 (636) | 0.76 (264) | 321 | 12.9 M |
+| 20261023T100857Z | JitoLabs | 0.80 (264) | 0.80 (264) | 257 | 7.9 M |
+| 20261023T102008Z | JitoLabs | 0.59 (1215) | 0.63 (528) | 345 | 12.1 M |
+| 20261023T102008Z | Rakurai | 0.64 (655) | 0.66 (264) | 236 | 9.3 M |
 
 ## Where leaders take transactions in (snapshot 20261023T094303Z)
 

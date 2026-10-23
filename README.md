@@ -45,6 +45,10 @@ docker compose run --rm probe sweep --live --to <your wallet>    # everything le
 docker compose run --rm analyze
 ```
 
+A whole measurement session is one command, `scripts/session.sh --live` (dry-run without `--live`): a fresh
+snapshot, the slot stream recorded alongside the run (an independent record of every window start), the run of the
+campaign's 12 leaders × 24 bursts with its log, a final reconciliation and the analysis.
+
 | Command | What it does | Sends? |
 | --- | --- | --- |
 | `recon` | Snapshot of clients (`clientId`, version), stake, TPU addresses, slot time, Alpenglow state, candidate leaders | no |
@@ -57,9 +61,13 @@ docker compose run --rm analyze
 | `run` | Bursts into the targets' leader windows, then collection and reconciliation | only with `--live` |
 | `reconcile` | Checks every probe of the live runs against the chain and records any fee the ledger is missing | no |
 
-**Spend cap.** Every fee paid (probes, funding, sweeping) is read back from the chain and appended to
-`data/spend_ledger.jsonl`, once per signature. Before each burst its worst case is reserved, and a burst that could
-pass the cap is refused. A burst whose collection fails, or a probe that lands after its burst was collected, is
+**Spend cap.** Every fee paid (probes, funding, sweeping) is read back from the chain and appended to the spend
+ledger, once per signature. The ledger belongs to the keys that pay: `secrets/spend_ledger.jsonl` counts for the cap
+and `data/spend_ledger.jsonl` is its published copy, merged by signature whenever the tool starts, so a run pointed at
+another data directory still sees everything these keys have spent. A live run first checks that every payer can pay
+the most expensive probe of every burst it plans, prints the plan (bursts, worst case, what is left under the cap) and
+waits 10 s before sending. Before each burst its worst case is reserved, and a burst that could pass the cap is
+refused. A burst whose collection fails, or a probe that lands after its burst was collected, is
 picked up by the reconciliation that `run --live` performs before it sends anything and after its last probe can no
 longer land, so the ledger holds every fee actually paid. On a local validator the payers' balances fell by exactly the
 sum of the probe fees in the ledger (556 135 lamports over 101 landed probes, one run killed mid-way and reconciled).
@@ -96,7 +104,9 @@ plan for 74% of bursts and within 100 ms for 91% (median deviation 33 ms, worst 
 
 **Path.** Probes go over QUIC, configured as Agave's own `tpu-client-next` configures it, to the TPU address the
 leader advertises in gossip; for every probe the run records whether the TPU acknowledged all of its bytes. Our
-connection is unstaked, so stake-weighted QoS gives it a small share; probes that do not land are counted, not re-sent.
+connection is unstaked, so stake-weighted QoS gives it a small share, and a busy TPU evicts it: the connection is
+opened 700 ms before the fire moment, reopened if the TPU drops it (every drop is recorded with the burst), and
+probes that do not land are counted, not re-sent.
 For Jito-Solana, Agave, Firedancer and Rakurai that TPU is the validator's own host. For the BAM and Harmonic clients
 it never is: their nodes advertise a shared ingress of the external sequencer or block builder (on October 23, 361
 AgaveBam nodes behind 17 TPU hosts, up to 96 behind one; 59 HarmonicAgave nodes behind 7). For those leaders the

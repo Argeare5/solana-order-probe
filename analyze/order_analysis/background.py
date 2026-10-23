@@ -40,7 +40,9 @@ def block_rows(data: Dataset) -> pd.DataFrame:
             tau = stats.kendalltau(known["position"], -per_cost).statistic if len(known) > 2 else np.nan
             rows.append({
                 "run_id": b.run_id, "slot": slot, "identity": b.identity, "client": b.client,
-                "transactions": len(txs), "with_priority_info": len(known), "tau_reward_per_cost": tau,
+                "transactions": len(txs), "compute_units": int(txs["cu"].fillna(0).sum()),
+                "cost_units": int(txs["cost_units"].fillna(0).sum()),
+                "with_priority_info": len(known), "tau_reward_per_cost": tau,
                 "position_in_window": slot - b.window_start,
             })
     return pd.DataFrame(rows)

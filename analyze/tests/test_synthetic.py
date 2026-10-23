@@ -55,3 +55,33 @@ def test_agreement_counts_pairs():
     assert list(agree) == [3, 0] and n == 3
     agree, n = metrics._agreement(np.array([[2.0, 2.0, 1.0]]))
     assert list(agree) == [2] and n == 2
+
+
+def test_missing_fire_timing_comes_from_the_recorded_stream(tmp_path):
+    import gzip
+    import json
+
+    synth.write(tmp_path / "data", bursts_per_validator=4)
+    path = tmp_path / "data" / "runs" / "20990101T000000Z" / "bursts.jsonl"
+    bursts = [json.loads(line) for line in path.read_text().splitlines()]
+    # The run's clock missed the first burst's window start; a slot stream recorded alongside saw it
+    bursts[0]["fire_vs_observed_ms"] = None
+    bursts[0]["fire_unix_us"] = 5_000_000_000_000
+    path.write_text("".join(json.dumps(b) + "\n" for b in bursts))
+    window = bursts[0]["window"]["start"]
+    # 40 first shreds delivered 50 ms after the node's timestamp; the window's first shred 250 ms after the fire
+    # moment by the node's clock, so 300 ms after it on this machine's clock
+    events = [{"unix_us": 0, "kind": "connected", "slot": 0, "node_ms": None}]
+    for i in range(40):
+        node_ms = 5_000_000_250 - (39 - i) * 200
+        events.append({"unix_us": (node_ms + 50) * 1000, "kind": "firstShredReceived", "slot": window - 39 + i, "node_ms": node_ms})
+    (tmp_path / "data" / "calibration" / "x").mkdir(parents=True)
+    with gzip.open(tmp_path / "data" / "calibration" / "x" / "events.json.gz", "wt") as f:
+        json.dump(events, f)
+
+    data = load.load(tmp_path / "data", cluster="synthetic")
+    first = data.bursts.iloc[0]
+    assert first["fire_timing_source"] == "slot stream recorded alongside"
+    assert abs(first["fire_vs_observed_ms"] - (-300.0)) < 1e-6
+    assert (data.bursts["fire_timing_source"].iloc[1:] == "run clock").all()
+    assert abs(data.probes[data.probes["burst"] == 0]["fire_vs_observed_ms"].iloc[0] - (-300.0)) < 1e-6

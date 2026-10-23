@@ -13,7 +13,10 @@ import json
 from dataclasses import dataclass
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
+
+from . import network
 
 
 @dataclass
@@ -41,7 +44,7 @@ def _jsonl(path: Path) -> list[dict]:
 
 BURST_COLUMNS = [
     "run_id", "burst", "identity", "client", "version", "stake_sol", "path", "variant", "spacing_ms", "offset_ms",
-    "fire_at", "fire_vs_observed_ms", "clock_basis", "quic_handshake_ms", "quic_rtt_ms",
+    "fire_at", "fire_unix_us", "fire_vs_observed_ms", "clock_basis", "quic_handshake_ms", "quic_rtt_ms",
 ]
 
 
@@ -53,6 +56,9 @@ def load(data_dir: Path, cluster: str | None = "mainnet-beta", include_dry: bool
         if cluster is not None and run.get("cluster") != cluster:
             continue
         if not run.get("live") and not include_dry:
+            continue
+        if run.get("lost"):
+            # A run whose records were lost: only its fees and signatures remain (reconstructed.jsonl)
             continue
         run_dirs[run["run_id"]] = run_dir
         runs.append(run)
@@ -96,8 +102,23 @@ def load(data_dir: Path, cluster: str | None = "mainnet-beta", include_dry: bool
                     "fee_lamports": r.get("fee_lamports"),
                     "failed": r.get("err") is not None,
                 })
+    bursts_df = pd.DataFrame(bursts)
     probes_df = pd.DataFrame(probes)
+    if not bursts_df.empty:
+        # A burst whose own clock did not see the window start takes it from a slot stream recorded alongside
+        bursts_df["fire_timing_source"] = np.where(bursts_df["fire_vs_observed_ms"].notna(), "run clock", None)
+        missing = bursts_df["fire_vs_observed_ms"].isna() & bursts_df["fire_unix_us"].notna()
+        if missing.any():
+            starts = network.window_starts(data_dir)
+            start = bursts_df.loc[missing, "window_start"].map(starts)
+            found = start.notna()
+            idx = start[found].index
+            bursts_df.loc[idx, "fire_vs_observed_ms"] = bursts_df.loc[idx, "fire_unix_us"] / 1e3 - start[found]
+            bursts_df.loc[idx, "fire_timing_source"] = "slot stream recorded alongside"
+        if not probes_df.empty:
+            timing = bursts_df.set_index(["run_id", "burst"])["fire_vs_observed_ms"]
+            probes_df["fire_vs_observed_ms"] = [timing.get((r, b)) for r, b in zip(probes_df["run_id"], probes_df["burst"])]
     if not probes_df.empty:
         for column in ("landed_slot", "block_index", "block_transactions", "fee_lamports"):
             probes_df[column] = probes_df[column].astype("Int64")
-    return Dataset(data_dir, pd.DataFrame(runs), pd.DataFrame(bursts), probes_df, run_dirs)
+    return Dataset(data_dir, pd.DataFrame(runs), bursts_df, probes_df, run_dirs)

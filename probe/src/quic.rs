@@ -70,3 +70,54 @@ pub async fn send(connection: &Connection, wire: &[u8]) -> Result<quinn::SendStr
     stream.finish()?;
     Ok(stream)
 }
+
+/// Reconnections allowed within one burst.
+const MAX_RECONNECTS: u32 = 3;
+
+/// A connection to one TPU that is reopened when the TPU drops it. A busy TPU evicts unstaked connections
+/// (`closed by peer: dropped`), sometimes between the handshake and the first stream; every drop is counted and its
+/// reason kept with the burst.
+pub struct Link<'a> {
+    client: &'a TpuClient,
+    peer: SocketAddr,
+    pub connection: Connection,
+    pub handshake: Duration,
+    pub drops: Vec<String>,
+}
+
+impl<'a> Link<'a> {
+    pub async fn open(client: &'a TpuClient, peer: SocketAddr) -> Result<Self> {
+        let (connection, handshake) = client.connect(peer).await?;
+        Ok(Self { client, peer, connection, handshake, drops: Vec::new() })
+    }
+
+    /// Reopens the connection if the TPU has closed it.
+    pub async fn ensure_open(&mut self) -> Result<()> {
+        if let Some(reason) = self.connection.close_reason() {
+            self.reconnect(reason.to_string()).await?;
+        }
+        Ok(())
+    }
+
+    /// Sends one transaction; if the connection is gone, reopens it once and sends again.
+    pub async fn send(&mut self, wire: &[u8]) -> Result<quinn::SendStream> {
+        match send(&self.connection, wire).await {
+            Ok(stream) => Ok(stream),
+            Err(error) => {
+                let reason = self.connection.close_reason().map_or_else(|| format!("{error:#}"), |r| r.to_string());
+                self.reconnect(reason).await?;
+                send(&self.connection, wire).await
+            }
+        }
+    }
+
+    async fn reconnect(&mut self, reason: String) -> Result<()> {
+        self.drops.push(reason);
+        if self.drops.len() as u32 > MAX_RECONNECTS {
+            anyhow::bail!("dropped {} times in one burst", self.drops.len());
+        }
+        let (connection, _) = self.client.connect(self.peer).await?;
+        self.connection = connection;
+        Ok(())
+    }
+}

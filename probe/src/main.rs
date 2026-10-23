@@ -87,7 +87,7 @@ async fn main() -> anyhow::Result<()> {
     // Both rustls backends are linked (through different dependencies): use the one Agave's TLS utils use
     let _ = rustls::crypto::CryptoProvider::install_default(solana_tls_utils::crypto_provider());
     let rpc = rpc::Rpc::new(&cli.rpc_url)?;
-    let ledger = ledger::Ledger::open(&cli.data_dir, cli.spend_cap_sol)?;
+    let ledger = ledger::Ledger::open(&cli.secrets_dir, &cli.data_dir, cli.spend_cap_sol)?;
     match cli.command {
         Command::Recon(args) => recon::run(&rpc, &cli.data_dir, args).await,
         Command::QuicPing { peers } => {

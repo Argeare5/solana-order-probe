@@ -10,8 +10,10 @@ from __future__ import annotations
 
 import gzip
 import json
+from collections import defaultdict
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 
@@ -84,3 +86,25 @@ def slot_positions(data_dir: Path) -> pd.DataFrame:
         for r in summary.get("slot_interval_by_position_ms", []):
             rows.append({"calibration": path.parent.name, **r})
     return pd.DataFrame(rows)
+
+
+def window_starts(data_dir: Path) -> dict[int, float]:
+    """The first shred of every slot in the recorded slot streams (data/calibration), on this machine's clock in Unix
+    ms: the node's timestamp moved by its connection's lower delivery envelope, as the slot clock does. Used for the
+    bursts whose own clock did not see their window start."""
+    starts: dict[int, float] = {}
+    for path in sorted((data_dir / "calibration").glob("*/events.json.gz")):
+        with gzip.open(path, "rt") as f:
+            events = json.load(f)
+        connection, deliveries, shreds = 0, defaultdict(list), []
+        for e in events:
+            if e["kind"] == "connected":
+                connection += 1
+            elif e["kind"] == "firstShredReceived" and e.get("node_ms"):
+                deliveries[connection].append(e["unix_us"] / 1e3 - e["node_ms"])
+                shreds.append((e["slot"], e["node_ms"], connection))
+        envelope = {c: float(np.quantile(d, 0.02)) for c, d in deliveries.items() if len(d) >= 30}
+        for slot, node_ms, c in shreds:
+            if c in envelope:
+                starts.setdefault(slot, node_ms + envelope[c])
+    return starts

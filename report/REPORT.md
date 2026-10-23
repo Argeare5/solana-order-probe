@@ -24,6 +24,7 @@ Checked on the chain: blocks 459 652 900 and 459 652 950 carry 664 of 953 and 64
 | 2026-10-23 10:09–10:20 | **Live pilot**: 3 leaders on 3 clients (JitoLabs, HarmonicAgave, Firedancer) × 8 bursts, fired 300 ms before the window, 0 and 10 ms spacing | `data/runs/20261023T100857Z` |
 | 2026-10-23 10:20–12:51 | **Live campaign, session 1**: 12 leaders on 8 clients × 24 bursts, every combination of 4 variants, fire 300 ms before or 100 ms after the window start, and 0, 10 or 50 ms between sends | `data/runs/20261023T102008Z` |
 | 2026-10-23 13:00–13:08 | Reconciliation of all live probes with the chain (1 late landing, 5 180 lamports added); spend ledger checked against the 13 addresses' balances | `data/runs/*/reconciled.jsonl`, `data/spend_ledger.jsonl` |
+| 2026-10-23 13:20 | Live run started by mistake during a code check (4 bursts, 48 probes, 258 160 lamports); records lost, fees and signatures recovered from the chain; not analysed (see What went wrong) | `data/runs/20261023T132013Z/reconstructed.jsonl` |
 
 ## Where leaders take transactions in
 
@@ -213,8 +214,12 @@ the evidence, the block is background.
 
 ### What these results do not show
 
-One session of 2.5 hours on October 23 (10:20–12:51 UTC), from one unstaked machine: other times of day, staked senders and leaders with
-more data may differ. The verdicts describe the result in the block; for BAM and Harmonic leaders that result is the
+One session of 2.5 hours on October 23 (10:20–12:51 UTC), from one unstaked machine: other times of day, staked
+senders and leaders with more data may differ. The sessions already differ: in the cleanest condition (whole burst
+before the window, at most 10 ms apart) the pilot, run just before it, gave a fee share of 0.80 for the JitoLabs leader,
+0.78 for HarmonicAgave and 1.00 for Firedancer, against 0.63, 0.59 and 0.95 in session 1 (`generated/by_session.csv`);
+a second session at another time of day is planned. The verdicts describe the result in the block; for BAM and
+Harmonic leaders that result is the
 external sequencer's and the leader's together.
 
 ## What went wrong
@@ -239,6 +244,20 @@ external sequencer's and the leader's together.
   it sent, and the reconciliation records any fee still missing (tested above).
 - **A merely processed status was counted as landed.** A slot that is processed but later dropped with its fork
   would have recorded a landing that never happened; a probe now counts as landed only when its block is confirmed.
+- **A live run was started by mistake.** At 13:20 UTC, while checking the new guard that payers must afford a whole
+  run, the check itself was run with `--live` and a scratch data directory, expecting the guard to refuse it. The
+  payers could afford it, so 4 bursts (48 probes, all landed, 258 160 lamports) went to two leaders without being
+  planned, and their records were deleted with the scratch directory. The fees went into that directory's own spend
+  ledger, out of sight of the cap. Recovered: the 48 signatures and fees from the payers' on-chain history (memo tags
+  `sop:20261023T132013Z:*`), now in the spend ledger and in `data/runs/20261023T132013Z/reconstructed.jsonl`; the
+  ledger again equals the chain (18 962 276 lamports spent of the 0.1 SOL deposited). Fixed: the ledger now belongs to
+  the keys (`secrets/spend_ledger.jsonl`, merged with the published copy), so another data directory cannot reset the
+  count; a live run prints its plan and waits 10 s; checks are never run with `--live`. These bursts are not analysed.
+- **Unstaked connections were evicted.** In session 1 the TPU closed 26 connections right after the handshake
+  (`closed by peer: dropped`), losing 312 probes, mostly at the FireBAM leader whose TPU is a BAM ingress shared with
+  ~100 nodes. The connection was opened 2–3 s before the fire moment and sat idle. For the next session it is
+  opened 700 ms before and reopened if dropped; in a mainnet dry-run against that FireBAM leader no connection was
+  dropped in 3 bursts.
 - **The final reconciliation of session 1 timed out.** It asked the public RPC for 256 signature statuses with history
   search in one request; for unknown signatures (mostly the FireBAM probes that never reached a leader) the endpoint
   timed out, and the run ended with an error after all 288 bursts had been sent and collected. Requests now carry 32

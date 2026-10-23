@@ -1,0 +1,7 @@
+{
+  "run_id": "20261023T132013Z",
+  "cluster": "mainnet-beta",
+  "live": true,
+  "lost": true,
+  "note": "Started by mistake during a code check on 2026-10-23 at 13:20 UTC (a live run with a scratch data directory); its bursts.jsonl and results.jsonl were deleted with that directory. The 48 probes (4 bursts, all landed) and their fees were recovered from the payers' on-chain history (memo tags sop:20261023T132013Z:*). Not part of the analysis."
+}

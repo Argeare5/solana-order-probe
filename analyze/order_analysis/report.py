@@ -152,6 +152,8 @@ def build(data: Dataset, out: Path, seed: int, n_boot: int, n_perm: int, min_pai
     # Timing: when bursts went out relative to the window's first shred, by planned offset
     bursts = data.bursts
     timing = bursts.groupby("offset_ms")["fire_vs_observed_ms"].describe(percentiles=[0.1, 0.5, 0.9])
+    timing["from_parallel_stream"] = bursts.groupby("offset_ms")["fire_timing_source"].apply(
+        lambda s: int((s == "slot stream recorded alongside").sum()))
     timing.to_csv(out / "timing.csv")
     slot_in_window = probes.dropna(subset=["landed_slot"]).assign(
         slot_in_window=lambda d: d["landed_slot"].astype(int) - d["window_start"]
@@ -182,8 +184,11 @@ def build(data: Dataset, out: Path, seed: int, n_boot: int, n_perm: int, min_pai
                              "| --- | --- | --- | --- | --- | --- |"]
                             + [f"| {r['client']} | `{r['identity']}` | {r['sent']} | {r['landed']} | {_fmt_share(r, 'fee')} | "
                                f"{_fmt_share(r, 'arrival_null')} |" for _, r in rpc_df.iterrows()]) + "\n\n"
+    sessions_df = _sessions(probes, blocks, data.runs, rng)
+    sessions_df.to_csv(out / "by_session.csv", index=False)
     (out / "summary.md").write_text(_markdown(delivery, validators_df, clients_df, timing, blocks, summary) + "\n"
-                                    + _conditions_markdown(conditions_df) + rpc_md + network_md)
+                                    + _conditions_markdown(conditions_df) + _sessions_markdown(sessions_df) + rpc_md
+                                    + network_md)
     return summary
 
 
@@ -377,4 +382,42 @@ def _conditions_markdown(df: pd.DataFrame) -> str:
             else:
                 cells.append(f"{r['fee_share'].iloc[0]:.2f} ({int(r['fee_pairs'].iloc[0])})")
         lines.append(f"| {client} | " + " | ".join(cells) + " |")
+    return "\n".join(lines) + "\n\n"
+
+
+def _sessions(probes: pd.DataFrame, blocks: pd.DataFrame, runs: pd.DataFrame, rng: np.random.Generator) -> pd.DataFrame:
+    """Per run (a session at one time of day) and client: the fee share in all main and conflict bursts and in the
+    cleanest condition (whole burst at the leader before its window, sent at most 10 ms apart), and the load of the
+    target leaders' blocks."""
+    started = dict(zip(runs.get("run_id", []), runs.get("started_at", [])))
+    rows = []
+    for (run_id, client), g in probes.groupby(["run_id", "client"]):
+        ladder = g[g["variant"].isin(INDEPENDENT_VARIANTS)]
+        clean = ladder[(ladder["offset_ms"] < 0) & (ladder["spacing_ms"] <= 10)]
+        b = blocks[(blocks["run_id"] == run_id) & (blocks["client"] == client)] if not blocks.empty else blocks
+        fee, fee_clean = metrics.share(ladder, "fee", rng, 200, 1), metrics.share(clean, "fee", rng, 200, 1)
+        rows.append({
+            "run_id": run_id, "started_at": started.get(run_id), "client": client,
+            "fee_share": fee.share, "fee_pairs": fee.pairs, "fee_share_clean": fee_clean.share, "fee_pairs_clean": fee_clean.pairs,
+            "block_transactions_median": float(b["transactions"].median()) if len(b) else np.nan,
+            "block_compute_units_median": float(b["compute_units"].median()) if len(b) else np.nan,
+        })
+    return pd.DataFrame(rows)
+
+
+def _sessions_markdown(df: pd.DataFrame) -> str:
+    if df.empty or df["run_id"].nunique() < 2:
+        return ""
+    lines = ["## By session", "",
+             "Each run is a session at one time of day. Fee share: main and conflict bursts (all conditions / whole burst "
+             "before the window, ≤ 10 ms apart); block load: median transactions and compute units of the target "
+             "leaders' blocks that held probes.", "",
+             "| Session | Client | Fee share | Fee share, clean | Transactions per block | Compute units per block |",
+             "| --- | --- | --- | --- | --- | --- |"]
+    for _, r in df.sort_values(["client", "run_id"]).iterrows():
+        def f(v, digits=2):
+            return "–" if pd.isna(v) else f"{v:.{digits}f}"
+        lines.append(f"| {r['run_id']} | {r['client']} | {f(r['fee_share'])} ({int(r['fee_pairs'])}) | "
+                     f"{f(r['fee_share_clean'])} ({int(r['fee_pairs_clean'])}) | {f(r['block_transactions_median'], 0)} | "
+                     f"{f(r['block_compute_units_median'] / 1e6, 1)} M |")
     return "\n".join(lines) + "\n\n"
