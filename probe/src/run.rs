@@ -2,17 +2,19 @@
 //!
 //! For each burst the tool waits for the next window of one of the targets, builds K probes with a fresh blockhash
 //! (one payer each, same shape, prices and send order set by the burst's variant), opens a QUIC connection to the
-//! leader's TPU and, `lead_ms` before the window starts by the slot clock, sends the probes one stream each in the
-//! planned order, `spacing_ms` apart. The burst is written to `bursts.jsonl` before collection starts.
+//! leader's TPU and, at the burst's offset from the predicted start of the window (the slot clock is re-predicted
+//! every few ms until then), sends the probes one stream each in the planned order, `spacing_ms` apart. The first
+//! evidence of the window that the RPC node then reports is recorded with the burst, so the analysis knows when the
+//! burst really went out relative to the window. The burst is written to `bursts.jsonl` before collection starts.
 //! Without `--live` nothing is sent: the burst is planned, built and timed, and the connection is opened, so the
 //! dry-run shows whether the timing hits the window.
 
 use std::collections::HashMap;
 use std::net::SocketAddr;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::time::{Duration, Instant};
 
-use anyhow::{Context, Result, bail};
+use anyhow::{Result, bail};
 use chrono::{SecondsFormat, Utc};
 use rand::rngs::StdRng;
 use rand::seq::SliceRandom;
@@ -22,7 +24,7 @@ use serde_json::json;
 use solana_pubkey::Pubkey;
 use solana_signer::Signer;
 
-use crate::clock::SlotClock;
+use crate::clock::{self, SlotClock};
 use crate::keys::PayerPool;
 use crate::ledger::Ledger;
 use crate::probe::{self, ProbeSpec};
@@ -30,6 +32,16 @@ use crate::quic::{self, TpuClient};
 use crate::rpc::Rpc;
 use crate::schedule::{self, Window};
 use crate::{chain, collect};
+
+/// How the probes reach the leader.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, clap::ValueEnum, Serialize)]
+#[serde(rename_all = "lowercase")]
+pub enum SendPath {
+    /// Straight to the leader's TPU over QUIC: we control the arrival order.
+    Quic,
+    /// Through the RPC node's `sendTransaction` (no preflight, no retries), which forwards them itself: for comparison.
+    Rpc,
+}
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, clap::ValueEnum, Serialize)]
 #[serde(rename_all = "lowercase")]
@@ -66,8 +78,8 @@ pub struct Args {
     #[arg(long, default_value_t = 12)]
     probes: usize,
 
-    /// Compute unit limit of every probe.
-    #[arg(long, default_value_t = 1_400)]
+    /// Compute unit limit of every probe (a probe consumes ~810 CU on mainnet: see `simulate`).
+    #[arg(long, default_value_t = 900)]
     cu_limit: u32,
 
     /// Price ladder in micro-lamports per compute unit, one price per probe.
@@ -78,13 +90,19 @@ pub struct Args {
     )]
     prices: Vec<u64>,
 
-    /// How long before the window starts (by the slot clock) the first probe goes out, in ms.
-    #[arg(long, default_value_t = 150.0)]
-    lead_ms: f64,
+    /// When the first probe goes out, relative to the predicted first evidence of the window's first slot at the
+    /// RPC node, in ms (negative = before); used in turn. Probes that reach an Agave leader before its window are
+    /// held for it, so a negative offset gives the scheduler the whole burst at once and a positive one streams it in.
+    #[arg(long, value_delimiter = ',', allow_hyphen_values = true, default_value = "-300,100")]
+    offsets_ms: Vec<f64>,
 
     /// Gap between consecutive sends of a burst, in ms; used in turn.
     #[arg(long, value_delimiter = ',', default_value = "0,10,50")]
     spacings_ms: Vec<u64>,
+
+    /// How the probes are sent: straight to the leader over QUIC, or through the RPC node for comparison.
+    #[arg(long, value_enum, default_value = "quic")]
+    path: SendPath,
 
     /// Seed of the random send orders and addresses (default: random, written to run.json).
     #[arg(long)]
@@ -126,14 +144,28 @@ pub struct BurstRecord {
     pub tpu_quic: String,
     pub stake_sol: f64,
     pub window: Window,
+    pub path: SendPath,
     pub variant: Variant,
     pub spacing_ms: u64,
-    pub lead_ms: f64,
+    /// Planned fire moment relative to the predicted first evidence of the window start, in ms.
+    pub offset_ms: f64,
     pub blockhash: String,
     pub fire_at: String,
-    /// Slot by the clock at the fire moment (fractional), and the last notified slot.
+    pub fire_unix_us: i64,
+    /// Slot by the clock at the fire moment (fractional), the last slot seen, and the fitted slot time.
     pub fire_slot_estimate: f64,
-    pub fire_last_notified_slot: u64,
+    pub fire_last_seen_slot: u64,
+    pub clock_slot_ms: f64,
+    /// What the clock predicted from at the fire moment, and the node's clock minus ours (node basis only).
+    pub clock_basis: clock::Basis,
+    pub clock_node_offset_ms: Option<f64>,
+    /// The window start's first evidence as predicted at the fire moment (local Unix µs).
+    pub predicted_start_unix_us: i64,
+    /// As it was then observed: the local arrival of its first notification, and the node's first-shred timestamp.
+    pub observed_arrival_unix_us: Option<i64>,
+    pub observed_first_shred_node_ms: Option<u64>,
+    /// Fire moment minus the observed window start on the clock's basis, in ms (negative = fired before it).
+    pub fire_vs_observed_ms: Option<f64>,
     pub quic_handshake_ms: Option<f64>,
     pub quic_rtt_ms: Option<f64>,
     pub worst_case_lamports: u64,
@@ -172,13 +204,12 @@ pub async fn run(rpc: &Rpc, data_dir: &Path, secrets: &Path, ledger: &Ledger, ar
     let bounds = schedule::epoch_bounds(rpc).await?;
     let mut targets = Vec::new();
     for identity in &args.targets {
-        let node = nodes
-            .as_array()
-            .into_iter()
-            .flatten()
-            .find(|n| n["pubkey"].as_str() == Some(identity))
-            .with_context(|| format!("{identity} is not in gossip"))?;
-        let tpu_quic: SocketAddr = node["tpuQuic"].as_str().with_context(|| format!("{identity} has no TPU QUIC address"))?.parse()?;
+        let node = nodes.as_array().into_iter().flatten().find(|n| n["pubkey"].as_str() == Some(identity));
+        let Some(tpu_quic) = node.and_then(|n| n["tpuQuic"].as_str()).and_then(|a| a.parse::<SocketAddr>().ok()) else {
+            println!("{identity} is not in gossip or has no TPU QUIC address: skipped");
+            continue;
+        };
+        let node = node.unwrap();
         let mut windows = schedule::windows(rpc, identity, bounds.first_slot, bounds.first_slot).await?;
         let next_epoch = bounds.first_slot + bounds.slots;
         windows.extend(schedule::windows(rpc, identity, next_epoch, next_epoch).await.unwrap_or_default());
@@ -192,12 +223,12 @@ pub async fn run(rpc: &Rpc, data_dir: &Path, secrets: &Path, ledger: &Ledger, ar
             done: 0,
         });
     }
+    if targets.is_empty() {
+        bail!("none of the targets can be measured");
+    }
 
-    let samples = rpc.call("getRecentPerformanceSamples", json!([10])).await?;
-    let (slots, secs) = samples.as_array().into_iter().flatten().fold((0u64, 0u64), |acc, s| {
-        (acc.0 + s["numSlots"].as_u64().unwrap_or(0), acc.1 + s["samplePeriodSecs"].as_u64().unwrap_or(0))
-    });
-    let slot_ms = secs as f64 * 1000.0 / slots.max(1) as f64;
+    let slot_ms = schedule::slot_ms(rpc).await?;
+    let (genesis_hash, cluster) = chain::cluster(rpc).await?;
 
     let pool = PayerPool::load_or_create(secrets, args.probes)?;
     if args.live {
@@ -209,20 +240,30 @@ pub async fn run(rpc: &Rpc, data_dir: &Path, secrets: &Path, ledger: &Ledger, ar
         }
     }
 
+    let clock = SlotClock::start(args.ws_url.clone(), slot_ms, None).await?;
+    let basis = clock.settle(Duration::from_secs(20)).await;
+    println!("slot clock on {basis:?}, slot time {:.1} ms", clock.slot_ms());
+
     crate::store::write_json(
         &run_dir.join("run.json"),
         &json!({
             "run_id": run_id,
             "started_at": Utc::now().to_rfc3339(),
+            "cluster": cluster,
+            "genesis_hash": genesis_hash,
             "live": args.live,
+            "path": args.path,
             "seed": seed,
             "epoch": bounds.epoch,
             "slot_ms": slot_ms,
             "probes": args.probes,
             "cu_limit": args.cu_limit,
             "prices": args.prices,
-            "lead_ms": args.lead_ms,
+            "offsets_ms": args.offsets_ms,
             "spacings_ms": args.spacings_ms,
+            "clock_basis": basis,
+            "clock_anchors": clock::ANCHORS,
+            "clock_arrival_estimator": clock::ESTIMATOR,
             "variants": args.variants,
             "bursts_per_target": args.bursts_per_target,
             "spend_cap_lamports": ledger.cap(),
@@ -234,9 +275,13 @@ pub async fn run(rpc: &Rpc, data_dir: &Path, secrets: &Path, ledger: &Ledger, ar
             })).collect::<Vec<_>>(),
         }),
     )?;
-    println!("run {run_id}  {}  seed {seed}  slot {slot_ms:.0} ms  cap {} lamports, spent {}", if args.live { "LIVE" } else { "dry-run" }, ledger.cap(), ledger.spent());
+    println!(
+        "run {run_id}  {cluster}  {}  seed {seed}  slot {slot_ms:.0} ms  cap {} lamports, spent {}",
+        if args.live { "LIVE" } else { "dry-run" },
+        ledger.cap(),
+        ledger.spent()
+    );
 
-    let clock = SlotClock::start(args.ws_url.clone(), slot_ms).await?;
     let tpu = TpuClient::new()?;
     let deadline = Instant::now() + Duration::from_secs(args.max_minutes * 60);
     let mut collectors = tokio::task::JoinSet::new();
@@ -271,7 +316,7 @@ pub async fn run(rpc: &Rpc, data_dir: &Path, secrets: &Path, ledger: &Ledger, ar
             break;
         };
         let target = &targets[ti];
-        let wait = clock.eta(window.start).saturating_duration_since(Instant::now());
+        let wait = clock.predict(window.start).saturating_duration_since(Instant::now());
         println!(
             "burst {burst}: {} {} window {}+{} in {:.1} s",
             target.client,
@@ -280,18 +325,24 @@ pub async fn run(rpc: &Rpc, data_dir: &Path, secrets: &Path, ledger: &Ledger, ar
             window.slots,
             wait.as_secs_f64()
         );
-        tokio::time::sleep_until((clock.eta(window.start) - Duration::from_millis(2_500)).into()).await;
+        tokio::time::sleep_until((clock.predict(window.start) - Duration::from_millis(2_500)).into()).await;
 
-        // Prepare the burst
-        let variant = args.variants[target.done % args.variants.len()];
-        let spacing_ms = args.spacings_ms[(target.done / args.variants.len()) % args.spacings_ms.len()];
+        // Prepare the burst. Conditions cycle per target: variant fastest, then offset, then spacing
+        let (n_variants, n_offsets) = (args.variants.len(), args.offsets_ms.len());
+        let variant = args.variants[target.done % n_variants];
+        let offset_ms = args.offsets_ms[(target.done / n_variants) % n_offsets];
+        let spacing_ms = args.spacings_ms[(target.done / (n_variants * n_offsets)) % args.spacings_ms.len()];
         let blockhash = chain::latest_blockhash(rpc).await?;
         let shared = Pubkey::new_from_array(rng.random());
+        // Prices go to the payers in a fresh random order every burst, so that price is never tied to a payer
+        // (a leader that orders by account would otherwise look like one that orders by price)
+        let mut price_rank: Vec<usize> = (0..args.probes).collect();
+        price_rank.shuffle(&mut rng);
         let mut specs = Vec::with_capacity(args.probes);
         for i in 0..args.probes {
             let cu_price = match variant {
                 Variant::Null => ladder[args.probes / 2],
-                _ => ladder[i],
+                _ => ladder[price_rank[i]],
             };
             let shared_target = variant == Variant::Conflict && i % 2 == 1;
             specs.push((
@@ -306,7 +357,8 @@ pub async fn run(rpc: &Rpc, data_dir: &Path, secrets: &Path, ledger: &Ledger, ar
         }
         let mut order: Vec<usize> = (0..args.probes).collect();
         if variant == Variant::Reverse {
-            // Already ascending by price: the most expensive probe goes last
+            // Cheapest first: the most expensive probe goes last
+            order.sort_by_key(|&i| price_rank[i]);
         } else {
             order.shuffle(&mut rng);
         }
@@ -338,8 +390,13 @@ pub async fn run(rpc: &Rpc, data_dir: &Path, secrets: &Path, ledger: &Ledger, ar
             }
         }
 
-        let (connection, handshake_ms, rtt_ms) = match tpu.connect(target.tpu_quic).await {
-            Ok((connection, handshake)) => {
+        let connected = match args.path {
+            SendPath::Quic => tpu.connect(target.tpu_quic).await.map(Some),
+            SendPath::Rpc => Ok(None),
+        };
+        let (connection, handshake_ms, rtt_ms) = match connected {
+            Ok(None) => (None, None, None),
+            Ok(Some((connection, handshake))) => {
                 let rtt = connection.rtt().as_secs_f64() * 1e3;
                 (Some(connection), Some(handshake.as_secs_f64() * 1e3), Some(rtt))
             }
@@ -353,22 +410,36 @@ pub async fn run(rpc: &Rpc, data_dir: &Path, secrets: &Path, ledger: &Ledger, ar
             }
         };
 
-        // Fire
-        let fire = clock.eta(window.start) - Duration::from_secs_f64(args.lead_ms / 1e3);
-        tokio::time::sleep_until(fire.into()).await;
+        // Fire: the window start is re-predicted with the newest evidence every few ms until the moment comes
+        loop {
+            let fire = clock::shift(clock.predict(window.start), offset_ms);
+            let now = Instant::now();
+            if now >= fire {
+                break;
+            }
+            tokio::time::sleep((fire - now).min(Duration::from_millis(5))).await;
+        }
         let fired = Instant::now();
+        let fire_unix_us = clock::unix_us();
         let fire_at = Utc::now().to_rfc3339_opts(SecondsFormat::Micros, true);
         let fire_slot_estimate = clock.now_slot();
-        let fire_last_notified_slot = clock.latest().slot;
+        let fire_last_seen_slot = clock.latest_slot();
+        let clock_slot_ms = clock.slot_ms();
+        let clock_basis = clock.basis();
+        let clock_node_offset_ms = clock.node_offset_ms();
+        let predicted_start_unix_us = (clock.predict_unix_ms(window.start) * 1e3) as i64;
         for (n, &i) in order.iter().enumerate() {
             if n > 0 && spacing_ms > 0 {
                 tokio::time::sleep(Duration::from_millis(spacing_ms)).await;
             }
             if args.live {
-                if let Some(connection) = &connection {
-                    if let Err(error) = quic::send(connection, &built[i].wire).await {
-                        records[i].send_error = Some(format!("{error:#}"));
-                    }
+                let sent = match (&connection, args.path) {
+                    (Some(connection), SendPath::Quic) => quic::send(connection, &built[i].wire).await,
+                    (_, SendPath::Rpc) => chain::send_unchecked(rpc, &built[i].wire).await.map(|_| ()),
+                    (None, SendPath::Quic) => Ok(()),
+                };
+                if let Err(error) = sent {
+                    records[i].send_error = Some(format!("{error:#}"));
                 }
             }
             records[i].sent_offset_us = Some(fired.elapsed().as_micros() as u64);
@@ -378,6 +449,7 @@ pub async fn run(rpc: &Rpc, data_dir: &Path, secrets: &Path, ledger: &Ledger, ar
             tokio::time::sleep(Duration::from_millis(300)).await;
             connection.close(0u32.into(), b"done");
         }
+        let observed = clock.wait_observed(window.start, clock.predict(window.start) + Duration::from_secs(3)).await;
 
         let record = BurstRecord {
             run_id: run_id.clone(),
@@ -389,13 +461,22 @@ pub async fn run(rpc: &Rpc, data_dir: &Path, secrets: &Path, ledger: &Ledger, ar
             tpu_quic: target.tpu_quic.to_string(),
             stake_sol: target.stake_sol,
             window,
+            path: args.path,
             variant,
             spacing_ms,
-            lead_ms: args.lead_ms,
+            offset_ms,
             blockhash: blockhash.to_string(),
             fire_at,
+            fire_unix_us,
             fire_slot_estimate,
-            fire_last_notified_slot,
+            fire_last_seen_slot,
+            clock_slot_ms,
+            clock_basis,
+            clock_node_offset_ms,
+            predicted_start_unix_us,
+            observed_arrival_unix_us: observed.map(|o| o.unix_us),
+            observed_first_shred_node_ms: observed.and_then(|o| o.first_shred_node_ms),
+            fire_vs_observed_ms: clock.observed_unix_ms(window.start).map(|ms| fire_unix_us as f64 / 1e3 - ms),
             quic_handshake_ms: handshake_ms,
             quic_rtt_ms: rtt_ms,
             worst_case_lamports: worst_case,
@@ -403,15 +484,16 @@ pub async fn run(rpc: &Rpc, data_dir: &Path, secrets: &Path, ledger: &Ledger, ar
         };
         crate::store::append_jsonl(&run_dir.join("bursts.jsonl"), &record)?;
         println!(
-            "  fired {:?} at slot ≈ {:.2} (window {}), handshake {:.0} ms",
+            "  fired {:?} (offset {offset_ms:+.0} ms, spacing {spacing_ms} ms): {}, {}",
             variant,
-            fire_slot_estimate,
-            window.start,
-            handshake_ms.unwrap_or(f64::NAN)
+            record
+                .fire_vs_observed_ms
+                .map_or("the window's first slot was not seen (skipped?)".to_owned(), |ms| format!("{ms:+.0} ms vs the window's first shred")),
+            handshake_ms.map_or("through the RPC node".to_owned(), |ms| format!("QUIC handshake {ms:.0} ms"))
         );
 
         if args.live {
-            let collect_at = clock.eta(window.end() + 1) + Duration::from_secs(4);
+            let collect_at = clock.predict(window.end() + 1) + Duration::from_secs(4);
             collectors.spawn(collect::burst(rpc.clone(), run_dir.clone(), record, ledger.clone(), collect_at));
         }
         targets[ti].done += 1;
@@ -426,8 +508,4 @@ pub async fn run(rpc: &Rpc, data_dir: &Path, secrets: &Path, ledger: &Ledger, ar
     }
     println!("run {run_id}: {burst} bursts; spent {} of {} lamports", ledger.spent(), ledger.cap());
     Ok(())
-}
-
-pub fn run_dir(data_dir: &Path, run_id: &str) -> PathBuf {
-    data_dir.join("runs").join(run_id)
 }

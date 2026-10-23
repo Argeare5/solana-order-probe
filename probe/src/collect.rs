@@ -117,8 +117,10 @@ pub async fn burst(rpc: Rpc, run_dir: PathBuf, burst: BurstRecord, ledger: Ledge
     Ok(())
 }
 
-/// A block in compact form: its transactions in block order with signature, fee, compute units consumed, error flag,
-/// version and, when the message carries them, the compute budget limit and price.
+/// A block in compact form: its transactions in block order with signature, fee, compute units consumed, cost units
+/// (the leader's cost model), error flag, version, number of signatures and, when the message carries them, the
+/// compute unit limit, the compute unit price (legacy and v0) and the priority fee in lamports (v1 states it
+/// directly; for legacy and v0 it is limit × price, and 0 without a price).
 async fn fetch_block(rpc: &Rpc, slot: u64) -> Result<Value> {
     let params = json!([slot, {
         "encoding": "json",
@@ -133,15 +135,19 @@ async fn fetch_block(rpc: &Rpc, slot: u64) -> Result<Value> {
         .into_iter()
         .flatten()
         .map(|tx| {
-            let (cu_limit, cu_price) = compute_budget(&tx["transaction"]["message"]);
+            let message = &tx["transaction"]["message"];
+            let budget = compute_budget(message);
             json!({
                 "signature": tx["transaction"]["signatures"][0],
                 "fee": tx["meta"]["fee"],
                 "cu": tx["meta"]["computeUnitsConsumed"],
+                "cost_units": tx["meta"]["costUnits"],
                 "err": !tx["meta"]["err"].is_null(),
                 "version": tx["version"],
-                "cu_limit": cu_limit,
-                "cu_price": cu_price,
+                "signatures": message["header"]["numRequiredSignatures"],
+                "cu_limit": budget.limit,
+                "cu_price": budget.price,
+                "priority_fee": budget.priority_fee,
             })
         })
         .collect();
@@ -155,12 +161,28 @@ async fn fetch_block(rpc: &Rpc, slot: u64) -> Result<Value> {
     }))
 }
 
-/// Compute unit limit and price from a JSON-encoded message (legacy and v0 layout), if present.
-fn compute_budget(message: &Value) -> (Option<u32>, Option<u64>) {
+#[derive(Debug, Default, PartialEq)]
+struct Budget {
+    limit: Option<u32>,
+    /// Micro-lamports per compute unit (legacy and v0).
+    price: Option<u64>,
+    /// Lamports.
+    priority_fee: Option<u64>,
+}
+
+/// The compute budget of a JSON-encoded message: from its `transactionConfig` (v1) or its Compute Budget
+/// instructions (legacy and v0).
+fn compute_budget(message: &Value) -> Budget {
     const COMPUTE_BUDGET: &str = "ComputeBudget111111111111111111111111111111";
+    if let Some(config) = message.get("transactionConfig").filter(|c| c.is_object()) {
+        return Budget {
+            limit: config["computeUnitLimit"].as_u64().map(|l| l as u32),
+            price: None,
+            priority_fee: Some(config["priorityFee"].as_u64().unwrap_or(0)),
+        };
+    }
     let keys = message["accountKeys"].as_array();
-    let mut limit = None;
-    let mut price = None;
+    let mut budget = Budget::default();
     for ix in message["instructions"].as_array().into_iter().flatten() {
         let program = ix["programIdIndex"].as_u64().and_then(|i| keys?.get(i as usize)).and_then(Value::as_str);
         if program != Some(COMPUTE_BUDGET) {
@@ -168,10 +190,54 @@ fn compute_budget(message: &Value) -> (Option<u32>, Option<u64>) {
         }
         let Some(data) = ix["data"].as_str().and_then(|d| bs58::decode(d).into_vec().ok()) else { continue };
         match data.first() {
-            Some(2) if data.len() >= 5 => limit = Some(u32::from_le_bytes(data[1..5].try_into().unwrap())),
-            Some(3) if data.len() >= 9 => price = Some(u64::from_le_bytes(data[1..9].try_into().unwrap())),
+            Some(2) if data.len() >= 5 => budget.limit = Some(u32::from_le_bytes(data[1..5].try_into().unwrap())),
+            Some(3) if data.len() >= 9 => budget.price = Some(u64::from_le_bytes(data[1..9].try_into().unwrap())),
             _ => {}
         }
     }
-    (limit, price)
+    budget.priority_fee = match (budget.limit, budget.price) {
+        (_, None) => Some(0),
+        (Some(limit), Some(price)) => Some((limit as u64 * price).div_ceil(1_000_000)),
+        // A price without a limit: the default limit depends on the instructions, which are not counted here
+        (None, Some(_)) => None,
+    };
+    budget
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn v1_budget_comes_from_the_transaction_config() {
+        let message = json!({
+            "accountKeys": [],
+            "instructions": [],
+            "transactionConfig": { "computeUnitLimit": 62728, "heapSize": null, "priorityFee": 9033 }
+        });
+        assert_eq!(compute_budget(&message), Budget { limit: Some(62728), price: None, priority_fee: Some(9033) });
+    }
+
+    #[test]
+    fn no_price_means_no_priority_fee() {
+        let v1 = json!({ "transactionConfig": { "computeUnitLimit": 698, "priorityFee": null } });
+        assert_eq!(compute_budget(&v1).priority_fee, Some(0));
+        let legacy = json!({ "accountKeys": [], "instructions": [] });
+        assert_eq!(compute_budget(&legacy), Budget { limit: None, price: None, priority_fee: Some(0) });
+    }
+
+    #[test]
+    fn legacy_budget_comes_from_the_instructions() {
+        // SetComputeUnitLimit(900) and SetComputeUnitPrice(5000)
+        let limit = bs58::encode([2u8, 0x84, 0x03, 0, 0]).into_string();
+        let price = bs58::encode([3u8, 0x88, 0x13, 0, 0, 0, 0, 0, 0]).into_string();
+        let message = json!({
+            "accountKeys": ["Payer11111111111111111111111111111111111111", "ComputeBudget111111111111111111111111111111"],
+            "instructions": [
+                { "programIdIndex": 1, "accounts": [], "data": limit },
+                { "programIdIndex": 1, "accounts": [], "data": price }
+            ]
+        });
+        assert_eq!(compute_budget(&message), Budget { limit: Some(900), price: Some(5000), priority_fee: Some(5) });
+    }
 }

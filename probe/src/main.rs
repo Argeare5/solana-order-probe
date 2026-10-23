@@ -1,3 +1,4 @@
+mod calibrate;
 mod chain;
 mod clock;
 mod collect;
@@ -10,6 +11,7 @@ mod recon;
 mod rpc;
 mod run;
 mod schedule;
+mod simulate;
 mod store;
 
 use std::path::PathBuf;
@@ -55,13 +57,24 @@ enum Command {
     Keys {
         #[arg(long, default_value_t = 12)]
         payers: usize,
+        /// Create a fresh funder keypair if there is none. Fund its address from your wallet with what the runs
+        /// need, and `sweep --live --to <your wallet>` returns what is left: your wallet's key never enters the tool.
+        #[arg(long)]
+        new_funder: bool,
     },
+    /// Requests an airdrop for the funder (not on mainnet).
+    Airdrop(fund::AirdropArgs),
     /// Tops the payers up from the funder (dry-run unless --live).
     Fund(fund::FundArgs),
-    /// Returns every payer's lamports to the funder (dry-run unless --live).
+    /// Returns every payer's lamports to the funder, and with --to the funder's to that address (dry-run unless --live).
     Sweep(fund::SweepArgs),
     /// Sends bursts of probes into the leader windows of the targets and collects where they land (dry-run unless --live).
     Run(run::Args),
+    /// Records the slot notifications for a while and measures how well the slot clock predicts window starts.
+    /// Read-only.
+    Calibrate(calibrate::Args),
+    /// Simulates a probe through the RPC node and reports the compute units it consumes (sets --cu-limit). Read-only.
+    Simulate(simulate::Args),
 }
 
 #[tokio::main]
@@ -90,9 +103,14 @@ async fn main() -> anyhow::Result<()> {
             }
             Ok(())
         }
-        Command::Keys { payers } => {
+        Command::Keys { payers, new_funder } => {
             use solana_signer::Signer;
-            match keys::load(&fund::funder_path(&cli.secrets_dir)) {
+            let funder_path = fund::funder_path(&cli.secrets_dir);
+            if new_funder && !funder_path.exists() {
+                keys::save(&funder_path, &solana_keypair::Keypair::new())?;
+                println!("created a new funder keypair at {}", funder_path.display());
+            }
+            match keys::load(&funder_path) {
                 Ok(funder) => println!(
                     "funder {}  {:.6} SOL",
                     funder.pubkey(),
@@ -107,8 +125,11 @@ async fn main() -> anyhow::Result<()> {
             println!("spent {} of {} lamports", ledger.spent(), ledger.cap());
             Ok(())
         }
+        Command::Airdrop(args) => fund::airdrop(&rpc, &cli.secrets_dir, args).await,
         Command::Fund(args) => fund::fund(&rpc, &cli.secrets_dir, &ledger, args).await,
         Command::Sweep(args) => fund::sweep(&rpc, &cli.secrets_dir, &ledger, args).await,
         Command::Run(args) => run::run(&rpc, &cli.data_dir, &cli.secrets_dir, &ledger, args).await,
+        Command::Calibrate(args) => calibrate::run(&rpc, &cli.data_dir, args).await,
+        Command::Simulate(args) => simulate::run(&rpc, &cli.secrets_dir, args).await,
     }
 }

@@ -16,6 +16,18 @@ pub async fn latest_blockhash(rpc: &Rpc) -> Result<Hash> {
     text.parse().map_err(|e| anyhow::anyhow!("blockhash {text}: {e:?}"))
 }
 
+/// The RPC node's genesis hash and the cluster it names.
+pub async fn cluster(rpc: &Rpc) -> Result<(String, &'static str)> {
+    let hash = rpc.call("getGenesisHash", json!([])).await?.as_str().context("genesis hash")?.to_owned();
+    let name = match hash.as_str() {
+        "5eykt4UsFv8P8NJdTREpY1vzqKqZKvdpKuc147dw2N9d" => "mainnet-beta",
+        "EtWTRABZaYq6iMfeYKouRu166VU2xqa1wcaWoxPkrZBG" => "devnet",
+        "4uhcVJyU9pJkvQyS88uRDiswHXSCkY3zQawwpjk2NsNY" => "testnet",
+        _ => "unknown",
+    };
+    Ok((hash, name))
+}
+
 pub async fn balance(rpc: &Rpc, pubkey: &str) -> Result<u64> {
     let result = rpc.call("getBalance", json!([pubkey, { "commitment": "confirmed" }])).await?;
     result["value"].as_u64().context("balance")
@@ -30,6 +42,16 @@ pub async fn send(rpc: &Rpc, wire: &[u8]) -> Result<String> {
     let encoded = base64::engine::general_purpose::STANDARD.encode(wire);
     let result = rpc
         .call("sendTransaction", json!([encoded, { "encoding": "base64", "preflightCommitment": "confirmed" }]))
+        .await?;
+    Ok(result.as_str().context("signature")?.to_owned())
+}
+
+/// Sends through the RPC node as the comparison path of `run`: no preflight and no retries by the node, so each
+/// probe is forwarded once, in the order sent.
+pub async fn send_unchecked(rpc: &Rpc, wire: &[u8]) -> Result<String> {
+    let encoded = base64::engine::general_purpose::STANDARD.encode(wire);
+    let result = rpc
+        .call("sendTransaction", json!([encoded, { "encoding": "base64", "skipPreflight": true, "maxRetries": 0 }]))
         .await?;
     Ok(result.as_str().context("signature")?.to_owned())
 }

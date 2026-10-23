@@ -8,5 +8,10 @@ __pycache__/
 *.pyc
 .venv/
 
-# Local scratch
+# Local scratch and editor settings
 .DS_Store
+.idea/
+.vscode/
+
+# Devnet pipeline tests (not measurements)
+devnet/

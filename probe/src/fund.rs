@@ -33,9 +33,19 @@ pub struct FundArgs {
 pub struct SweepArgs {
     #[arg(long, default_value_t = 12)]
     payers: usize,
+    /// After the payers, send the funder's whole balance to this address too (the funder account closes).
+    #[arg(long)]
+    to: Option<String>,
     /// Send the sweep transactions. Without it the plan is only printed.
     #[arg(long)]
     live: bool,
+}
+
+#[derive(clap::Args)]
+pub struct AirdropArgs {
+    /// SOL to request for the funder (devnet, testnet or a local validator).
+    #[arg(long, default_value_t = 1.0)]
+    sol: f64,
 }
 
 pub fn funder_path(secrets: &Path) -> std::path::PathBuf {
@@ -99,10 +109,15 @@ pub async fn sweep(rpc: &Rpc, secrets: &Path, ledger: &Ledger, args: SweepArgs) 
     }
     let total: u64 = holders.iter().map(|(_, b)| b).sum();
     println!("{} payers hold {:.6} SOL in total", holders.len(), total as f64 / 1e9);
-    if holders.is_empty() || !args.live {
-        if !holders.is_empty() {
-            println!("dry-run: nothing sent (add --live to sweep)");
-        }
+    let to: Option<Pubkey> = match &args.to {
+        Some(text) => Some(text.parse().map_err(|e| anyhow::anyhow!("--to {text}: {e:?}"))?),
+        None => None,
+    };
+    if let Some(to) = &to {
+        println!("then the funder {} sends its whole balance to {to}", funder.pubkey());
+    }
+    if !args.live {
+        println!("dry-run: nothing sent (add --live to sweep)");
         return Ok(());
     }
     // The funder pays the fees, so every payer can send its whole balance and close
@@ -116,7 +131,32 @@ pub async fn sweep(rpc: &Rpc, secrets: &Path, ledger: &Ledger, args: SweepArgs) 
         let tx = Transaction::new_signed_with_payer(&instructions, Some(&funder.pubkey()), &signers, chain::latest_blockhash(rpc).await?);
         submit(rpc, ledger, "sweep", &tx).await?;
     }
+    if let Some(to) = to {
+        const FEE: u64 = 5_000;
+        let balance = chain::balance(rpc, &funder.pubkey().to_string()).await?;
+        if balance > FEE {
+            let ix = solana_system_interface::instruction::transfer(&funder.pubkey(), &to, balance - FEE);
+            let tx = Transaction::new_signed_with_payer(&[ix], Some(&funder.pubkey()), &[&funder], chain::latest_blockhash(rpc).await?);
+            submit(rpc, ledger, "sweep", &tx).await?;
+            println!("sent {:.9} SOL from the funder to {to}", (balance - FEE) as f64 / 1e9);
+        }
+    }
     println!("swept");
+    Ok(())
+}
+
+pub async fn airdrop(rpc: &Rpc, secrets: &Path, args: AirdropArgs) -> Result<()> {
+    let (_, cluster) = chain::cluster(rpc).await?;
+    if cluster == "mainnet-beta" {
+        bail!("there are no airdrops on mainnet");
+    }
+    let funder = keys::load(&funder_path(secrets)).context("the funder keypair (create one with `keys --new-funder`)")?;
+    let lamports = (args.sol * 1e9).round() as u64;
+    let result = rpc.call("requestAirdrop", serde_json::json!([funder.pubkey().to_string(), lamports])).await?;
+    let signature = result.as_str().context("airdrop signature")?.to_owned();
+    chain::confirm(rpc, std::slice::from_ref(&signature), Duration::from_secs(60)).await?;
+    let balance = chain::balance(rpc, &funder.pubkey().to_string()).await?;
+    println!("airdrop {signature}: funder {} now holds {:.6} SOL on {cluster}", funder.pubkey(), balance as f64 / 1e9);
     Ok(())
 }
 

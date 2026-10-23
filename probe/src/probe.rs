@@ -17,8 +17,9 @@ use solana_signature::Signature;
 use solana_signer::Signer;
 use solana_transaction::Transaction;
 
-/// SPL Memo v2.
-pub const MEMO_PROGRAM: Pubkey = Pubkey::from_str_const("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
+/// SPL Memo v1. Memo v2 logs the memo and checks signers, which costs ~11 100 CU on mainnet (`simulate`, 23.10.2026);
+/// v1 keeps the tag in the instruction data for ~360 CU, so the whole probe needs ~810 CU and the limit stays small.
+pub const MEMO_PROGRAM: Pubkey = Pubkey::from_str_const("Memo1UhkJRfHyvLMcVucJwxXeuD728EqVDDwQDxFMNo");
 
 pub struct ProbeSpec {
     pub tag: String,

@@ -282,7 +282,7 @@ pub async fn run(rpc: &Rpc, data_dir: &Path, args: Args) -> Result<()> {
 }
 
 /// Keeps only the host of the RPC URL, so that a provider key in the path or query never lands in the data.
-fn rpc_host(url: &str) -> String {
+pub fn rpc_host(url: &str) -> String {
     url.split("://").nth(1).unwrap_or(url).split(['/', '?']).next().unwrap_or("").to_owned()
 }
 

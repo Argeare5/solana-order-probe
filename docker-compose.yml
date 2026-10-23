@@ -1,0 +1,38 @@
+# `docker compose up` runs, with no keys and no spending:
+#   probe   — a dry-run against the current mainnet: finds the next leader windows of the targets, builds and times
+#             one burst for each, opens the QUIC connection to the leader, and sends nothing;
+#   analyze — recomputes every table and figure in report/generated from the raw data in data/.
+#
+# Real sends happen only when asked for explicitly, under the spend cap (see README):
+#   docker compose run --rm probe run --targets <identity,...> --live
+#
+# Keys live in ./secrets (mounted, never in the image or the repository); raw data in ./data.
+
+x-probe-env: &probe-env
+  RPC_URL: ${RPC_URL:-https://api.mainnet-beta.solana.com}
+  WS_URL: ${WS_URL:-wss://api.mainnet-beta.solana.com}
+  SPEND_CAP_SOL: ${SPEND_CAP_SOL:-0.05}
+
+services:
+  probe:
+    build: ./probe
+    image: solana-order-probe/probe
+    environment: *probe-env
+    volumes:
+      - ./data:/work/data
+      - ./secrets:/work/secrets
+    command:
+      - run
+      - --targets
+      - ${TARGETS:-HEL1USMZKAL2odpNBj2oCjffnFGaYwmbGmyewGv1e2TU,Fd7btgySsrjuo25CJCj7oE7VPMyezDhnx7pZkj2v69Nk,EvnRmnMrd69kFdbLMxWkTn1icZ7DCceRhvmb2SJXqDo4}
+      - --bursts-per-target
+      - "1"
+      - --max-minutes
+      - "5"
+
+  analyze:
+    build: ./analyze
+    image: solana-order-probe/analyze
+    volumes:
+      - ./data:/work/data:ro
+      - ./report:/work/report

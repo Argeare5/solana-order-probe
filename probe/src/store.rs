@@ -21,6 +21,11 @@ pub fn write_json_gz(path: &Path, value: &Value) -> Result<()> {
     fs::write(path, encoder.finish()?).with_context(|| format!("writing {}", path.display()))
 }
 
+pub fn read_json_gz(path: &Path) -> Result<Value> {
+    let file = fs::File::open(path).with_context(|| format!("opening {}", path.display()))?;
+    serde_json::from_reader(flate2::read::GzDecoder::new(std::io::BufReader::new(file))).with_context(|| format!("parsing {}", path.display()))
+}
+
 pub fn append_jsonl<T: Serialize>(path: &Path, record: &T) -> Result<()> {
     if let Some(dir) = path.parent() {
         fs::create_dir_all(dir)?;

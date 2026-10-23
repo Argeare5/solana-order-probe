@@ -1,0 +1,95 @@
+{
+  "bursts_per_target": 8,
+  "clock_anchors": 1,
+  "clock_arrival_estimator": {
+    "fit_slots": 150,
+    "quantile": 0.0,
+    "recent": 1
+  },
+  "clock_basis": "node_first_shred",
+  "cluster": "mainnet-beta",
+  "cu_limit": 900,
+  "epoch": 1065,
+  "genesis_hash": "5eykt4UsFv8P8NJdTREpY1vzqKqZKvdpKuc147dw2N9d",
+  "live": false,
+  "offsets_ms": [
+    -300.0,
+    100.0
+  ],
+  "payers": [
+    "29jbfD4WJxNhFxsKnCPjuYKddANR5RQyYUW5368tee5K",
+    "6xyKtK2hktG853sT4LHegAjc9E8U82f3mfnEwYiGx3wj",
+    "DeM7yJNuVE7hEZFqCaBtYYRL6SLZQJ7WwAKGmjTsRdpc",
+    "cPhPRbMYq8h5h9GbekUZKJ9EmDHTjsNaSX8VxthgMmH",
+    "TyMQHoskGtX8kL3hUKaqEgktVe5QZQDFikKKtEngVht",
+    "8qd59rzQLKVh6MLCF7douQP78YSjTx767noyKFkkeRKF",
+    "2YFhuZCJgLmzWWP14KCiB4ssiB3Gd71aKT2hvEVYB9uZ",
+    "SD1mGm6Y49AHbNxuPMnh25uWH98ku43iz5K1dKSYFSG",
+    "BZSChTHBbWS3mLVjUsfNs5iwRC33mtxESr9yMhbkjqX4",
+    "Dkfeby3QWzJv9ZQpUP888tcDT1ZqApCEdNdJjWiGuWPp",
+    "9nu2Rg5MSYZHcXv4z26HGLL7wooMos5bBE8ZgPbQhitB",
+    "J3WJjZtAo5cuQMS8mYub9boJBhcmpE83NxpczBHtfnvT"
+  ],
+  "prices": [
+    1000,
+    2000,
+    5000,
+    10000,
+    20000,
+    50000,
+    100000,
+    200000,
+    500000,
+    1000000,
+    2000000,
+    5000000
+  ],
+  "probes": 12,
+  "run_id": "20261023T083007Z",
+  "seed": 2337072116083177715,
+  "slot_ms": 210.896309314587,
+  "spacings_ms": [
+    0,
+    10,
+    50
+  ],
+  "spend_cap_lamports": 50000000,
+  "spent_before_lamports": 0,
+  "started_at": "2026-10-23T08:30:16.296074+00:00",
+  "targets": [
+    {
+      "client": "HarmonicAgave",
+      "identity": "Fd7btgySsrjuo25CJCj7oE7VPMyezDhnx7pZkj2v69Nk",
+      "stake_sol": 17133144.03017143,
+      "tpu_quic": "198.13.140.105:12341",
+      "version": "4.3.2"
+    },
+    {
+      "client": "JitoLabs",
+      "identity": "HEL1USMZKAL2odpNBj2oCjffnFGaYwmbGmyewGv1e2TU",
+      "stake_sol": 15968621.114237716,
+      "tpu_quic": "64.130.57.215:8002",
+      "version": "4.3.2"
+    },
+    {
+      "client": "AgaveBam",
+      "identity": "DRpbCBMxVnDK7maPM5tGv6MvB3v1sRMC86PZ8okm21hy",
+      "stake_sol": 12556095.511675864,
+      "tpu_quic": "208.91.105.55:5010",
+      "version": "4.3.2"
+    },
+    {
+      "client": "Firedancer",
+      "identity": "EvnRmnMrd69kFdbLMxWkTn1icZ7DCceRhvmb2SJXqDo4",
+      "stake_sol": 7797558.581163021,
+      "tpu_quic": "104.204.143.114:9007",
+      "version": "26.10.4"
+    }
+  ],
+  "variants": [
+    "main",
+    "null",
+    "reverse",
+    "conflict"
+  ]
+}
