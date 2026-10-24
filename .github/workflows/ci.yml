@@ -38,6 +38,8 @@ jobs:
         run: |
           mkdir -p "$RUNNER_TEMP/report"
           docker run --rm -v "$PWD/data:/work/data:ro" -v "$RUNNER_TEMP/report:/work/report" solana-order-probe/analyze
+      - name: The site is built from the committed report
+        run: python3 site/build.py && git diff --exit-code docs/index.html
 
   compose:
     name: docker compose

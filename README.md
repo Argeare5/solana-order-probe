@@ -10,9 +10,12 @@ block with `getBlock`.
 - `analyze/` — `order_analysis`, a Python package: within-block metrics, null model, figures, tables.
 - `data/` — every raw record: snapshots, calibrations, runs (bursts, signatures, slots, compact blocks), spend ledger.
 - `report/` — `REPORT.md` (dated measurements, results, what went wrong) and `generated/` (tables and figures).
+- `site/`, `docs/` — the results page at https://argeare5.github.io/solana-order-probe/, built from `report/generated`.
 
 All measurements are taken after Alpenglow's activation on October 21, 2026 (slot 459 653 000): mainnet blocks just
 before it carry ~650 vote transactions each, blocks after it none (`report/REPORT.md`).
+
+**Results page:** https://argeare5.github.io/solana-order-probe/
 
 **Status (October 24, 2026):** a pilot and two campaign sessions, one at midday and one at night, have run on mainnet:
 12 validators on 8 clients, 7 200 probes, 0.0378 SOL of fees in all, with the spend ledger matching the chain to the

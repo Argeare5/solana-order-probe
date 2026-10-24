@@ -27,7 +27,8 @@ measurements and what went wrong.
   validators are for pipeline tests; keep their data out of `data/` (use `--data-dir` and `--secrets-dir` elsewhere).
 - **No Jito bundles or tips.** Probes are ordinary transactions.
 - **Raw data is never edited by hand.** Everything in `data/` is written by `order-probe`; `report/generated/` is
-  written by `order_analysis` and is regenerated, not edited.
+  written by `order_analysis` and is regenerated, not edited. `docs/index.html` is written by `site/build.py`;
+  edit `site/template.html` and rebuild after every new analysis (CI checks that it is current).
 
 ## Layout
 
@@ -41,6 +42,8 @@ measurements and what went wrong.
 | `probe/src/quic.rs` | QUIC client to a TPU, configured like Agave's `tpu-client-next` |
 | `analyze/order_analysis/` | `load` (raw data → tables), `metrics` (pair shares, bootstrap, permutation, logistic), `report` (tables, figures, summary), `network` (TPU ingress, hand-over), `background` (whole blocks), `synth` (synthetic runs for tests) |
 | `data/` | `snapshots/`, `calibration/`, `runs/<run>/{run.json, bursts.jsonl, results.jsonl, reconciled.jsonl, blocks/}`, `spend_ledger.jsonl` |
+| `site/` | `build.py` (standard library only) fills `template.html` with the numbers in `report/generated` and one burst of `data/` |
+| `docs/` | The GitHub Pages site, written by `site/build.py`: `index.html`, plus `favicon.svg` and `og.png` |
 
 ## Commands
 
@@ -51,6 +54,7 @@ cargo build --release --manifest-path probe/Cargo.toml        # ./probe/target/r
 docker build -t solana-order-probe/analyze analyze
 docker run --rm --entrypoint python -w /app solana-order-probe/analyze -m pytest -q tests
 docker compose run --rm analyze                               # regenerate report/generated from data/
+python3 site/build.py                                         # rebuild docs/index.html from report/generated
 docker compose up                                             # dry-run on mainnet + analysis
 scripts/session.sh                                            # a whole session as a dry-run; --live sends
 ```
