@@ -13,6 +13,7 @@ import csv
 import html
 import json
 import math
+import re
 from collections import defaultdict
 from pathlib import Path
 
@@ -272,6 +273,8 @@ def main() -> None:
         page = page.replace("{{" + key + "}}", value)
     if "{{" in page:
         raise SystemExit("unfilled placeholder: " + page[page.index("{{"):page.index("{{") + 40])
+    # Links that leave the page open in a new tab, so the reader keeps the page
+    page = re.sub(r'<a ((?:(?!target=)[^>])*?href="https?://)', r'<a target="_blank" rel="noopener noreferrer" \1', page)
     (ROOT / "docs" / "index.html").write_text(page)
     print(f"docs/index.html: {len(clients)} clients, {len(vals)} validators, example burst at slot {ex['slot']}")
 
