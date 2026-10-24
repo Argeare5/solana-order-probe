@@ -1,15 +1,17 @@
 # Report
 
 Status (October 24, 2026): the pilot and two campaign sessions have run on mainnet, one at midday and one at night
-(12 validators on 8 clients, 7 200 probes, 0.0377 SOL of fees in all). Results below; every number is recomputed from
-`data/` by `order_analysis` (`generated/summary.md`, `generated/*.csv`).
+(12 validators on 8 clients, 7 200 probes, 0.0378 SOL of fees in all), and what was left has gone back to the wallet
+that funded them. Results below; every number is recomputed from `data/` by `order_analysis` (`generated/summary.md`,
+`generated/*.csv`).
 
 ## Measurements
 
 All times UTC. Every measurement is after Alpenglow's activation at slot 459 653 000 on October 21, 2026, around
 13:54 (slot 459 652 980 has block time 13:53:55, slot 459 653 040 13:54:10; slot 459 653 000 itself was skipped).
 Checked on the chain: blocks 459 652 900 and 459 652 950 carry 664 of 953 and 649 of 915 vote transactions, blocks
-459 653 100 and 459 653 200 carry 0 of 560 and 0 of 353. The first measurement here is at slot 460 36x xxx.
+459 653 100 and 459 653 200 carry 0 of 560 and 0 of 353. The first measurement here, the snapshot of October 23
+08:01, is at slot 460 367 296.
 
 | Date | What | Data |
 | --- | --- | --- |
@@ -30,6 +32,7 @@ Checked on the chain: blocks 459 652 900 and 459 652 950 carry 664 of 953 and 64
 | 2026-10-24 02:30–05:12 | **Live campaign, session 2**: the same 12 leaders and design as session 1, at night (05:30–08:12 in Kyiv) | `data/runs/20261024T023015Z` |
 | 2026-10-24 02:30–05:14 | Slot stream recorded alongside session 2 with the leader of every slot: calibration, and the window start of bursts whose run clock missed it | `data/calibration/20261024T023015Z` |
 | 2026-10-24 05:12–05:14 | Reconciliation of session 2 (66 probes not landed at collection, none landed later); spend ledger checked against the 13 addresses' balances | `data/runs/20261024T023015Z/reconciled.jsonl`, `data/spend_ledger.jsonl` |
+| 2026-10-24 05:45 | Sweep: the 12 payers and the funder emptied, 0.062 247 770 SOL back to the wallet that funded them (4 transactions, 80 000 lamports of fees) | `data/spend_ledger.jsonl` |
 
 ## Where leaders take transactions in
 
@@ -154,9 +157,9 @@ On a local validator in Docker (`solanalabs/solana:v1.18.26`, 2026-10-23 09:52�
 burst (JitoLabs, equal prices, 10 ms spacing) did not land at all: the leader's TPU dropped the QUIC connection in the
 middle of it (`tpu_ack`: "connection lost"). Unlike the local validator, mainnet leaders took all 12 probes sent back
 to back: every send position landed 12 times out of 12. Fees: 1 529 400 lamports for 276 probes; the reconciliation
-found nothing missing. The pilot was a check of the method; its bursts are part of the data, and its first readings
-(fee order strict for the Firedancer leader, not strict for the JitoLabs and HarmonicAgave ones) wait for the
-campaign's numbers.
+found nothing missing. The pilot was a check of the method; its bursts are part of the data. Its first readings, a
+strict fee order for the Firedancer leader and a loose one for the JitoLabs and HarmonicAgave ones, held in both
+sessions, except that the Firedancer leaders came to 0.95–0.97 rather than 1.00 (Results).
 
 ## Results
 
@@ -170,10 +173,10 @@ campaign's numbers.
 | Session 1, Oct 23 10:20–12:51 | 288 | 3 456 | 312 | 3 113 | 3 096 | 17 164 716 |
 | Session 2, Oct 24 02:30–05:12 | 288 | 3 456 | 3 | 3 390 | 3 342 | 18 707 160 |
 
-Fees paid in all: 37 679 436 lamports (0.0377 SOL): the probes above, 258 160 for the unplanned run (What went wrong)
-and 20 000 for two fundings. The spend ledger equals the chain: the 13 addresses (funder and 12 payers) received
-0.1 SOL from the owner's wallet and 7 206 lamports from strangers, and hold 62 327 770 lamports now, a difference of
-exactly the ledger's 37 679 436. The strangers' lamports came in three transfers to two payers during session 2 (1 842,
+Fees paid in all: 37 759 436 lamports (0.0378 SOL): the probes above, 258 160 for the unplanned run (What went wrong),
+20 000 for two fundings and 80 000 for the sweep. The spend ledger equals the chain: the 13 addresses (funder and
+12 payers) received 0.1 SOL from the owner's wallet and 7 206 lamports from strangers, sent 62 247 770 lamports back
+to that wallet and hold nothing now, a difference of exactly the ledger's 37 759 436. The strangers' lamports came in three transfers to two payers during session 2 (1 842,
 2 038 and 3 326 lamports at 02:44, 03:01 and 05:12, each from a different address that never had anything to do with
 this project), most likely address-poisoning spam aimed at busy accounts.
 

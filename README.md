@@ -15,7 +15,8 @@ All measurements are taken after Alpenglow's activation on October 21, 2026 (slo
 before it carry ~650 vote transactions each, blocks after it none (`report/REPORT.md`).
 
 **Status (October 24, 2026):** a pilot and two campaign sessions, one at midday and one at night, have run on mainnet:
-12 validators on 8 clients, 7 200 probes, 0.0377 SOL of fees, with the spend ledger matching the chain to the lamport.
+12 validators on 8 clients, 7 200 probes, 0.0378 SOL of fees in all, with the spend ledger matching the chain to the
+lamport. What was left has gone back to the wallet that funded the measurements.
 
 ## Run it
 
@@ -61,16 +62,16 @@ campaign's 12 leaders × 24 bursts with its log, a final reconciliation and the 
 | `run` | Bursts into the targets' leader windows, then collection and reconciliation | only with `--live` |
 | `reconcile` | Checks every probe of the live runs against the chain and records any fee the ledger is missing | no |
 
-**Spend cap.** Every fee paid (probes, funding, sweeping) is read back from the chain and appended to the spend
-ledger, once per signature. The ledger belongs to the keys that pay: `secrets/spend_ledger.jsonl` counts for the cap
-and `data/spend_ledger.jsonl` is its published copy, merged by signature whenever the tool starts, so a run pointed at
-another data directory still sees everything these keys have spent. A live run first checks that every payer can pay
-the most expensive probe of every burst it plans, prints the plan (bursts, worst case, what is left under the cap) and
-waits 10 s before sending. Before each burst its worst case is reserved, and a burst that could pass the cap is
-refused. A burst whose collection fails, or a probe that lands after its burst was collected, is
-picked up by the reconciliation that `run --live` performs before it sends anything and after its last probe can no
-longer land, so the ledger holds every fee actually paid. On a local validator the payers' balances fell by exactly the
-sum of the probe fees in the ledger (556 135 lamports over 101 landed probes, one run killed mid-way and reconciled).
+**Spend cap.** Every fee paid (probes, funding, sweeping) is read back from the chain and appended to the spend ledger,
+once per signature. The ledger belongs to the keys that pay: `secrets/spend_ledger.jsonl` counts for the cap and
+`data/spend_ledger.jsonl` is its published copy, merged by signature whenever the tool starts, so a run pointed at
+another data directory still sees everything these keys have spent. A live run first checks that every payer can pay the
+most expensive probe of every burst it plans, prints the plan (bursts, worst case, what is left under the cap) and waits
+10 s before sending. Before each burst its worst case is reserved, and a burst that could pass the cap is refused. A
+burst whose collection fails, or a probe that lands after its burst was collected, is picked up by the reconciliation
+that `run --live` performs before it sends anything and after its last probe can no longer land, so the ledger holds
+every fee actually paid. On a local validator the payers' balances fell by exactly the sum of the probe fees in the
+ledger (556 135 lamports over 101 landed probes, one run killed mid-way and reconciled).
 
 ## Design
 
@@ -151,6 +152,7 @@ position against reward per cost unit for every transaction.
   executed), so a missing probe is counted, not explained.
 - What happens to a probe after its window: late landings are found by the reconciliation and counted, not traced.
 - The internals of external sequencers (Jito BAM, Harmonic): only their result in the block is visible.
+- Where a shared ingress sends a probe and why: the block it landed in is visible, the ingress's routing is not.
 - The effect of the sender's stake: our connection is unstaked; staked senders may see a different picture.
 - Leaders or load conditions with few measurements.
 
