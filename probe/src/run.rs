@@ -203,13 +203,19 @@ fn probe_burst_worst_case(args: &Args) -> u64 {
 /// How long before the fire moment the QUIC connection is opened (the handshake takes 30–160 ms on mainnet).
 const CONNECT_LEAD_MS: f64 = 700.0;
 
-/// Sleeps until `offset_ms` from the predicted first evidence of `slot`, re-predicting every few ms.
-async fn wait_until(clock: &SlotClock, slot: u64, offset_ms: f64) {
+/// A burst that would go out later than this after its planned moment is skipped: it no longer tests the condition it
+/// was planned for and may miss the window altogether. In session 2 a blockhash request held up by the public RPC's
+/// rate limit delayed four bursts by 2–9 s.
+const MAX_LATE: Duration = Duration::from_millis(250);
+
+/// Sleeps until `offset_ms` from the predicted first evidence of `slot`, re-predicting every few ms, and returns how
+/// late it woke against the latest prediction (a few ms, unless something held the caller up before the moment).
+async fn wait_until(clock: &SlotClock, slot: u64, offset_ms: f64) -> Duration {
     loop {
         let at = clock::shift(clock.predict(slot), offset_ms);
         let now = Instant::now();
         if now >= at {
-            return;
+            return now - at;
         }
         tokio::time::sleep((at - now).min(Duration::from_millis(5))).await;
     }
@@ -484,7 +490,15 @@ pub async fn run(rpc: &Rpc, data_dir: &Path, secrets: &Path, ledger: &Ledger, ar
                 SendPath::Rpc => None,
             };
             let handshake_ms = link.as_ref().map(|l| l.handshake.as_secs_f64() * 1e3);
-            wait_until(&clock, window.start, offset_ms).await;
+            let late = wait_until(&clock, window.start, offset_ms).await;
+            if late > MAX_LATE {
+                println!("  {} ms after the planned moment (a slow RPC answer?); burst skipped", late.as_millis());
+                if args.live {
+                    ledger.release(worst_case);
+                }
+                targets[ti].windows.retain(|w| w.start != window.start);
+                continue;
+            }
             if let Some(link) = link.as_mut()
                 && let Err(error) = link.ensure_open().await
             {

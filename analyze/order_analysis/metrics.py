@@ -1,7 +1,7 @@
 """Within-block order metrics.
 
-Only probes of one burst that landed in the same block are compared: probes in different slots are ordered by the
-slot, which says nothing about the rule inside a block. For every such pair the probe placed earlier is compared
+Only probes of one burst that landed in the same block of the target leader's window are compared: probes in
+different slots are ordered by the slot, which says nothing about the rule inside a block. For every such pair the probe placed earlier is compared
 with the rule each hypothesis predicts:
 
 - fee: the higher compute unit price first (all probes have the same shape and cost, so price orders the reward per
@@ -27,8 +27,10 @@ GROUP = ["run_id", "burst", "landed_slot"]
 
 
 def landed_groups(probes: pd.DataFrame) -> pd.DataFrame:
-    """Probes that landed with a known block position, in blocks that hold at least two probes of their burst."""
-    landed = probes[probes["block_index"].notna()].copy()
+    """Probes that landed in their target leader's window with a known block position, in blocks that hold at least
+    two probes of their burst. A probe in any other block says nothing about the target's rule: a shared ingress
+    handed it to another of its leaders, or it landed in a later window."""
+    landed = probes[probes["block_index"].notna() & probes["in_window"].fillna(False).astype(bool)].copy()
     landed["block_index"] = landed["block_index"].astype(int)
     size = landed.groupby(GROUP)["index"].transform("size")
     return landed[size >= 2]

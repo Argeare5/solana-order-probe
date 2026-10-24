@@ -176,7 +176,6 @@ def build(data: Dataset, out: Path, seed: int, n_boot: int, n_perm: int, min_pai
         "probes_sent": int(len(probes)),
         "probes_landed": int(probes["landed_slot"].notna().sum()),
     })
-    (out / "summary.json").write_text(json.dumps(summary, indent=2, default=float))
     rpc_md = ""
     if not rpc_df.empty:
         rpc_md = "\n".join(["## Through an RPC node (comparison path)", "",
@@ -186,8 +185,25 @@ def build(data: Dataset, out: Path, seed: int, n_boot: int, n_perm: int, min_pai
                                f"{_fmt_share(r, 'arrival_null')} |" for _, r in rpc_df.iterrows()]) + "\n\n"
     sessions_df = _sessions(probes, blocks, data.runs, rng)
     sessions_df.to_csv(out / "by_session.csv", index=False)
+    # The verdict from each session alone (drawn last, so the numbers above stay as they were): a rule that every
+    # session finds at its own time of day is firmer than one only the pooled data reach
+    session_verdict_rows = []
+    for (run_id, client, identity), subset in probes.groupby(["run_id", "client", "identity"]):
+        null = subset[subset["variant"] == "null"]
+        fee = metrics.share(subset[subset["variant"].isin(INDEPENDENT_VARIANTS)], "fee", rng, n_boot, n_perm)
+        arrival = metrics.share(null, "arrival", rng, n_boot, n_perm)
+        payer = metrics.share(null, "payer", rng, n_boot, n_perm)
+        session_verdict_rows.append({"run_id": run_id, "client": client, "identity": identity,
+                                     "verdict": metrics.verdict(fee, arrival, payer, min_pairs, min_bursts),
+                                     **{f"fee_{k}": v for k, v in vars(fee).items()},
+                                     **{f"arrival_null_{k}": v for k, v in vars(arrival).items()}})
+    session_verdicts_df = pd.DataFrame(session_verdict_rows)
+    session_verdicts_df.to_csv(out / "by_session_validator.csv", index=False)
+    summary["session_verdicts"] = session_verdicts_df.replace({np.nan: None}).to_dict("records")
+    (out / "summary.json").write_text(json.dumps(summary, indent=2, default=float))
     (out / "summary.md").write_text(_markdown(delivery, validators_df, clients_df, timing, blocks, summary) + "\n"
-                                    + _conditions_markdown(conditions_df) + _sessions_markdown(sessions_df) + rpc_md
+                                    + _conditions_markdown(conditions_df) + _sessions_markdown(sessions_df)
+                                    + _session_verdicts_markdown(session_verdicts_df) + rpc_md
                                     + network_md)
     return summary
 
@@ -403,6 +419,31 @@ def _sessions(probes: pd.DataFrame, blocks: pd.DataFrame, runs: pd.DataFrame, rn
             "block_compute_units_median": float(b["compute_units"].median()) if len(b) else np.nan,
         })
     return pd.DataFrame(rows)
+
+
+def _session_verdicts_markdown(df: pd.DataFrame) -> str:
+    if df.empty or df["run_id"].nunique() < 2:
+        return ""
+    runs = sorted(df["run_id"].unique())
+    lines = ["## Verdict per validator, by session", "",
+             "The same rule and thresholds applied to each session alone. Cell: verdict; higher price first (main and "
+             "conflict) / sent earlier first (equal price), bursts in brackets.", "",
+             "| Client | Validator | " + " | ".join(runs) + " |",
+             "| --- | --- | " + " | ".join("---" for _ in runs) + " |"]
+    for (client, identity), g in df.groupby(["client", "identity"]):
+        cells = []
+        for run_id in runs:
+            r = g[g["run_id"] == run_id]
+            if r.empty:
+                cells.append("–")
+                continue
+            r = r.iloc[0]
+            def f(v):
+                return "–" if pd.isna(v) else f"{v:.2f}"
+            cells.append(f"{r['verdict']}; {f(r['fee_share'])} ({int(r['fee_bursts'])}) / "
+                         f"{f(r['arrival_null_share'])} ({int(r['arrival_null_bursts'])})")
+        lines.append(f"| {client} | `{_short(identity)}` | " + " | ".join(cells) + " |")
+    return "\n".join(lines) + "\n\n"
 
 
 def _sessions_markdown(df: pd.DataFrame) -> str:

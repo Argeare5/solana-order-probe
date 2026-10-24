@@ -14,8 +14,8 @@ block with `getBlock`.
 All measurements are taken after Alpenglow's activation on October 21, 2026 (slot 459 653 000): mainnet blocks just
 before it carry ~650 vote transactions each, blocks after it none (`report/REPORT.md`).
 
-**Status (October 23, 2026):** a pilot and the first campaign session have run on mainnet: 12 validators on 8 clients,
-3 744 probes, 0.0187 SOL of fees, with the spend ledger matching the chain to the lamport.
+**Status (October 24, 2026):** a pilot and two campaign sessions, one at midday and one at night, have run on mainnet:
+12 validators on 8 clients, 7 200 probes, 0.0377 SOL of fees, with the spend ledger matching the chain to the lamport.
 
 ## Run it
 
@@ -99,8 +99,9 @@ an artefact of another.
 leader before its window starts) or +100 ms (probes arrive while the leader builds its block). The prediction uses
 the RPC node's own first-shred timestamps (`slotsUpdatesSubscribe`) and each slot's duration by its position in the
 window, re-predicted every 5 ms until the moment comes; every burst records when it really went out against the
-window's observed first shred. In mainnet dry-runs on October 23 (34 bursts) the fire moment was within 50 ms of the
-plan for 74% of bursts and within 100 ms for 91% (median deviation 33 ms, worst 362 ms when a hand-over was slow).
+window's observed first shred, and one that would go out more than 250 ms after its planned moment is skipped. In
+mainnet dry-runs on October 23 (34 bursts) the fire moment was within 50 ms of the plan for 74% of bursts and within
+100 ms for 91% (median deviation 33 ms, worst 362 ms when a hand-over was slow).
 
 **Path.** Probes go over QUIC, configured as Agave's own `tpu-client-next` configures it, to the TPU address the
 leader advertises in gossip; for every probe the run records whether the TPU acknowledged all of its bytes. Our
@@ -108,24 +109,27 @@ connection is unstaked, so stake-weighted QoS gives it a small share, and a busy
 opened 700 ms before the fire moment, reopened if the TPU drops it (every drop is recorded with the burst), and
 probes that do not land are counted, not re-sent.
 For Jito-Solana, Agave, Firedancer and Rakurai that TPU is the validator's own host. For the BAM and Harmonic clients
-it never is: their nodes advertise a shared ingress of the external sequencer or block builder (on October 23, 361
-AgaveBam nodes behind 17 TPU hosts, up to 96 behind one; 59 HarmonicAgave nodes behind 7). For those leaders the
+it almost never is: their nodes advertise a shared ingress of the external sequencer or block builder (on October 23,
+361 AgaveBam nodes behind 17 TPU hosts, up to 96 behind one; 59 HarmonicAgave nodes behind 7). For those leaders the
 arrival order we control is the order at that ingress, and the rule we measure is the ingress's and the leader's
-together. For comparison, `run --path rpc` sends the same bursts through an RPC node's `sendTransaction` (no
-preflight, no retries), which forwards them itself; those bursts are reported separately and never enter the
-verdicts.
+together; the ingress may even hand a probe to another of its leaders. For comparison, `run --path rpc` sends the
+same bursts through an RPC node's `sendTransaction` (no preflight, no retries), which forwards them itself; those
+bursts are reported separately and never enter the verdicts.
 
-**Analysis.** Only probes of one burst that landed in the same block are compared (probes in different slots are
-ordered by the slot). For each pair the share that follows a rule is computed: the higher price first, the one sent
-earlier first, and as a control the lower payer index first (which carries no information). 0.5 means no relation,
-1.0 a strict rule. Intervals: 95% cluster bootstrap over bursts. Null model: a permutation test that shuffles the
-positions within each block (every order equally likely), plus the equal-price bursts. The reading was fixed before
-the data: a rule is claimed only when its permutation p-value is below 0.01 and its interval excludes 0.5, with at
-least 30 pairs from at least 5 bursts; otherwise the answer is "no detectable rule" (or "insufficient data"). The
-5-burst minimum was added after the pilot and before the campaign: the pilot showed an interval resampled from a
-single burst, which has zero width and means nothing. The fee share comes from the main and conflict bursts,
-where price is independent of the send order; the reverse bursts are reported on their own. The whole block serves as
-background: Kendall's τ of position against reward per cost unit for every transaction.
+**Analysis.** Only probes of one burst that landed in the same block of the target leader's window are compared (probes
+in different slots are ordered by the slot, and a block of another leader says nothing about the target). For each pair
+the share that follows a rule is computed: the higher price first, the one sent earlier first, and as a control the
+lower payer index first (which carries no information). 0.5 means no relation, 1.0 a strict rule. Intervals: 95% cluster
+bootstrap over bursts. Null model: a permutation test that shuffles the positions within each block (every order equally
+likely), plus the equal-price bursts. The reading was fixed before the data: a rule is claimed only when its permutation
+p-value is below 0.01 and its interval excludes 0.5, with at least 30 pairs from at least 5 bursts; otherwise the answer
+is "no detectable rule" (or "insufficient data"). The 5-burst minimum was added after the pilot and before the campaign:
+the pilot showed an interval resampled from a single burst, which has zero width and means nothing. Counting only the
+target's own blocks is a fix made after session 2, when probes handed to other leaders by a shared ingress turned up
+(report, What went wrong). The fee share comes from the main and conflict bursts, where price is independent of the send
+order; the reverse bursts are reported on their own. Verdicts pool all sessions; the same rule is also applied to each
+session alone, to show which results repeat at another time of day. The whole block serves as background: Kendall's τ of
+position against reward per cost unit for every transaction.
 
 ### What the design accounts for
 
@@ -166,19 +170,23 @@ compute budget per transaction).
 
 ## Results
 
-From session 1 (October 23, 10:20–12:51 UTC; details, intervals and caveats in [report/REPORT.md](report/REPORT.md),
-every table recomputed in [report/generated/summary.md](report/generated/summary.md)):
+From the pilot and two sessions (October 23, 10:20–12:51 UTC, and October 24, 02:30–05:12 UTC; details, intervals and
+caveats in [report/REPORT.md](report/REPORT.md), every table recomputed in
+[report/generated/summary.md](report/generated/summary.md)):
 
-- Every client with enough data orders by priority fee more often than chance, and none strictly under all
-  conditions. With the whole burst at the leader before its window, the share of probe pairs in fee order is
-  0.96–0.97 for Firedancer, 0.89–0.94 for AgaveBam, 0.81–0.83 for Agave and 0.61–0.71 for JitoLabs, HarmonicAgave
-  and Rakurai.
-- When probes arrive while the leader builds, arrival competes with the fee (shares 0.40–0.65 for most clients); at
-  equal price the Agave-based leaders tend to put the earlier probe first, the Firedancer ones the later.
-- Probes that write-lock one account are ordered by fee more strictly than independent ones, for every validator
-  with data.
-- Paths differ by client: BAM and Harmonic leaders take transactions through shared ingresses; the FireBAM ingress
-  dropped our unstaked connection in 21 of 24 bursts, and Harmonic's handed some probes to neighbouring leaders.
+- Every client orders by priority fee more often than chance, and none strictly under all conditions. With the whole
+  burst at the leader before its window, the share of probe pairs in fee order is 0.95–0.98 for Firedancer,
+  0.93–0.95 for AgaveBam, 0.90–0.96 for FireBAM, 0.80–0.83 for Agave, 0.68–0.74 for JitoLabs, HarmonicAgave and
+  Rakurai, and 0.58–0.87 for HarmonicFiredancer.
+- When probes arrive while the leader builds, arrival competes with the fee (0.38–0.68 for the Agave, JitoLabs,
+  Rakurai and Harmonic leaders). At equal price the Agave-based leaders put the earlier probe first and the Firedancer
+  ones the later (0.33–0.39 in every session); the Firedancer leaders behind BAM or Harmonic lean the Agave way.
+- Probes that write-lock one account are ordered by fee more strictly than independent ones, for every validator.
+- The midday and night sessions agree on the shares (within 0.09 for 10 of 11 validators) more than on the verdict
+  labels, which flip for validators near the thresholds; the report says which findings hold in every session.
+- Paths differ by client: BAM and Harmonic leaders take transactions through shared ingresses, which hand a probe to
+  whichever of their leaders is building, so it can land in another leader's block (the verdicts count only the
+  target's own).
 
 ## Development
 

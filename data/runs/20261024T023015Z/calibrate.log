@@ -1,0 +1,450 @@
+calibration 20261024T023015Z: recording slot notifications for 200 min (slot time 212.9 ms by the samples)
+  1080 events, slot 460681333, slot time 203.6 ms
+  1973 events, slot 460681445, slot time 203.0 ms
+  3387 events, slot 460681623, slot time 201.5 ms
+  4334 events, slot 460681742, slot time 203.5 ms
+slot stream: the WebSocket closed; reconnecting
+  5349 events, slot 460681906, slot time 201.5 ms
+  6448 events, slot 460682045, slot time 207.8 ms
+  7512 events, slot 460682179, slot time 211.1 ms
+  8559 events, slot 460682311, slot time 204.5 ms
+  9718 events, slot 460682458, slot time 202.9 ms
+  10726 events, slot 460682585, slot time 203.8 ms
+  11910 events, slot 460682733, slot time 206.1 ms
+  12974 events, slot 460682867, slot time 203.0 ms
+  14206 events, slot 460683023, slot time 202.2 ms
+  15333 events, slot 460683165, slot time 202.9 ms
+  16442 events, slot 460683303, slot time 203.8 ms
+  17518 events, slot 460683440, slot time 206.5 ms
+  18609 events, slot 460683578, slot time 203.2 ms
+  19797 events, slot 460683726, slot time 201.8 ms
+  20810 events, slot 460683859, slot time 201.4 ms
+  21979 events, slot 460684007, slot time 201.8 ms
+  23105 events, slot 460684149, slot time 204.8 ms
+  24253 events, slot 460684293, slot time 201.4 ms
+  25380 events, slot 460684435, slot time 203.2 ms
+  26488 events, slot 460684574, slot time 201.8 ms
+  27626 events, slot 460684716, slot time 204.0 ms
+  28768 events, slot 460684861, slot time 203.8 ms
+slot stream: the WebSocket closed; reconnecting
+  29588 events, slot 460685005, slot time 209.2 ms
+  30720 events, slot 460685147, slot time 204.8 ms
+  31800 events, slot 460685283, slot time 206.5 ms
+  32978 events, slot 460685431, slot time 203.8 ms
+  34112 events, slot 460685574, slot time 202.2 ms
+  35192 events, slot 460685711, slot time 203.8 ms
+  36342 events, slot 460685855, slot time 205.5 ms
+  37461 events, slot 460685997, slot time 202.5 ms
+  38543 events, slot 460686134, slot time 207.8 ms
+  39696 events, slot 460686279, slot time 208.5 ms
+  40815 events, slot 460686423, slot time 203.8 ms
+  41902 events, slot 460686559, slot time 202.0 ms
+  42861 events, slot 460686679, slot time 204.8 ms
+slot stream: the WebSocket closed; reconnecting
+  43646 events, slot 460686814, slot time 202.8 ms
+slot stream: the WebSocket closed; reconnecting
+  44650 events, slot 460686980, slot time 203.1 ms
+  45732 events, slot 460687115, slot time 202.5 ms
+slot stream: the WebSocket closed; reconnecting
+  46640 events, slot 460687259, slot time 203.1 ms
+slot stream: the WebSocket closed; reconnecting
+  47642 events, slot 460687413, slot time 211.8 ms
+  48687 events, slot 460687543, slot time 206.5 ms
+slot stream: the WebSocket closed; reconnecting
+  49566 events, slot 460687690, slot time 220.9 ms
+  50569 events, slot 460687816, slot time 205.8 ms
+  51573 events, slot 460687942, slot time 201.8 ms
+  52980 events, slot 460688119, slot time 201.8 ms
+  53976 events, slot 460688243, slot time 203.4 ms
+slot stream: the WebSocket closed; reconnecting
+  54960 events, slot 460688368, slot time 205.0 ms
+  55909 events, slot 460688526, slot time 203.2 ms
+  57178 events, slot 460688690, slot time 202.0 ms
+  58256 events, slot 460688826, slot time 203.2 ms
+slot stream: the WebSocket closed; reconnecting
+  59138 events, slot 460688969, slot time 212.5 ms
+  60144 events, slot 460689096, slot time 205.4 ms
+  61322 events, slot 460689244, slot time 202.8 ms
+slot stream: the WebSocket closed; reconnecting
+  62273 events, slot 460689391, slot time 200.2 ms
+  63380 events, slot 460689531, slot time 202.2 ms
+slot stream: the WebSocket closed; reconnecting
+  64381 events, slot 460689679, slot time 203.5 ms
+  65369 events, slot 460689803, slot time 202.6 ms
+slot stream: the WebSocket closed; reconnecting
+  66387 events, slot 460689967, slot time 201.5 ms
+  67455 events, slot 460690106, slot time 204.0 ms
+  68354 events, slot 460690219, slot time 202.4 ms
+slot stream: the WebSocket closed; reconnecting
+  69490 events, slot 460690391, slot time 203.4 ms
+  70630 events, slot 460690535, slot time 202.6 ms
+  71739 events, slot 460690675, slot time 202.6 ms
+  72815 events, slot 460690811, slot time 213.0 ms
+  73904 events, slot 460690949, slot time 205.0 ms
+slot stream: the WebSocket closed; reconnecting
+  74748 events, slot 460691095, slot time 202.9 ms
+  75846 events, slot 460691235, slot time 205.5 ms
+  76971 events, slot 460691375, slot time 202.2 ms
+  78062 events, slot 460691513, slot time 203.8 ms
+  79196 events, slot 460691655, slot time 203.2 ms
+  80127 events, slot 460691773, slot time 204.6 ms
+  81447 events, slot 460691939, slot time 203.2 ms
+  82385 events, slot 460692057, slot time 204.2 ms
+slot stream: the WebSocket closed; reconnecting
+slot stream: the WebSocket closed; reconnecting
+  83240 events, slot 460692197, slot time 204.5 ms
+  84132 events, slot 460692339, slot time 208.0 ms
+slot stream: the WebSocket closed; reconnecting
+  84930 events, slot 460692475, slot time 209.2 ms
+slot stream: the WebSocket closed; reconnecting
+  85932 events, slot 460692629, slot time 204.2 ms
+  87089 events, slot 460692775, slot time 203.0 ms
+  88229 events, slot 460692919, slot time 204.4 ms
+  89379 events, slot 460693063, slot time 203.4 ms
+  90510 events, slot 460693207, slot time 203.8 ms
+  91622 events, slot 460693346, slot time 205.1 ms
+  92700 events, slot 460693483, slot time 202.0 ms
+  93662 events, slot 460693603, slot time 204.2 ms
+slot stream: the WebSocket closed; reconnecting
+  94738 events, slot 460693770, slot time 202.9 ms
+  95584 events, slot 460693877, slot time 206.4 ms
+  96860 events, slot 460694037, slot time 203.4 ms
+  97816 events, slot 460694157, slot time 203.2 ms
+  99203 events, slot 460694331, slot time 201.8 ms
+  100302 events, slot 460694470, slot time 205.6 ms
+  101420 events, slot 460694611, slot time 202.4 ms
+  102387 events, slot 460694732, slot time 203.1 ms
+  103688 events, slot 460694896, slot time 205.4 ms
+  104676 events, slot 460695022, slot time 207.6 ms
+  105822 events, slot 460695167, slot time 203.8 ms
+  107005 events, slot 460695315, slot time 205.2 ms
+  108037 events, slot 460695445, slot time 203.9 ms
+  109258 events, slot 460695599, slot time 204.0 ms
+  110382 events, slot 460695741, slot time 203.2 ms
+  111471 events, slot 460695879, slot time 206.2 ms
+  112572 events, slot 460696017, slot time 203.8 ms
+  113763 events, slot 460696167, slot time 203.8 ms
+  114817 events, slot 460696299, slot time 204.2 ms
+  115973 events, slot 460696446, slot time 204.2 ms
+  117129 events, slot 460696592, slot time 203.1 ms
+  118245 events, slot 460696735, slot time 203.0 ms
+  119257 events, slot 460696859, slot time 203.2 ms
+  120377 events, slot 460697005, slot time 206.2 ms
+slot stream: the WebSocket closed; reconnecting
+  121285 events, slot 460697152, slot time 207.5 ms
+  122270 events, slot 460697277, slot time 205.4 ms
+  123348 events, slot 460697413, slot time 202.4 ms
+slot stream: the WebSocket closed; reconnecting
+  124368 events, slot 460697579, slot time 201.5 ms
+slot stream: the WebSocket closed; reconnecting
+  125257 events, slot 460697691, slot time 202.5 ms
+slot stream: the WebSocket closed; reconnecting
+  125978 events, slot 460697853, slot time 224.5 ms
+slot stream: the WebSocket closed; reconnecting
+  126688 events, slot 460697985, slot time 199.2 ms
+slot stream: the WebSocket closed; reconnecting
+  127604 events, slot 460698135, slot time 205.2 ms
+  128694 events, slot 460698273, slot time 205.2 ms
+slot stream: the WebSocket closed; reconnecting
+  129624 events, slot 460698419, slot time 203.6 ms
+  130631 events, slot 460698546, slot time 206.0 ms
+slot stream: the WebSocket closed; reconnecting
+  131561 events, slot 460698699, slot time 204.1 ms
+slot stream: the WebSocket closed; reconnecting
+  132443 events, slot 460698844, slot time 207.6 ms
+  133585 events, slot 460698988, slot time 208.4 ms
+  134724 events, slot 460699132, slot time 203.1 ms
+  135786 events, slot 460699266, slot time 203.0 ms
+  136781 events, slot 460699391, slot time 204.4 ms
+  138122 events, slot 460699559, slot time 201.2 ms
+  139251 events, slot 460699701, slot time 204.1 ms
+  140282 events, slot 460699833, slot time 209.4 ms
+  141455 events, slot 460699980, slot time 202.6 ms
+  142451 events, slot 460700107, slot time 203.5 ms
+  143687 events, slot 460700261, slot time 203.1 ms
+  144725 events, slot 460700394, slot time 207.5 ms
+  145689 events, slot 460700514, slot time 202.8 ms
+slot stream: the WebSocket closed; reconnecting
+  146570 events, slot 460700658, slot time 203.9 ms
+slot stream: the WebSocket closed; reconnecting
+  147691 events, slot 460700799, slot time 203.8 ms
+  148762 events, slot 460700963, slot time 202.4 ms
+  149828 events, slot 460701098, slot time 204.2 ms
+  151005 events, slot 460701246, slot time 208.1 ms
+  152128 events, slot 460701387, slot time 204.0 ms
+  153268 events, slot 460701531, slot time 202.2 ms
+  154378 events, slot 460701671, slot time 201.5 ms
+  155432 events, slot 460701803, slot time 203.1 ms
+  156538 events, slot 460701943, slot time 203.1 ms
+slot stream: the WebSocket closed; reconnecting
+  157471 events, slot 460702090, slot time 203.6 ms
+  158645 events, slot 460702238, slot time 203.8 ms
+  159663 events, slot 460702366, slot time 203.0 ms
+  160767 events, slot 460702509, slot time 202.8 ms
+  162017 events, slot 460702665, slot time 201.1 ms
+  163168 events, slot 460702811, slot time 202.0 ms
+  164227 events, slot 460702943, slot time 204.2 ms
+  165398 events, slot 460703091, slot time 202.5 ms
+  166472 events, slot 460703227, slot time 204.5 ms
+  167559 events, slot 460703363, slot time 204.2 ms
+slot stream: the WebSocket closed; reconnecting
+  168453 events, slot 460703517, slot time 204.0 ms
+  169527 events, slot 460703651, slot time 203.2 ms
+  170668 events, slot 460703795, slot time 207.5 ms
+  171825 events, slot 460703940, slot time 201.2 ms
+  172931 events, slot 460704079, slot time 202.8 ms
+  174066 events, slot 460704223, slot time 203.5 ms
+  175149 events, slot 460704359, slot time 206.0 ms
+  176267 events, slot 460704500, slot time 204.2 ms
+  177401 events, slot 460704643, slot time 203.5 ms
+  178352 events, slot 460704763, slot time 204.8 ms
+  179589 events, slot 460704918, slot time 203.9 ms
+  180833 events, slot 460705075, slot time 203.2 ms
+  181935 events, slot 460705214, slot time 207.4 ms
+  183075 events, slot 460705357, slot time 201.6 ms
+  184183 events, slot 460705497, slot time 204.5 ms
+  185280 events, slot 460705635, slot time 202.4 ms
+  186369 events, slot 460705773, slot time 204.4 ms
+  187515 events, slot 460705917, slot time 204.1 ms
+  188475 events, slot 460706039, slot time 203.8 ms
+  189684 events, slot 460706193, slot time 211.2 ms
+  190819 events, slot 460706336, slot time 202.4 ms
+  191929 events, slot 460706476, slot time 203.0 ms
+  192946 events, slot 460706603, slot time 203.6 ms
+  194024 events, slot 460706739, slot time 203.0 ms
+  195288 events, slot 460706898, slot time 203.5 ms
+  196392 events, slot 460707037, slot time 205.5 ms
+  197556 events, slot 460707183, slot time 203.8 ms
+  198587 events, slot 460707313, slot time 209.8 ms
+  199778 events, slot 460707462, slot time 202.4 ms
+  200877 events, slot 460707601, slot time 203.8 ms
+  202050 events, slot 460707747, slot time 201.8 ms
+  203180 events, slot 460707890, slot time 204.0 ms
+  204254 events, slot 460708025, slot time 205.1 ms
+  205400 events, slot 460708170, slot time 207.2 ms
+  206503 events, slot 460708309, slot time 203.0 ms
+  207644 events, slot 460708452, slot time 201.4 ms
+  208767 events, slot 460708595, slot time 204.5 ms
+  209924 events, slot 460708739, slot time 202.0 ms
+  211035 events, slot 460708879, slot time 203.0 ms
+slot stream: no notification for 3 s; reconnecting
+  211991 events, slot 460709017, slot time 204.5 ms
+  213124 events, slot 460709159, slot time 203.5 ms
+  214262 events, slot 460709303, slot time 202.5 ms
+  215398 events, slot 460709446, slot time 206.1 ms
+  216532 events, slot 460709587, slot time 202.8 ms
+  217630 events, slot 460709726, slot time 204.0 ms
+  218786 events, slot 460709870, slot time 202.8 ms
+  219921 events, slot 460710014, slot time 203.5 ms
+  221060 events, slot 460710157, slot time 201.6 ms
+  222151 events, slot 460710295, slot time 203.2 ms
+  223296 events, slot 460710439, slot time 204.0 ms
+  224429 events, slot 460710581, slot time 203.9 ms
+  225564 events, slot 460710723, slot time 203.5 ms
+  226720 events, slot 460710869, slot time 204.5 ms
+  227828 events, slot 460711009, slot time 204.9 ms
+  228973 events, slot 460711152, slot time 203.8 ms
+  230036 events, slot 460711287, slot time 207.0 ms
+  231235 events, slot 460711437, slot time 203.2 ms
+  232358 events, slot 460711579, slot time 202.8 ms
+  233502 events, slot 460711723, slot time 202.2 ms
+  234450 events, slot 460711843, slot time 201.8 ms
+  235698 events, slot 460711999, slot time 202.5 ms
+  236847 events, slot 460712143, slot time 204.2 ms
+  237982 events, slot 460712287, slot time 204.2 ms
+  239085 events, slot 460712425, slot time 205.2 ms
+  240207 events, slot 460712568, slot time 204.0 ms
+  241333 events, slot 460712709, slot time 202.8 ms
+  242386 events, slot 460712842, slot time 203.0 ms
+  243606 events, slot 460712994, slot time 204.2 ms
+  244727 events, slot 460713135, slot time 205.0 ms
+  245816 events, slot 460713273, slot time 204.8 ms
+  246924 events, slot 460713413, slot time 205.8 ms
+  247771 events, slot 460713519, slot time 204.0 ms
+  249184 events, slot 460713697, slot time 202.0 ms
+  250312 events, slot 460713839, slot time 204.0 ms
+  251406 events, slot 460713976, slot time 206.6 ms
+  252545 events, slot 460714121, slot time 204.6 ms
+  253527 events, slot 460714244, slot time 202.1 ms
+  254820 events, slot 460714407, slot time 202.8 ms
+  255924 events, slot 460714546, slot time 203.5 ms
+  256958 events, slot 460714675, slot time 203.8 ms
+  258183 events, slot 460714829, slot time 201.5 ms
+  259360 events, slot 460714978, slot time 203.8 ms
+  260475 events, slot 460715118, slot time 202.6 ms
+  261539 events, slot 460715252, slot time 207.8 ms
+  262479 events, slot 460715370, slot time 204.5 ms
+  263822 events, slot 460715539, slot time 208.0 ms
+  264941 events, slot 460715681, slot time 204.5 ms
+  266067 events, slot 460715823, slot time 204.0 ms
+  267195 events, slot 460715965, slot time 203.5 ms
+  268305 events, slot 460716104, slot time 203.5 ms
+  269458 events, slot 460716249, slot time 202.0 ms
+  270591 events, slot 460716391, slot time 203.0 ms
+  271728 events, slot 460716534, slot time 202.6 ms
+  272896 events, slot 460716681, slot time 203.5 ms
+  274042 events, slot 460716825, slot time 200.5 ms
+  275166 events, slot 460716966, slot time 202.5 ms
+  276276 events, slot 460717105, slot time 201.5 ms
+  277446 events, slot 460717253, slot time 201.8 ms
+  278585 events, slot 460717396, slot time 203.2 ms
+  279729 events, slot 460717539, slot time 202.0 ms
+  280853 events, slot 460717680, slot time 203.8 ms
+  281972 events, slot 460717823, slot time 203.0 ms
+  283104 events, slot 460717964, slot time 204.9 ms
+  284200 events, slot 460718102, slot time 203.2 ms
+  285334 events, slot 460718246, slot time 202.8 ms
+  286412 events, slot 460718382, slot time 207.0 ms
+  287560 events, slot 460718525, slot time 202.1 ms
+  288676 events, slot 460718667, slot time 204.8 ms
+  289771 events, slot 460718805, slot time 202.6 ms
+  290869 events, slot 460718943, slot time 204.5 ms
+  291896 events, slot 460719073, slot time 202.9 ms
+  293140 events, slot 460719230, slot time 205.0 ms
+  294256 events, slot 460719370, slot time 203.4 ms
+  295398 events, slot 460719514, slot time 202.8 ms
+  296540 events, slot 460719657, slot time 203.0 ms
+  297564 events, slot 460719787, slot time 202.8 ms
+  298750 events, slot 460719936, slot time 206.1 ms
+  299884 events, slot 460720079, slot time 203.8 ms
+  301027 events, slot 460720223, slot time 203.0 ms
+  302158 events, slot 460720366, slot time 205.4 ms
+  303262 events, slot 460720505, slot time 203.6 ms
+  304388 events, slot 460720647, slot time 204.0 ms
+  305494 events, slot 460720786, slot time 207.5 ms
+  306596 events, slot 460720925, slot time 207.6 ms
+  307715 events, slot 460721065, slot time 204.4 ms
+  308866 events, slot 460721210, slot time 201.0 ms
+  309998 events, slot 460721353, slot time 201.4 ms
+  310932 events, slot 460721470, slot time 203.6 ms
+  312161 events, slot 460721625, slot time 204.2 ms
+  313382 events, slot 460721779, slot time 203.0 ms
+  314492 events, slot 460721918, slot time 206.2 ms
+  315616 events, slot 460722058, slot time 202.5 ms
+  316752 events, slot 460722202, slot time 204.9 ms
+  317867 events, slot 460722345, slot time 201.9 ms
+  318990 events, slot 460722485, slot time 203.5 ms
+  320135 events, slot 460722629, slot time 203.2 ms
+  321006 events, slot 460722739, slot time 203.2 ms
+  322238 events, slot 460722895, slot time 206.4 ms
+  323454 events, slot 460723047, slot time 203.0 ms
+  324523 events, slot 460723182, slot time 203.1 ms
+  325768 events, slot 460723339, slot time 204.0 ms
+  326844 events, slot 460723475, slot time 208.2 ms
+  327932 events, slot 460723611, slot time 203.8 ms
+  329083 events, slot 460723755, slot time 204.0 ms
+  330229 events, slot 460723902, slot time 204.5 ms
+  331344 events, slot 460724043, slot time 202.2 ms
+  332448 events, slot 460724183, slot time 202.2 ms
+  333586 events, slot 460724327, slot time 202.6 ms
+  334743 events, slot 460724471, slot time 201.2 ms
+  335858 events, slot 460724611, slot time 202.2 ms
+  337014 events, slot 460724757, slot time 202.2 ms
+  338122 events, slot 460724897, slot time 202.5 ms
+  339233 events, slot 460725037, slot time 203.2 ms
+  340386 events, slot 460725182, slot time 202.9 ms
+  341477 events, slot 460725319, slot time 204.2 ms
+  342616 events, slot 460725463, slot time 204.1 ms
+  343709 events, slot 460725601, slot time 205.8 ms
+  344584 events, slot 460725711, slot time 207.5 ms
+  345961 events, slot 460725884, slot time 204.9 ms
+  347100 events, slot 460726029, slot time 203.5 ms
+  348166 events, slot 460726164, slot time 206.4 ms
+  349322 events, slot 460726310, slot time 201.5 ms
+  350434 events, slot 460726450, slot time 205.5 ms
+  351554 events, slot 460726590, slot time 205.1 ms
+  352645 events, slot 460726729, slot time 206.2 ms
+  353755 events, slot 460726869, slot time 204.6 ms
+  354922 events, slot 460727015, slot time 202.2 ms
+  356056 events, slot 460727158, slot time 202.1 ms
+  357204 events, slot 460727302, slot time 202.4 ms
+  358331 events, slot 460727443, slot time 202.4 ms
+  stopped after 359207 events
+
+by client of the leader (node first-shred timestamps, ms; median [p10, p90]):
+client               windows skipped  hand-over in             window (slot 0→3)        hand-over out            clock error at start    
+AgaveBam             4114 83  279 [244, 396] n=4022    546 [542, 549] n=4025    265 [246, 385] n=4018    -48 [-193, 28] n=4011   
+JitoLabs             2671 63  266 [238, 373] n=2600    547 [502, 628] n=2597    270 [248, 388] n=2597    -17 [-185, 31] n=2593   
+HarmonicAgave        2531 66  261 [242, 326] n=2450    564 [552, 592] n=2453    247 [220, 356] n=2459    -1 [-163, 31] n=2444    
+HarmonicFiredancer   986 18  252 [232, 315] n=963     550 [548, 555] n=966     272 [248, 388] n=966     6 [-147, 40] n=965      
+Firedancer           838 22  257 [235, 319] n=815     601 [547, 739] n=813     314 [254, 401] n=812     -2 [-188, 39] n=810     
+FireBAM              191 4  250 [230, 316] n=187     549 [549, 551] n=187     266 [250, 386] n=187     8 [-153, 38] n=185      
+Rakurai              126 0  258 [230, 292] n=125     548 [544, 550] n=124     267 [252, 389] n=125     4 [-127, 34] n=124      
+Agave                112 1  282 [264, 391] n=110     553 [544, 569] n=109     252 [226, 371] n=110     -26 [-186, 19] n=109    
+Unknown(19747)       8 0  312 [292, 322] n=8       561 [556, 581] n=7       225 [204, 234] n=7       -41 [-90, -22] n=8      
+Raiku                7 0  254 [250, 269] n=7       557 [556, 558] n=7       254 [248, 290] n=7       7 [-31, 21] n=7         
+not in gossip        5 1  426 [418, 435] n=4       515 [507, 527] n=4       -39 [-57, 41] n=4        -219 [-341, -146] n=4   
+
+359207 events {"completed":45245,"connected":34,"createdBank":45237,"firstShredReceived":45244,"frozen":45237,"optimisticConfirmation":43872,"root":89095,"slot":45243}; slotsUpdates: true; 45284 slots seen, 1075 skipped
+first shred → this machine: {"median":284.092529296875,"n":45244,"p10":-46.9202392578125,"p90":3879.9665283203162,"q02_lower_envelope":-90.6062255859375,"q02_lower_envelope_by_connection":[-48.2909765625,-57.126904296875,-59.2372314453125,357.5788427734375,-49.056787109375,1.9529980468749955,-50.91705078125,52.40248046875001,-61.0460595703125,77.69525390625,372.54326660156255,-52.29892578125,-60.99283203125,-58.658935546875,-60.23994140625,278.48005859375,297.1272412109375,54.622353515625,-67.296533203125,-68.121240234375,110.27602539062501,-65.18802734375,553.77,473.00456054687504,347.046865234375,177.423251953125,27.982177734375,472.5758447265625,-70.37595703125,284.4501123046875,-69.167373046875,-74.139150390625,-86.344541015625,-94.73486328125]}
+first shred → slot notification: {"median":3.1569999996572733,"n":45227,"p90":292.65939999986443}
+slot interval by position in the window (node first-shred timestamps):
+  slot ≡ 0 mod 4: n 11292  median  265.0  p10  239.0  p90  382.0 ms
+  slot ≡ 1 mod 4: n 11307  median  149.0  p10  142.0  p90  177.0 ms
+  slot ≡ 2 mod 4: n 11303  median  200.0  p10  197.0  p90  213.0 ms
+  slot ≡ 3 mod 4: n 11302  median  200.0  p10  198.0  p90  213.0 ms
+
+prediction error at 11265 window starts (predicted − observed first evidence, ms):
+method                                horizon  median     p10     p90   |err|
+arrival slot fit 0 recent 1 q 0      20.0   -16.9  -269.1   176.1   156.3
+arrival slot fit 0 recent 1 q 0      100.0   -28.1  -275.7   172.8   158.5
+arrival slot fit 0 recent 1 q 0      300.0   -63.0  -309.0   229.3   194.6
+arrival slot fit 0 recent 1 q 0      600.0   -43.0  -395.7   260.4   233.2
+arrival slot fit 0 recent 1 q 0      1000.0   -60.1  -439.6   343.1   274.2
+arrival slot fit 0 recent 1 q 0      2500.0   -50.0  -676.1   587.9   425.1
+arrival any fit 150 recent 1 q 0     20.0  -129.2  -435.1   120.1   220.0
+arrival any fit 150 recent 1 q 0     100.0  -134.2  -441.2    86.9   223.6
+arrival any fit 150 recent 1 q 0     300.0  -162.6  -459.4   114.6   254.9
+arrival any fit 150 recent 1 q 0     600.0  -179.3  -511.0   198.5   295.5
+arrival any fit 150 recent 1 q 0     1000.0  -173.3  -594.5   256.3   338.6
+arrival any fit 150 recent 1 q 0     2500.0  -207.1  -853.7   587.4   537.0
+arrival any fit 150 recent 8 q 0.25  20.0  -184.7  -649.1   109.3   318.1
+arrival any fit 150 recent 8 q 0.25  100.0  -186.5  -652.2   104.3   321.0
+arrival any fit 150 recent 8 q 0.25  300.0  -196.7  -665.8   113.4   337.4
+arrival any fit 150 recent 8 q 0.25  600.0  -209.0  -701.3   177.1   373.8
+arrival any fit 150 recent 8 q 0.25  1000.0  -216.1  -778.5   250.8   424.7
+arrival any fit 150 recent 8 q 0.25  2500.0  -243.6 -1028.5   608.7   612.1
+arrival any fit 150 recent 8 q 0.5   20.0   -82.6  -486.7   281.2   275.0
+arrival any fit 150 recent 8 q 0.5   100.0   -86.2  -492.6   280.6   278.3
+arrival any fit 150 recent 8 q 0.5   300.0  -101.7  -514.4   292.5   297.6
+arrival any fit 150 recent 8 q 0.5   600.0  -108.7  -563.0   356.9   340.3
+arrival any fit 150 recent 8 q 0.5   1000.0  -116.7  -633.6   434.9   393.4
+arrival any fit 150 recent 8 q 0.5   2500.0  -139.7  -893.6   794.2   591.4
+node linear fit 150 recent 1 q 0     20.0   -48.0  -182.0    36.8    89.2
+node linear fit 150 recent 1 q 0     100.0   -46.5  -182.2    40.5    89.1
+node linear fit 150 recent 1 q 0     300.0   -38.0  -183.7    51.6    88.4
+node linear fit 150 recent 1 q 0     600.0   -28.0  -192.5    66.3    92.2
+node linear fit 150 recent 1 q 0     1000.0   -40.1  -227.7    75.5   105.7
+node linear fit 150 recent 1 q 0     2500.0   -42.2  -283.8   134.2   136.3
+node linear fit 150 recent 8 q 0.5   20.0   -25.4  -181.7    70.7    87.7
+node linear fit 150 recent 8 q 0.5   100.0   -25.2  -184.6    74.6    89.6
+node linear fit 150 recent 8 q 0.5   300.0   -23.6  -196.2    83.7    95.7
+node linear fit 150 recent 8 q 0.5   600.0   -20.7  -218.4    98.9   104.8
+node linear fit 150 recent 8 q 0.5   1000.0   -23.7  -231.9   114.9   113.5
+node linear fit 150 recent 8 q 0.5   2500.0   -26.5  -287.3   175.9   148.7
+node phased, 1 anchors               20.0   -13.0  -176.0    32.0    74.9
+node phased, 1 anchors               100.0   -14.0  -180.0    32.0    76.4
+node phased, 1 anchors               300.0   -18.0  -194.0    32.0    81.4
+node phased, 1 anchors               600.0   -31.0  -230.0    34.0    92.1
+node phased, 1 anchors               1000.0   -55.0  -271.0    38.0   110.6
+node phased, 1 anchors               2500.0  -119.0  -372.0    41.0   167.1
+node phased, 2 anchors               20.0   -14.5  -184.0    32.2    77.3
+node phased, 2 anchors               100.0   -16.0  -188.5    32.2    78.8
+node phased, 2 anchors               300.0   -21.0  -204.5    32.0    83.7
+node phased, 2 anchors               600.0   -37.0  -240.5    35.5    95.8
+node phased, 2 anchors               1000.0   -58.5  -276.0    38.2   112.9
+node phased, 2 anchors               2500.0  -122.5  -378.0    40.0   170.5
+node phased, 4 anchors               20.0   -18.5  -205.5    30.0    82.4
+node phased, 4 anchors               100.0   -21.2  -212.2    29.5    84.2
+node phased, 4 anchors               300.0   -30.5  -230.0    30.5    90.2
+node phased, 4 anchors               600.0   -49.5  -259.0    35.0   105.1
+node phased, 4 anchors               1000.0   -65.0  -286.0    36.0   118.9
+node phased, 4 anchors               2500.0  -129.0  -392.5    37.0   177.6
+node phased, 8 anchors               20.0   -42.5  -250.0    29.5    98.4
+node phased, 8 anchors               100.0   -45.0  -255.5    30.0   100.9
+node phased, 8 anchors               300.0   -57.5  -271.0    31.0   109.7
+node phased, 8 anchors               600.0   -68.5  -294.0    32.8   120.4
+node phased, 8 anchors               1000.0   -87.2  -320.8    34.0   135.9
+node phased, 8 anchors               2500.0  -143.0  -418.5    29.8   192.8
+
+Calibration written to data/calibration/20261024T023015Z

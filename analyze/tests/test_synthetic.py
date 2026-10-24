@@ -50,6 +50,30 @@ def test_outputs_are_written(summary, tmp_path_factory):
         assert (out / name).exists(), name
 
 
+def test_a_single_session_gives_the_pooled_verdicts(summary):
+    assert {v["client"]: v["verdict"] for v in summary["session_verdicts"]} == verdicts(summary)
+
+
+def test_session_verdicts_get_a_column_per_session():
+    import pandas as pd
+
+    rows = [{"run_id": run_id, "client": "C", "identity": "A" * 44, "verdict": "v", "fee_share": 0.9, "fee_bursts": 6,
+             "arrival_null_share": float("nan"), "arrival_null_bursts": 0} for run_id in ("r1", "r2")]
+    table = report._session_verdicts_markdown(pd.DataFrame(rows))
+    assert "| Client | Validator | r1 | r2 |" in table
+    assert "| C | `AAAA…AAAA` | v; 0.90 (6) / – (0) | v; 0.90 (6) / – (0) |" in table
+    assert report._session_verdicts_markdown(pd.DataFrame(rows[:1])) == ""
+
+
+def test_probes_outside_the_window_are_not_compared():
+    import pandas as pd
+
+    # Two probes in the target's block, two handed to another leader's block by a shared ingress
+    probes = pd.DataFrame({"run_id": "r", "burst": 0, "landed_slot": [10, 10, 9, 9], "index": [0, 1, 2, 3],
+                           "block_index": [0.0, 1.0, 0.0, 1.0], "in_window": [True, True, False, False]})
+    assert list(metrics.landed_groups(probes)["index"]) == [0, 1]
+
+
 def test_agreement_counts_pairs():
     agree, n = metrics._agreement(np.array([[3.0, 2.0, 1.0], [1.0, 2.0, 3.0]]))
     assert list(agree) == [3, 0] and n == 3

@@ -1,0 +1,153 @@
+{
+  "bursts_per_target": 24,
+  "clock_anchors": 1,
+  "clock_arrival_estimator": {
+    "fit_slots": 150,
+    "quantile": 0.0,
+    "recent": 1
+  },
+  "clock_basis": "node_first_shred",
+  "cluster": "mainnet-beta",
+  "code_version": "0.1.0 71e18362ff7b",
+  "cu_limit": 900,
+  "epoch": 1066,
+  "genesis_hash": "5eykt4UsFv8P8NJdTREpY1vzqKqZKvdpKuc147dw2N9d",
+  "live": true,
+  "offsets_ms": [
+    -300.0,
+    100.0
+  ],
+  "path": "quic",
+  "payers": [
+    "29jbfD4WJxNhFxsKnCPjuYKddANR5RQyYUW5368tee5K",
+    "6xyKtK2hktG853sT4LHegAjc9E8U82f3mfnEwYiGx3wj",
+    "DeM7yJNuVE7hEZFqCaBtYYRL6SLZQJ7WwAKGmjTsRdpc",
+    "cPhPRbMYq8h5h9GbekUZKJ9EmDHTjsNaSX8VxthgMmH",
+    "TyMQHoskGtX8kL3hUKaqEgktVe5QZQDFikKKtEngVht",
+    "8qd59rzQLKVh6MLCF7douQP78YSjTx767noyKFkkeRKF",
+    "2YFhuZCJgLmzWWP14KCiB4ssiB3Gd71aKT2hvEVYB9uZ",
+    "SD1mGm6Y49AHbNxuPMnh25uWH98ku43iz5K1dKSYFSG",
+    "BZSChTHBbWS3mLVjUsfNs5iwRC33mtxESr9yMhbkjqX4",
+    "Dkfeby3QWzJv9ZQpUP888tcDT1ZqApCEdNdJjWiGuWPp",
+    "9nu2Rg5MSYZHcXv4z26HGLL7wooMos5bBE8ZgPbQhitB",
+    "J3WJjZtAo5cuQMS8mYub9boJBhcmpE83NxpczBHtfnvT"
+  ],
+  "prices": [
+    1000,
+    2000,
+    5000,
+    10000,
+    20000,
+    50000,
+    100000,
+    200000,
+    500000,
+    1000000,
+    2000000,
+    5000000
+  ],
+  "probes": 12,
+  "run_id": "20261024T023015Z",
+  "seed": 3859979914438862078,
+  "slot_ms": 212.91696238466997,
+  "spacings_ms": [
+    0,
+    10,
+    50
+  ],
+  "spend_cap_lamports": 50000000,
+  "spent_before_lamports": 18972276,
+  "started_at": "2026-10-24T02:30:36.777567+00:00",
+  "targets": [
+    {
+      "client": "Agave",
+      "identity": "7QQGNm3ptwinipDCyaCF7jY5katgmFUu1ieP2f7nwLpE",
+      "stake_sol": 1875000.9534662,
+      "tpu_quic": "5.199.172.176:12002",
+      "version": "4.3.2"
+    },
+    {
+      "client": "Agave",
+      "identity": "5Us18hLZPXJTS4QVuGSsUw137Dyd2tgBaem24Xsf5nBS",
+      "stake_sol": 1207979.324911175,
+      "tpu_quic": "185.189.44.172:12002",
+      "version": "4.3.2"
+    },
+    {
+      "client": "JitoLabs",
+      "identity": "HEL1USMZKAL2odpNBj2oCjffnFGaYwmbGmyewGv1e2TU",
+      "stake_sol": 16022777.902436491,
+      "tpu_quic": "64.130.57.215:8002",
+      "version": "4.3.2"
+    },
+    {
+      "client": "JitoLabs",
+      "identity": "E1r4Psq84tHfQ6aPTvvDka4U3u8zPVD7gEUrH25RdxHL",
+      "stake_sol": 10882510.649488416,
+      "tpu_quic": "64.130.32.153:8002",
+      "version": "4.3.2"
+    },
+    {
+      "client": "AgaveBam",
+      "identity": "DRpbCBMxVnDK7maPM5tGv6MvB3v1sRMC86PZ8okm21hy",
+      "stake_sol": 12572396.114967449,
+      "tpu_quic": "208.91.105.55:5010",
+      "version": "4.3.2"
+    },
+    {
+      "client": "AgaveBam",
+      "identity": "5Cchr1XGEg7dbBXByV5NY2ad8jfxAM7HA3x8D56rq9Ux",
+      "stake_sol": 5688479.581092335,
+      "tpu_quic": "63.254.180.13:5010",
+      "version": "4.3.2"
+    },
+    {
+      "client": "Firedancer",
+      "identity": "EvnRmnMrd69kFdbLMxWkTn1icZ7DCceRhvmb2SJXqDo4",
+      "stake_sol": 7782538.803998724,
+      "tpu_quic": "104.204.143.114:9007",
+      "version": "26.10.4"
+    },
+    {
+      "client": "Firedancer",
+      "identity": "9eGrDohdNTAo61DRHyfMuqKWXqYnA3i254Wiszxe8FoY",
+      "stake_sol": 7037301.090908213,
+      "tpu_quic": "86.54.152.246:9007",
+      "version": "26.10.4"
+    },
+    {
+      "client": "HarmonicAgave",
+      "identity": "Fd7btgySsrjuo25CJCj7oE7VPMyezDhnx7pZkj2v69Nk",
+      "stake_sol": 17096229.98475625,
+      "tpu_quic": "198.13.140.105:12341",
+      "version": "4.3.2"
+    },
+    {
+      "client": "HarmonicFiredancer",
+      "identity": "JUPiTERrZqgf1jUyR7dSkhMx4Kn2qJyekWsg3LT1h4b",
+      "stake_sol": 9724045.661416186,
+      "tpu_quic": "198.13.140.105:12349",
+      "version": "26.10.4"
+    },
+    {
+      "client": "Rakurai",
+      "identity": "ana2y2YvQ3ZPMwm6qhnN3nJoUSiT3qx5Pvetkq9xcfY",
+      "stake_sol": 2264600.760735918,
+      "tpu_quic": "45.32.145.112:8002",
+      "version": "4.3.2"
+    },
+    {
+      "client": "FireBAM",
+      "identity": "9jxgosAfHgHzwnxsHw4RAZYaLVokMbnYtmiZBreynGFP",
+      "stake_sol": 4477328.987787841,
+      "tpu_quic": "198.13.141.173:5010",
+      "version": "26.10.4"
+    }
+  ],
+  "variants": [
+    "main",
+    "null",
+    "reverse",
+    "conflict"
+  ]
+}
