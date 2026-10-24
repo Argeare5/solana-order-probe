@@ -18,7 +18,7 @@ jobs:
       run:
         working-directory: probe
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: probe
@@ -30,7 +30,7 @@ jobs:
     name: analyze (Python)
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - run: docker build -t solana-order-probe/analyze analyze
       - name: Synthetic tests
         run: docker run --rm --entrypoint python -w /app solana-order-probe/analyze -m pytest -q tests
@@ -43,7 +43,7 @@ jobs:
     name: docker compose
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - run: docker compose config --quiet
       - run: docker compose build
       - run: docker compose run --rm probe --help
